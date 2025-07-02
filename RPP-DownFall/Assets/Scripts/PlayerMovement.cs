@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class PlayerMovement : MonoBehaviour {
     public bool moving = false;
@@ -14,10 +13,17 @@ public class PlayerMovement : MonoBehaviour {
     // Update is called once per frame
     void Update () 
     {
-        movement ();
+        Movement ();
+        LookAtMouse();
     }
 
-    void movement() 
+    private void LookAtMouse()
+    {
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        transform.right = mousePos - new Vector2(transform.position.x, transform.position.y);
+    }
+
+    private void Movement() 
     {
         Vector3 direction = Vector3.zero;
 
