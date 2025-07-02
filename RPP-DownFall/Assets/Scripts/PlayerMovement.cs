@@ -1,46 +1,53 @@
 using UnityEngine;
 using System.Collections;
 
-public class PlayerMovement : MonoBehaviour
-{
+public class PlayerMovement : MonoBehaviour {
     public bool moving = false;
-    public float speed = 5f;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    float speed = 5.0f;
+
+    // Use this for initialization
+    void Start () 
     {
         
     }
 
     // Update is called once per frame
-    void Update()
+    void Update () 
     {
-        Movement();
+        movement ();
     }
-    
-    void Movement()
+
+    void movement() 
     {
-        if (Input.GetKey(KeyCode.W))
+        Vector3 direction = Vector3.zero;
+
+        if (Input.GetKey(KeyCode.W)) 
         {
-            transform.Translate(Vector3.up * (speed * Time.deltaTime), Space.World);
+            direction += Vector3.up;
         }
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.S)) 
         {
-            transform.Translate(Vector3.left * (speed * Time.deltaTime), Space.World);
+            direction += Vector3.down;
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.A)) 
         {
-            transform.Translate(Vector3.right * (speed * Time.deltaTime), Space.World);
+            direction += Vector3.left;
         }
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.D)) 
         {
-            transform.Translate(Vector3.down * (speed * Time.deltaTime), Space.World);
+            direction += Vector3.right;
         }
 
-        if (Input.GetKey(KeyCode.W) != true && Input.GetKey(KeyCode.A) != true && Input.GetKey(KeyCode.D) != true &&
-            Input.GetKey(KeyCode.S) != true)
+        if (direction != Vector3.zero) 
+        {
+            direction.Normalize(); // Normaliza para evitar velocidade duplicada na diagonal
+            transform.Translate(direction * (speed * Time.deltaTime), Space.World);
+            moving = true;
+        } 
+        
+        else 
         {
             moving = false;
         }
-        
     }
 }
