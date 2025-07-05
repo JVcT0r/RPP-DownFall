@@ -1,59 +1,58 @@
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour {
-    public bool moving = false;
-    float speed = 5.0f;
+public class PlayerController : MonoBehaviour
+{
+    public float moveSpeed = 5f;
+    public GameObject bulletPrefab;
+    public Transform firePoint;
+    public float bulletSpeed = 10f;
 
-    // Use this for initialization
-    void Start () 
+    private Vector2 moveInput;
+    private Vector2 mousePos;
+
+    void Update()
     {
         
-    }
+        moveInput = new Vector2(
+            Input.GetAxisRaw("Horizontal"),
+            Input.GetAxisRaw("Vertical")
+        ).normalized;
 
-    // Update is called once per frame
-    void Update () 
-    {
-        Movement ();
-        LookAtMouse();
-    }
-
-    private void LookAtMouse()
-    {
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.right = mousePos - new Vector2(transform.position.x, transform.position.y);
-    }
-
-    private void Movement() 
-    {
-        Vector3 direction = Vector3.zero;
-
-        if (Input.GetKey(KeyCode.W)) 
-        {
-            direction += Vector3.up;
-        }
-        if (Input.GetKey(KeyCode.S)) 
-        {
-            direction += Vector3.down;
-        }
-        if (Input.GetKey(KeyCode.A)) 
-        {
-            direction += Vector3.left;
-        }
-        if (Input.GetKey(KeyCode.D)) 
-        {
-            direction += Vector3.right;
-        }
-
-        if (direction != Vector3.zero) 
-        {
-            direction.Normalize(); // Normaliza para evitar velocidade duplicada na diagonal
-            transform.Translate(direction * (speed * Time.deltaTime), Space.World);
-            moving = true;
-        } 
         
-        else 
+        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        
+        if (Input.GetMouseButtonDown(0)) 
         {
-            moving = false;
+            Shoot();
         }
+    }
+
+    void FixedUpdate()
+    {
+        
+        transform.position += (Vector3)(moveInput * moveSpeed * Time.fixedDeltaTime);
+
+        
+        Vector2 aimDir = mousePos - (Vector2)transform.position;
+        float angle = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
+    void Shoot()
+    {
+        
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+
+        
+        if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
+        {
+            rb.linearVelocity = firePoint.right * bulletSpeed;
+        }
+
+        
+        Destroy(bullet, 3f);
     }
 }
+
+
