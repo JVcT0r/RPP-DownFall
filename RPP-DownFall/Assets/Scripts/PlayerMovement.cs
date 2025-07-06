@@ -1,17 +1,29 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
+    [Header("Movimento e Combate")]
     public float moveSpeed = 5f;
     public GameObject bulletPrefab;
     public Transform firePoint;
     public float bulletSpeed = 10f;
+
+    [Header("Interação")]
     public float interactRange = 1f;
     public LayerMask interactableLayer;
+
+    [Header("Dash")]
+    public float dashSpeed = 15f;
+    public float dashDuration = 0.2f;
+    public float dashCooldown = 1f;
 
     private Vector2 moveInput;
     private Vector2 mousePos;
     private Camera mainCam;
+
+    private bool isDashing = false;
+    private float dashTime;
+    private float lastDashTime;
 
     void Awake()
     {
@@ -20,28 +32,42 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        // Entrada de movimento
         moveInput = new Vector2(
             Input.GetAxisRaw("Horizontal"),
             Input.GetAxisRaw("Vertical")
         ).normalized;
 
+        // Posição do mouse na tela
         mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
 
+        // Atirar com botão esquerdo do mouse
         if (Input.GetMouseButtonDown(0))
         {
             Shoot();
         }
 
+        // Interação com tecla E
         if (Input.GetKeyDown(KeyCode.E))
         {
             TryInteract();
+        }
+
+        // Dash com Shift (esquerdo)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= lastDashTime + dashCooldown && moveInput != Vector2.zero)
+        {
+            StartCoroutine(Dash());
         }
     }
 
     void FixedUpdate()
     {
-        transform.position += (Vector3)(moveInput * moveSpeed * Time.fixedDeltaTime);
+        if (!isDashing)
+        {
+            transform.position += (Vector3)(moveInput * moveSpeed * Time.fixedDeltaTime);
+        }
 
+        // Rotacionar jogador em direção ao mouse
         Vector2 aimDir = mousePos - (Vector2)transform.position;
         float angle = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
@@ -53,7 +79,7 @@ public class PlayerController : MonoBehaviour
 
         if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
         {
-            rb.linearVelocity = firePoint.right * bulletSpeed;
+            rb.velocity = firePoint.right * bulletSpeed;
         }
 
         Destroy(bullet, 3f);
@@ -62,7 +88,7 @@ public class PlayerController : MonoBehaviour
     void TryInteract()
     {
         Vector2 origin = transform.position;
-        Vector2 direction = transform.right; 
+        Vector2 direction = transform.right;
 
         RaycastHit2D hit = Physics2D.Raycast(origin, direction, interactRange, interactableLayer);
 
@@ -75,8 +101,25 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        
         Debug.DrawRay(origin, direction * interactRange, Color.yellow, 0.5f);
+    }
+
+    private System.Collections.IEnumerator Dash()
+    {
+        isDashing = true;
+        dashTime = 0f;
+        lastDashTime = Time.time;
+
+        Vector2 dashDirection = moveInput;
+
+        while (dashTime < dashDuration)
+        {
+            transform.position += (Vector3)(dashDirection * dashSpeed * Time.deltaTime);
+            dashTime += Time.deltaTime;
+            yield return null;
+        }
+
+        isDashing = false;
     }
 
     void OnDrawGizmosSelected()
@@ -85,6 +128,7 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawRay(transform.position, transform.right * interactRange);
     }
 }
+
 
 
 

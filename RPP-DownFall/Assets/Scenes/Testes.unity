@@ -646,6 +646,9 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
+  dashSpeed: 10
+  dashDuration: 0.1
+  dashCooldown: 1
 --- !u!1001 &1122934899
 PrefabInstance:
   m_ObjectHideFlags: 0
