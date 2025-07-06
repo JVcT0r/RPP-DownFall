@@ -562,8 +562,8 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
-  dashSpeed: 10
-  dashDuration: 0.1
+  dashSpeed: 13
+  dashDuration: 0.2
   dashCooldown: 1
 --- !u!1001 &1122934899
 PrefabInstance:
