@@ -3,38 +3,47 @@ using UnityEngine;
 public class Door : MonoBehaviour, IInteractable
 {
     [SerializeField]
-    private float openAngle = 90f; 
+    private float openAngle = 90f;
 
     [SerializeField]
-    private float openSpeed = 90f; 
+    private float openSpeed = 90f;
 
-    private bool isOpening = false;
-    private float currentAngle = 0f;
-
-    public void Interact()
-    {
-        if (!isOpening && currentAngle < openAngle)
-        {
-            isOpening = true;
-        }
-    }
+    private bool isMoving = false;
+    private bool isOpen = false;
+    private float targetAngle = 0f;
 
     private void Update()
     {
-        if (isOpening && currentAngle < openAngle)
+        if (isMoving)
         {
+            float currentZ = transform.eulerAngles.z;
             float angleStep = openSpeed * Time.deltaTime;
-            float angleToRotate = Mathf.Min(angleStep, openAngle - currentAngle);
 
-            transform.Rotate(0f, 0f, angleToRotate);
-            currentAngle += angleToRotate;
+            
+            if (currentZ > 180) currentZ -= 360;
 
-            if (currentAngle >= openAngle)
+            float angleDiff = targetAngle - currentZ;
+            float angleMove = Mathf.Clamp(angleDiff, -angleStep, angleStep);
+
+            transform.Rotate(0f, 0f, angleMove);
+
+            if (Mathf.Abs(angleDiff) < 0.1f)
             {
-                isOpening = false;
+                transform.eulerAngles = new Vector3(0f, 0f, targetAngle);
+                isMoving = false;
             }
         }
     }
+
+    public void Interact()
+    {
+        if (isMoving) return;
+
+        isOpen = !isOpen;
+        targetAngle = isOpen ? openAngle : 0f;
+        isMoving = true;
+    }
 }
+
 
 

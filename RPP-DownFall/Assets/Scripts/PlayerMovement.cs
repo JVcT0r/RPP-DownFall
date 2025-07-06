@@ -61,21 +61,28 @@ public class PlayerController : MonoBehaviour
 
     void TryInteract()
     {
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, interactRange, interactableLayer);
-        if (hit != null)
+        Vector2 origin = transform.position;
+        Vector2 direction = transform.right; 
+
+        RaycastHit2D hit = Physics2D.Raycast(origin, direction, interactRange, interactableLayer);
+
+        if (hit.collider != null)
         {
-            var interactable = hit.GetComponent<IInteractable>();
+            var interactable = hit.collider.GetComponent<IInteractable>();
             if (interactable != null)
             {
                 interactable.Interact();
             }
         }
+
+        
+        Debug.DrawRay(origin, direction * interactRange, Color.yellow, 0.5f);
     }
 
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, interactRange);
+        Gizmos.DrawRay(transform.position, transform.right * interactRange);
     }
 }
 
