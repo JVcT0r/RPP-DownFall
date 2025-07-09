@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -9,8 +10,11 @@ public class PlayerMovement : MonoBehaviour
     public float bulletSpeed = 10f;
 
     [Header("Interação")]
-    public float interactRange = 1f;
+    public float interactRange = 1.5f;
     public LayerMask interactableLayer;
+
+    [Header("Lanterna")]
+    public Transform flashlight;
 
     [Header("Dash")]
     public float dashSpeed = 15f;
@@ -38,25 +42,41 @@ public class PlayerMovement : MonoBehaviour
             Input.GetAxisRaw("Vertical")
         ).normalized;
 
-        // Posição do mouse na tela
+        // Posição do mouse
         mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
 
-        // Atirar com botão esquerdo do mouse
+        // Tiro
         if (Input.GetMouseButtonDown(0))
         {
             Shoot();
         }
 
-        // Interação com tecla E
+        // Interação
         if (Input.GetKeyDown(KeyCode.E))
         {
             TryInteract();
         }
 
-        // Dash com Shift (esquerdo)
+        // Dash
         if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= lastDashTime + dashCooldown && moveInput != Vector2.zero)
         {
             StartCoroutine(Dash());
+        }
+
+        // Rotação da lanterna para o mouse
+        if (flashlight != null)
+        {
+            Vector2 dir = mousePos - (Vector2)transform.position;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            flashlight.rotation = Quaternion.Euler(0f, 0f, angle);
+        }
+
+        // Ativar/desativar lanterna com F
+        if (Input.GetKeyDown(KeyCode.F) && flashlight != null)
+        {
+            var light2D = flashlight.GetComponent<Light2D>();
+            if (light2D != null)
+                light2D.enabled = !light2D.enabled;
         }
     }
 
@@ -67,7 +87,7 @@ public class PlayerMovement : MonoBehaviour
             transform.position += (Vector3)(moveInput * moveSpeed * Time.fixedDeltaTime);
         }
 
-        // Rotacionar jogador em direção ao mouse
+        // Rotação do jogador
         Vector2 aimDir = mousePos - (Vector2)transform.position;
         float angle = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
@@ -84,11 +104,11 @@ public class PlayerMovement : MonoBehaviour
 
         Destroy(bullet, 3f);
     }
-
+    
     void TryInteract()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange, interactableLayer);
-        float coneAngle = 80f; 
+        float coneAngle = 80f;
 
         Vector2 forward = transform.right;
 
@@ -105,13 +125,11 @@ public class PlayerMovement : MonoBehaviour
                 if (interactable != null)
                 {
                     interactable.Interact();
-                    break; 
+                    break;
                 }
             }
         }
     }
-
-
 
     private System.Collections.IEnumerator Dash()
     {
@@ -130,7 +148,7 @@ public class PlayerMovement : MonoBehaviour
 
         isDashing = false;
     }
-
+    
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
@@ -149,8 +167,8 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.DrawRay(transform.position, leftDir);
         Gizmos.DrawRay(transform.position, rightDirFinal);
     }
-
 }
+
 
 
 
