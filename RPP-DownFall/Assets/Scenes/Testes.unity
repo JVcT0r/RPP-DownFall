@@ -558,7 +558,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 1489640080764844140, guid: 8a23ac776f3d9434fa7abb7f16363c3a, type: 3}
   firePoint: {fileID: 282884095}
   bulletSpeed: 20
-  interactRange: 1.75
+  interactRange: 1.28
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -744,19 +744,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -5011490562965048616, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_Size.x
-      value: 1.0087606
+      value: 1.0434788
       objectReference: {fileID: 0}
     - target: {fileID: -5011490562965048616, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_Size.y
-      value: 0.9904558
+      value: 1.0088491
       objectReference: {fileID: 0}
     - target: {fileID: -5011490562965048616, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_Offset.x
-      value: 0.5042806
+      value: 0.4938646
       objectReference: {fileID: 0}
     - target: {fileID: -5011490562965048616, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_Offset.y
-      value: 0.4880965
+      value: 0.49896538
       objectReference: {fileID: 0}
     - target: {fileID: 2104255277291671176, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_Radius

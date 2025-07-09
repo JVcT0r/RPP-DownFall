@@ -88,13 +88,17 @@ public class PlayerMovement : MonoBehaviour
     void TryInteract()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange, interactableLayer);
-        float coneAngle = 45f; 
-    
+        float coneAngle = 80f; 
+
+        Vector2 forward = transform.right;
+
         foreach (var hit in hits)
         {
-            Vector2 dirToTarget = (hit.transform.position - transform.position).normalized;
-            float angle = Vector2.Angle(transform.right, dirToTarget);
-    
+            Vector2 dirToTarget = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+            float angle = Vector2.Angle(forward, dirToTarget);
+
+            Debug.Log($"[INTERACT] {hit.name}: angle = {angle}");
+
             if (angle <= coneAngle)
             {
                 var interactable = hit.GetComponent<IInteractable>();
@@ -106,6 +110,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+
 
 
     private System.Collections.IEnumerator Dash()
@@ -131,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, interactRange);
 
-        float coneAngle = 45f;
+        float coneAngle = 80f;
         Vector3 rightDir = transform.right;
 
         Quaternion leftRot = Quaternion.Euler(0, 0, -coneAngle);
@@ -144,6 +149,7 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.DrawRay(transform.position, leftDir);
         Gizmos.DrawRay(transform.position, rightDirFinal);
     }
+
 }
 
 
