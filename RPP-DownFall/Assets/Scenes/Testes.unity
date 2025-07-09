@@ -539,8 +539,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.28844738, y: -0.07635556}
-  m_Size: {x: 2, y: 1.12}
+  m_Offset: {x: -0.079686485, y: 0.06677199}
+  m_Size: {x: 1.24622, y: 1.5674788}
   m_Direction: 0
 --- !u!114 &736096318
 MonoBehaviour:
@@ -558,7 +558,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 1489640080764844140, guid: 8a23ac776f3d9434fa7abb7f16363c3a, type: 3}
   firePoint: {fileID: 282884095}
   bulletSpeed: 20
-  interactRange: 2
+  interactRange: 1.75
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64

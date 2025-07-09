@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
         {
-            rb.velocity = firePoint.right * bulletSpeed;
+            rb.linearVelocity = firePoint.right * bulletSpeed;
         }
 
         Destroy(bullet, 3f);
@@ -87,22 +87,26 @@ public class PlayerMovement : MonoBehaviour
 
     void TryInteract()
     {
-        Vector2 origin = transform.position;
-        Vector2 direction = transform.right;
-
-        RaycastHit2D hit = Physics2D.Raycast(origin, direction, interactRange, interactableLayer);
-
-        if (hit.collider != null)
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange, interactableLayer);
+        float coneAngle = 45f; 
+    
+        foreach (var hit in hits)
         {
-            var interactable = hit.collider.GetComponent<IInteractable>();
-            if (interactable != null)
+            Vector2 dirToTarget = (hit.transform.position - transform.position).normalized;
+            float angle = Vector2.Angle(transform.right, dirToTarget);
+    
+            if (angle <= coneAngle)
             {
-                interactable.Interact();
+                var interactable = hit.GetComponent<IInteractable>();
+                if (interactable != null)
+                {
+                    interactable.Interact();
+                    break; 
+                }
             }
         }
-
-        Debug.DrawRay(origin, direction * interactRange, Color.yellow, 0.5f);
     }
+
 
     private System.Collections.IEnumerator Dash()
     {
@@ -125,7 +129,20 @@ public class PlayerMovement : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, transform.right * interactRange);
+        Gizmos.DrawWireSphere(transform.position, interactRange);
+
+        float coneAngle = 45f;
+        Vector3 rightDir = transform.right;
+
+        Quaternion leftRot = Quaternion.Euler(0, 0, -coneAngle);
+        Quaternion rightRot = Quaternion.Euler(0, 0, coneAngle);
+
+        Vector3 leftDir = leftRot * rightDir * interactRange;
+        Vector3 rightDirFinal = rightRot * rightDir * interactRange;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawRay(transform.position, leftDir);
+        Gizmos.DrawRay(transform.position, rightDirFinal);
     }
 }
 
