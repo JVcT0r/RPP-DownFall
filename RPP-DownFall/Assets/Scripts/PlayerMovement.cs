@@ -63,13 +63,13 @@ public class PlayerMovement : MonoBehaviour
             StartCoroutine(Dash());
         }
 
-        // Rotação da lanterna para o mouse
+       /* // Rotação da lanterna para o mouse
         if (flashlight != null)
         {
             Vector2 dir = mousePos - (Vector2)transform.position;
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             flashlight.rotation = Quaternion.Euler(0f, 0f, angle);
-        }
+        }*/
 
         // Ativar/desativar lanterna com F
         if (Input.GetKeyDown(KeyCode.F) && flashlight != null)
