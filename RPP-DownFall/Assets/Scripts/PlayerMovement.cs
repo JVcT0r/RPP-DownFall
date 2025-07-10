@@ -7,7 +7,7 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public GameObject bulletPrefab;
     public Transform firePoint;
-    public float bulletSpeed = 10f;
+    public float bulletSpeed = 500f;
 
     [Header("Interação")]
     public float interactRange = 1.5f;
