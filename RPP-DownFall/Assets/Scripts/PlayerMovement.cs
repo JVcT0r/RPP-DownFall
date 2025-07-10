@@ -21,6 +21,14 @@ public class PlayerMovement : MonoBehaviour
     public float dashDuration = 0.2f;
     public float dashCooldown = 1f;
 
+    [Header("Tremor da Cam")] 
+    [SerializeField]
+    private CameraShakeController camShake;
+    [SerializeField]
+    private float shakeIntensity = 5f;
+    [SerializeField]
+    private float shakeTime = 0.2f;
+
     private Vector2 moveInput;
     private Vector2 mousePos;
     private Camera mainCam;
@@ -28,6 +36,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isDashing = false;
     private float dashTime;
     private float lastDashTime;
+    
 
     void Awake()
     {
@@ -48,6 +57,7 @@ public class PlayerMovement : MonoBehaviour
         // Tiro
         if (Input.GetMouseButtonDown(0))
         {
+           
             Shoot();
         }
 
@@ -101,7 +111,8 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.linearVelocity = firePoint.right * bulletSpeed;
         }
-
+        
+        camShake.ShakeCamera(shakeIntensity, shakeTime);
         Destroy(bullet, 3f);
     }
     
