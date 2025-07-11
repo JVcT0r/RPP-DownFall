@@ -7,29 +7,32 @@ public class CameraShakeController : MonoBehaviour
 {
     private CinemachineCamera vCam;
     private CinemachineBasicMultiChannelPerlin perlinNoise;
-
+    private float shakeTimer;
     private void Awake()
     {
         vCam = GetComponent<CinemachineCamera>();
         perlinNoise = vCam.GetComponent<CinemachineBasicMultiChannelPerlin>();
-        ResetIntensity();
+        
         
     }
 
     public void ShakeCamera(float intensity, float shakeTime)
     {
-        perlinNoise.AmplitudeGain = intensity;
-        StartCoroutine(WaitTime(shakeTime));
+       perlinNoise.AmplitudeGain = intensity;
+       shakeTimer = shakeTime;
+    }
+    
+    public void Update()
+    {
+        if (shakeTimer > 0)
+        {
+            shakeTimer -= Time.deltaTime;
+            if (shakeTimer <= 0)
+            {
+                perlinNoise.AmplitudeGain = 0f;
+            }
+        }
     }
 
-    IEnumerator WaitTime(float shakeTime)
-    {
-        yield return new WaitForSeconds(shakeTime);
-        ResetIntensity();
-    }
-
-    void ResetIntensity()
-    {
-        perlinNoise.AmplitudeGain = 0f;
-    }
+   
 }
