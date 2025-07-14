@@ -42,11 +42,15 @@ public class Player : MonoBehaviour
     private bool isDashing = false;
     private float dashTime;
     private float lastDashTime;
+    
+    private Rigidbody2D rb;
 
     void Awake()
     {
         mainCam = Camera.main;
         currentHealth = maxHealth;
+        rb = GetComponent<Rigidbody2D>(); 
+
         if (deathScreen != null)
             deathScreen.SetActive(false);
     }
@@ -87,10 +91,11 @@ public class Player : MonoBehaviour
     {
         if (!isDashing)
         {
-            transform.position += (Vector3)(moveInput * moveSpeed * Time.fixedDeltaTime);
+            Vector2 targetPosition = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
+            rb.MovePosition(targetPosition);
         }
 
-        Vector2 aimDir = mousePos - (Vector2)transform.position;
+        Vector2 aimDir = mousePos - rb.position;
         float angle = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
@@ -99,9 +104,9 @@ public class Player : MonoBehaviour
     {
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
-        if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
+        if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
         {
-            rb.linearVelocity = firePoint.right * bulletSpeed;
+            bulletRb.linearVelocity = firePoint.right * bulletSpeed;
         }
 
         camShake.ShakeCamera(shakeIntensity, shakeTime);
@@ -187,14 +192,12 @@ public class Player : MonoBehaviour
         Time.timeScale = 0f;
     }
 
-    // Chamado pelo botão "Tentar novamente"
     public void RestartGame()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    // Chamado pelo botão "Sair"
     public void QuitGame()
     {
         Application.Quit();
