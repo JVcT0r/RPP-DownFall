@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
-public class PlayerMovement : MonoBehaviour
+public class Player : MonoBehaviour
 {
     [Header("Movimento e Combate")]
     public float moveSpeed = 5f;
@@ -29,6 +30,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float shakeTime = 0.2f;
 
+    [Header("Vida")]
+    public int maxHealth = 3;
+    private int currentHealth;
+    public GameObject deathScreen;
+
     private Vector2 moveInput;
     private Vector2 mousePos;
     private Camera mainCam;
@@ -36,52 +42,39 @@ public class PlayerMovement : MonoBehaviour
     private bool isDashing = false;
     private float dashTime;
     private float lastDashTime;
-    
 
     void Awake()
     {
         mainCam = Camera.main;
+        currentHealth = maxHealth;
+        if (deathScreen != null)
+            deathScreen.SetActive(false);
     }
 
     void Update()
     {
-        // Entrada de movimento
         moveInput = new Vector2(
             Input.GetAxisRaw("Horizontal"),
             Input.GetAxisRaw("Vertical")
         ).normalized;
 
-        // Posição do mouse
         mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
 
-        // Tiro
         if (Input.GetMouseButtonDown(0))
         {
-           
             Shoot();
         }
 
-        // Interação
         if (Input.GetKeyDown(KeyCode.E))
         {
             TryInteract();
         }
 
-        // Dash
         if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= lastDashTime + dashCooldown && moveInput != Vector2.zero)
         {
             StartCoroutine(Dash());
         }
 
-       /* // Rotação da lanterna para o mouse
-        if (flashlight != null)
-        {
-            Vector2 dir = mousePos - (Vector2)transform.position;
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            flashlight.rotation = Quaternion.Euler(0f, 0f, angle);
-        }*/
-
-        // Ativar/desativar lanterna com F
         if (Input.GetKeyDown(KeyCode.F) && flashlight != null)
         {
             var light2D = flashlight.GetComponent<Light2D>();
@@ -97,7 +90,6 @@ public class PlayerMovement : MonoBehaviour
             transform.position += (Vector3)(moveInput * moveSpeed * Time.fixedDeltaTime);
         }
 
-        // Rotação do jogador
         Vector2 aimDir = mousePos - (Vector2)transform.position;
         float angle = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
@@ -111,11 +103,11 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.linearVelocity = firePoint.right * bulletSpeed;
         }
-        
+
         camShake.ShakeCamera(shakeIntensity, shakeTime);
         Destroy(bullet, 3f);
     }
-    
+
     void TryInteract()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange, interactableLayer);
@@ -127,8 +119,6 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector2 dirToTarget = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
             float angle = Vector2.Angle(forward, dirToTarget);
-
-            Debug.Log($"[INTERACT] {hit.name}: angle = {angle}");
 
             if (angle <= coneAngle)
             {
@@ -159,7 +149,7 @@ public class PlayerMovement : MonoBehaviour
 
         isDashing = false;
     }
-    
+
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
@@ -178,9 +168,36 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.DrawRay(transform.position, leftDir);
         Gizmos.DrawRay(transform.position, rightDirFinal);
     }
+
+    public void TakeDamage(int amount)
+    {
+        currentHealth -= amount;
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        if (deathScreen != null)
+            deathScreen.SetActive(true);
+
+        Time.timeScale = 0f;
+    }
+
+    // Chamado pelo botão "Tentar novamente"
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    // Chamado pelo botão "Sair"
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 }
-
-
-
-
 
