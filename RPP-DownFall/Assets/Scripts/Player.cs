@@ -57,34 +57,11 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        moveInput = new Vector2(
-            Input.GetAxisRaw("Horizontal"),
-            Input.GetAxisRaw("Vertical")
-        ).normalized;
-
-        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            Shoot();
-        }
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            TryInteract();
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= lastDashTime + dashCooldown && moveInput != Vector2.zero)
-        {
-            StartCoroutine(Dash());
-        }
-
-        if (Input.GetKeyDown(KeyCode.F) && flashlight != null)
-        {
-            var light2D = flashlight.GetComponent<Light2D>();
-            if (light2D != null)
-                light2D.enabled = !light2D.enabled;
-        }
+        Shoot();
+        Movement();
+        TryInteract();
+        DashInput();
+        Flashlight();
     }
 
     void FixedUpdate()
@@ -100,38 +77,55 @@ public class Player : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
+    void Movement();
+    {
+        moveInput = new Vector2(
+            Input.GetAxisRaw("Horizontal"),
+            Input.GetAxisRaw("Vertical")
+        ).normalized;
+
+        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition); 
+    }
+    
+    
     void Shoot()
     {
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-
-        if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
+        if (Input.GetMouseButtonDown(0))
         {
-            bulletRb.linearVelocity = firePoint.right * bulletSpeed;
-        }
+            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
-        camShake.ShakeCamera(shakeIntensity, shakeTime);
-        Destroy(bullet, 3f);
+            if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
+            {
+                bulletRb.linearVelocity = firePoint.right * bulletSpeed;
+            }
+
+            camShake.ShakeCamera(shakeIntensity, shakeTime);
+            Destroy(bullet, 3f); 
+        }
     }
 
     void TryInteract()
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange, interactableLayer);
-        float coneAngle = 80f;
-
-        Vector2 forward = transform.right;
-
-        foreach (var hit in hits)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            Vector2 dirToTarget = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
-            float angle = Vector2.Angle(forward, dirToTarget);
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange, interactableLayer);
+            float coneAngle = 80f;
 
-            if (angle <= coneAngle)
+            Vector2 forward = transform.right;
+
+            foreach (var hit in hits)
             {
-                var interactable = hit.GetComponent<IInteractable>();
-                if (interactable != null)
+                Vector2 dirToTarget = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+                float angle = Vector2.Angle(forward, dirToTarget);
+
+                if (angle <= coneAngle)
                 {
-                    interactable.Interact();
-                    break;
+                    var interactable = hit.GetComponent<IInteractable>();
+                    if (interactable != null)
+                    {
+                        interactable.Interact();
+                        break;
+                    }
                 }
             }
         }
@@ -153,6 +147,26 @@ public class Player : MonoBehaviour
         }
 
         isDashing = false;
+    }
+    
+    void DashInput()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift) &&
+            Time.time >= lastDashTime + dashCooldown &&
+            moveInput != Vector2.zero)
+        {
+            StartCoroutine(Dash());
+        }
+    }
+    
+    void Flashlight()
+    {
+        if (Input.GetKeyDown(KeyCode.F) && flashlight != null)
+        {
+            var light2D = flashlight.GetComponent<Light2D>();
+            if (light2D != null)
+                light2D.enabled = !light2D.enabled;
+        } 
     }
 
     void OnDrawGizmosSelected()
