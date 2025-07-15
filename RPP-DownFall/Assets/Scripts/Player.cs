@@ -57,8 +57,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        Shoot();
         Movement();
+        Shoot();
         TryInteract();
         DashInput();
         Flashlight();
@@ -77,16 +77,14 @@ public class Player : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
-    void Movement();
+    private void Movement()
     {
         moveInput = new Vector2(
             Input.GetAxisRaw("Horizontal"),
             Input.GetAxisRaw("Vertical")
         ).normalized;
-
-        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition); 
+        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
     }
-    
     
     void Shoot()
     {
@@ -100,8 +98,19 @@ public class Player : MonoBehaviour
             }
 
             camShake.ShakeCamera(shakeIntensity, shakeTime);
-            Destroy(bullet, 3f); 
+            Destroy(bullet, 3f);
         }
+       
+    }
+    
+    private void Flashlight()
+    {
+        if (Input.GetKeyDown(KeyCode.F) && flashlight != null)
+        {
+            var light2D = flashlight.GetComponent<Light2D>();
+            if (light2D != null)
+                light2D.enabled = !light2D.enabled;
+        }  
     }
 
     void TryInteract()
@@ -129,6 +138,7 @@ public class Player : MonoBehaviour
                 }
             }
         }
+        
     }
 
     private System.Collections.IEnumerator Dash()
@@ -149,25 +159,17 @@ public class Player : MonoBehaviour
         isDashing = false;
     }
     
-    void DashInput()
+    private void DashInput()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift) &&
-            Time.time >= lastDashTime + dashCooldown &&
-            moveInput != Vector2.zero)
         {
-            StartCoroutine(Dash());
+            if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= lastDashTime + dashCooldown && moveInput != Vector2.zero)
+            {
+                StartCoroutine(Dash());
+            }
         }
     }
+
     
-    void Flashlight()
-    {
-        if (Input.GetKeyDown(KeyCode.F) && flashlight != null)
-        {
-            var light2D = flashlight.GetComponent<Light2D>();
-            if (light2D != null)
-                light2D.enabled = !light2D.enabled;
-        } 
-    }
 
     void OnDrawGizmosSelected()
     {
@@ -217,4 +219,3 @@ public class Player : MonoBehaviour
         Application.Quit();
     }
 }
-
