@@ -189,6 +189,7 @@ public class Player : MonoBehaviour
         Gizmos.DrawRay(transform.position, leftDir);
         Gizmos.DrawRay(transform.position, rightDirFinal);
     }
+    
 
     public void TakeDamage(int amount)
     {
@@ -206,16 +207,5 @@ public class Player : MonoBehaviour
             deathScreen.SetActive(true);
 
         Time.timeScale = 0f;
-    }
-
-    public void RestartGame()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void QuitGame()
-    {
-        Application.Quit();
     }
 }
