@@ -32,7 +32,8 @@ public class Player : MonoBehaviour
 
     [Header("Vida")]
     public int maxHealth = 3;
-    private int currentHealth;
+
+    public int CurrentHealth { get; private set; }
     public GameObject deathScreen;
 
     private Vector2 moveInput;
@@ -42,13 +43,14 @@ public class Player : MonoBehaviour
     private bool isDashing = false;
     private float dashTime;
     private float lastDashTime;
+    public bool dead = false;
     
     private Rigidbody2D rb;
 
     void Awake()
     {
         mainCam = Camera.main;
-        currentHealth = maxHealth;
+        CurrentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>(); 
 
         if (deathScreen != null)
@@ -57,11 +59,14 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        Movement();
-        Shoot();
-        TryInteract();
-        DashInput();
-        Flashlight();
+        if (!dead)
+        {
+            Movement();
+            Shoot();
+            TryInteract();
+            DashInput();
+            Flashlight();
+        }
     }
 
     void FixedUpdate()
@@ -193,9 +198,9 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
-        currentHealth -= amount;
+        CurrentHealth -= amount;
 
-        if (currentHealth <= 0)
+        if (CurrentHealth <= 0)
         {
             Die();
         }
@@ -207,5 +212,7 @@ public class Player : MonoBehaviour
             deathScreen.SetActive(true);
 
         Time.timeScale = 0f;
+        Destroy(gameObject);
+        dead =  true;
     }
 }
