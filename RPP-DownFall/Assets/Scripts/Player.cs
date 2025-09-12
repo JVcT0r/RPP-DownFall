@@ -63,6 +63,7 @@ public class Player : MonoBehaviour
         {
             Movement();
             Shoot();
+            Reload();
             TryInteract();
             DashInput();
             Flashlight();
@@ -73,7 +74,7 @@ public class Player : MonoBehaviour
     {
         if (!isDashing)
         {
-            Vector2 targetPosition = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
+           Vector2 targetPosition = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
             rb.MovePosition(targetPosition);
         }
 
@@ -93,7 +94,7 @@ public class Player : MonoBehaviour
     
     void Shoot()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets != 0)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
@@ -101,11 +102,26 @@ public class Player : MonoBehaviour
             {
                 bulletRb.linearVelocity = firePoint.right * bulletSpeed;
             }
+            AmmoManager.Bullets--;
 
             camShake.ShakeCamera(shakeIntensity, shakeTime);
             Destroy(bullet, 3f);
         }
        
+    }
+
+    void Reload()
+    {
+        int MaxBullets = AmmoManager.BulletsMax;
+        int MaxMagazine = AmmoManager.MagazineMax;
+        
+        if (AmmoManager.Magazine > 0 && AmmoManager.Bullets < 12 && Input.GetKey(KeyCode.R))
+        {
+            MaxBullets = MaxBullets - AmmoManager.Bullets;
+            AmmoManager.Bullets = 12;
+            AmmoManager.Magazine = AmmoManager.Magazine - MaxBullets;
+        }
+        
     }
     
     private void Flashlight()
