@@ -7,7 +7,8 @@ public class AmmoManager : MonoBehaviour
 {
     [SerializeField]
     public TMP_Text ammoText;
-    
+
+    public static int ReloadTime = 1;
     
     public static int BulletsMax;
     public static int MagazineMax;
@@ -19,10 +20,10 @@ public class AmmoManager : MonoBehaviour
     void Start()
     {
         BulletsMax = 12;
-        MagazineMax = 64;
+        MagazineMax = 60;
         
         Bullets = 12;
-        Magazine = 64;
+        Magazine = 60;
     }
 
     // Update is called once per frame

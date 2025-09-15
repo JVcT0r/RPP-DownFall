@@ -41,11 +41,14 @@ public class Player : MonoBehaviour
     private Camera mainCam;
 
     private bool isDashing = false;
+    private bool isReloading = false;
     private float dashTime;
     private float lastDashTime;
     public bool dead = false;
     
     private Rigidbody2D rb;
+    
+    private Animator anim;
 
     void Awake()
     {
@@ -94,7 +97,7 @@ public class Player : MonoBehaviour
     
     void Shoot()
     {
-        if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets != 0)
+        if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets != 0 && !isReloading)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
@@ -115,11 +118,15 @@ public class Player : MonoBehaviour
         int MaxBullets = AmmoManager.BulletsMax;
         int MaxMagazine = AmmoManager.MagazineMax;
         
-        if (AmmoManager.Magazine > 0 && AmmoManager.Bullets < 12 && Input.GetKey(KeyCode.R))
+        if (AmmoManager.Magazine > 0 && AmmoManager.Bullets < MaxBullets &&
+            !isReloading && Input.GetKey(KeyCode.R))
         {
-            MaxBullets = MaxBullets - AmmoManager.Bullets;
-            AmmoManager.Bullets = 12;
-            AmmoManager.Magazine = AmmoManager.Magazine - MaxBullets;
+            int BulletsNeeded = MaxBullets - AmmoManager.Bullets;
+            int bFromMagazine = Mathf.Min(BulletsNeeded, AmmoManager.Magazine);
+            
+            AmmoManager.Bullets += bFromMagazine;
+            AmmoManager.Magazine -= bFromMagazine;
+            
         }
         
     }
