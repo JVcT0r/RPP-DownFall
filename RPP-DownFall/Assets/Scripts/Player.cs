@@ -1,3 +1,4 @@
+using Mono.Cecil;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
@@ -66,6 +67,7 @@ public class Player : MonoBehaviour
         {
             Movement();
             Shoot();
+            ShootShotgun();
             Reload();
             TryInteract();
             DashInput();
@@ -97,7 +99,7 @@ public class Player : MonoBehaviour
     
     void Shoot()
     {
-        if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets != 0 && !isReloading)
+        if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets > 0 && !isReloading)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
@@ -112,6 +114,31 @@ public class Player : MonoBehaviour
         }
        
     }
+    
+    void ShootShotgun()
+    {
+        if (Input.GetMouseButtonDown(1) && AmmoManager.Bullets > 0 && !isReloading)
+        {
+            AmmoManager.Bullets--;
+            
+            for (int i = 8; i >=0;)
+            {
+                camShake.ShakeCamera(shakeIntensity, shakeTime);
+                GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation * Quaternion.Euler(0, Random.Range(-15, 15), 0)); //tentativa de fazer os tiro espalhar
+
+                if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
+                {
+                    bulletRb.linearVelocity = firePoint.right * bulletSpeed;
+                }
+
+                i--;                
+                Destroy(bullet, 3f);
+            }
+          
+        }
+       
+    }
+    
 
     void Reload()
     {
