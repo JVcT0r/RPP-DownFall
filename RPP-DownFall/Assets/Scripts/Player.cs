@@ -105,7 +105,7 @@ public class Player : MonoBehaviour
 
             if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
             {
-                bulletRb.linearVelocity = firePoint.right * bulletSpeed;
+                //bulletRb.linearVelocity = firePoint.right * bulletSpeed;
             }
             AmmoManager.Bullets--;
 
@@ -124,11 +124,12 @@ public class Player : MonoBehaviour
             for (int i = 8; i >=0;)
             {
                 camShake.ShakeCamera(shakeIntensity, shakeTime);
-                GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation * Quaternion.Euler(0, Random.Range(-15, 15), 0)); //tentativa de fazer os tiro espalhar
+                GameObject bullet = Instantiate(bulletPrefab, firePoint.position,
+                    firePoint.rotation * Quaternion.Euler(0, 0, Random.Range(-15, 15))); //tentativa de fazer os tiro espalhar, funciona, mas com a bala usando constant force ao inves da função abaixo.
                 
                 if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
                 {
-                    bulletRb.linearVelocity = firePoint.right * bulletSpeed;
+                    bulletRb.linearVelocity = firePoint.right * bulletSpeed; //comentando essa funçao e ativando o constant force no bullet prefab, as balas vao espalhar
                 }
 
                 i--;                
