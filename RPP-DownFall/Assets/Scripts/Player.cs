@@ -105,7 +105,7 @@ public class Player : MonoBehaviour
 
             if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
             {
-                //bulletRb.linearVelocity = firePoint.right * bulletSpeed;
+                bulletRb.linearVelocity = firePoint.right * bulletSpeed;
             }
             AmmoManager.Bullets--;
 
