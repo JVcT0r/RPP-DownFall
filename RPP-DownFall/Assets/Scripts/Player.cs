@@ -125,7 +125,7 @@ public class Player : MonoBehaviour
             {
                 camShake.ShakeCamera(shakeIntensity, shakeTime);
                 GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation * Quaternion.Euler(0, Random.Range(-15, 15), 0)); //tentativa de fazer os tiro espalhar
-
+                
                 if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
                 {
                     bulletRb.linearVelocity = firePoint.right * bulletSpeed;
