@@ -1,8 +1,25 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEngine.SceneManagement.SceneManager;
+
 
 public class GameManager : MonoBehaviour
 {
+    
+    public static GameManager instance;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else Destroy(this.gameObject);
+    }
+    
+    
     public void RestartGame()
     {
         Time.timeScale = 1f;
@@ -15,5 +32,11 @@ public class GameManager : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
         Application.Quit();
+    }
+
+
+    private void Start()
+    {
+        LoadScene("UI", LoadSceneMode.Additive);
     }
 }
