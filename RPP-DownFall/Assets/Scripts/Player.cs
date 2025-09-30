@@ -263,7 +263,7 @@ public class Player : MonoBehaviour
             deathScreen.SetActive(true);
 
         Time.timeScale = 0f;
-        Destroy(gameObject);
+        gameObject.SetActive(false);
         dead =  true;
     }
 }

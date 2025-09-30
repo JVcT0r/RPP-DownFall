@@ -1,12 +1,23 @@
-using Pathfinding;
+using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-    void Start()
+    [SerializeField] Transform target;
+    
+    NavMeshAgent agent;
+
+    private void Start()
     {
-        var player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        GetComponent<AIDestinationSetter>().target = player;
+        agent = GetComponent<NavMeshAgent>();
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
+        
+    }
+
+    private void Update()
+    {
+        agent.SetDestination(target.position);
     }
 }
-
