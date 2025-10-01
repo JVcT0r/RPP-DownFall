@@ -1,16 +1,14 @@
 using System;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class Bullet : MonoBehaviour
 {
-    //private Vector3 rotation;
-    SpawnDamageParticles particles
-    
     public int damage = 1;
+    
 
     private void Start()
     {
-        //rotation = transform.eulerAngles;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -20,12 +18,12 @@ public class Bullet : MonoBehaviour
             EnemyHealth enemy = collision.GetComponent<EnemyHealth>();
             if (enemy != null)
             {
-                particles().SpawnDamageParticle(transform.position, transform.eulerAngles);
                 enemy.TakeDamage(damage);
             }
         }
         Destroy(gameObject);
     }
+ 
 }
 
 

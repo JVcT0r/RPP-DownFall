@@ -143,6 +143,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 832d580f8598d4a4ca9d5124e8a07922, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _damageParticle: {fileID: 4804943363204292773, guid: 39e488c4061117b4c8c02ec8c64ef62b, type: 3}
+  _particleOffsetDistance: 0.5
   damage: 1
 --- !u!70 &1132217644404004551
 CapsuleCollider2D:
