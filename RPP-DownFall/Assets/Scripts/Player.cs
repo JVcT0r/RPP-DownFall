@@ -2,6 +2,7 @@ using Mono.Cecil;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
+using UnityEngine.VFX;
 
 public class Player : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class Player : MonoBehaviour
     public GameObject bulletPrefab;
     public Transform firePoint;
     public float bulletSpeed = 500f;
+    public SpawnDamageParticles Particles;
 
     [Header("Interação")]
     public float interactRange = 1.5f;
@@ -102,6 +104,7 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets > 0 && !isReloading)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+            Particles.PlayFireVFX();
 
             if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
             {

@@ -29,4 +29,9 @@ public class SpawnDamageParticles : MonoBehaviour
     {
         vfx.SendEvent("BulletImpact");
     }
+
+    public void PlayFireVFX()
+    {
+        vfx.SendEvent("Fire");
+    }
 }
