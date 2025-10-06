@@ -1,30 +1,32 @@
+using System;
 using UnityEngine;
 using UnityEngine.VFX;
 
 public class SpawnDamageParticles : MonoBehaviour
 {
-    [SerializeField] private VisualEffectAsset _damageParticle;
-    [SerializeField] private float _particleOffsetDistance = 0.5f;
-    
-    
-    
-    private BoxCollider2D _boxCollider2D;
-    
-    void Awake()
+    [SerializeField] private VisualEffect vfx;
+    private VFXEventAttribute eventAttribute;
+
+    private void Start()
     {
-        _boxCollider2D = GetComponent<BoxCollider2D>();
+        eventAttribute = vfx.CreateVFXEventAttribute();
     }
 
-    public void SpawnDamageParticle(Vector3 spawnPosition, Vector3 dir)
+    /*private void Update()
     {
-        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, dir);
-        Instantiate(_damageParticle, spawnPosition + new Vector3(dir.x * (_boxCollider2D.bounds.extents.x * _particleOffsetDistance), 
-            dir.y * (_boxCollider2D.bounds.extents.y * _particleOffsetDistance)), rotation);
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            PlayVFX();
+        }
+    }*/
+
+    public void PlayBloodVFX()
+    {
+        vfx.SendEvent("EnemyDamaged");
     }
 
-    // Update is called once per frame
-    void Update()
+    public void PlayImpactVFX()
     {
-        
+        vfx.SendEvent("BulletImpact");
     }
 }
