@@ -254,6 +254,7 @@ public class Player : MonoBehaviour
     {
         camShake.ShakeCamera(3f, 0.5f);
         CurrentHealth -= amount;
+        
 
         if (CurrentHealth <= 0)
         {

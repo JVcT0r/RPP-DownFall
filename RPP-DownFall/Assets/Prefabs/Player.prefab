@@ -185,7 +185,7 @@ MonoBehaviour:
   camShake: {fileID: 0}
   shakeIntensity: 2
   shakeTime: 0.07
-  maxHealth: 3
+  maxHealth: 5
   deathScreen: {fileID: 0}
   dead: 0
 --- !u!1 &2673606008756780284
