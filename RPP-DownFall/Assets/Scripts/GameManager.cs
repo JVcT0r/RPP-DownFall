@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     
     public static GameManager instance;
+    public Player player;
 
     private void Awake()
     {
@@ -18,8 +19,16 @@ public class GameManager : MonoBehaviour
         }
         //else Destroy(this.gameObject);
     }
-    
-    
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Pause();
+        }
+    }
+
+
     public void RestartGame()
     {
         Time.timeScale = 1f;
@@ -33,6 +42,21 @@ public class GameManager : MonoBehaviour
 #endif
         Application.Quit();
     }
+
+    public void Pause()
+    {
+        Time.timeScale = 0f;
+        LoadScene("UI_PauseScreen", LoadSceneMode.Additive);
+        player.paused = true;
+    }
+
+    public void UnPause()
+    {
+        Time.timeScale = 1f;
+        UnloadSceneAsync("UI_PauseScreen");
+        player.paused = false;
+    }
+    
 
 
     private void Start()

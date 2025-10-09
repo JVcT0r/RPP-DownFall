@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
     private float dashTime;
     private float lastDashTime;
     public bool dead = false;
+    public bool paused = false;
     
     private Rigidbody2D rb;
     
@@ -66,7 +67,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (!dead)
+        if (!dead & !paused)
         {
             Movement();
             Shoot();
