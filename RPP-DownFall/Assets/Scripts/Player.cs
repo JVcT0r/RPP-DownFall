@@ -2,14 +2,19 @@ using Mono.Cecil;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
+using UnityEngine.VFX;
 
 public class Player : MonoBehaviour
 {
+    public GameManager gameManager;
+    
     [Header("Movimento e Combate")]
     public float moveSpeed = 5f;
     public GameObject bulletPrefab;
     public Transform firePoint;
     public float bulletSpeed = 500f;
+    public SpawnDamageParticles Particles;
+    public SpawnDamageParticles ParticlesDmg;
 
     [Header("Interação")]
     public float interactRange = 1.5f;
@@ -63,7 +68,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (!dead)
+        if (!dead & !gameManager.paused)
         {
             Movement();
             Shoot();
@@ -72,6 +77,7 @@ public class Player : MonoBehaviour
             TryInteract();
             DashInput();
             Flashlight();
+            //DeathAnimation();
         }
     }
 
@@ -102,6 +108,7 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets > 0 && !isReloading)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+            Particles.PlayFireVFX();
 
             if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
             {
@@ -249,11 +256,26 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
+        camShake.ShakeCamera(3f, 0.5f);
+        ParticlesDmg.PlayBloodVFX();
         CurrentHealth -= amount;
+        
 
+        
         if (CurrentHealth <= 0)
         {
             Die();
+        }
+    }
+
+    void DeathAnimation()
+    {
+        if (CurrentHealth <= 0)
+        {
+                
+            Time.timeScale = 0.1f;
+
+            Invoke("Die", 0.5f);
         }
     }
 

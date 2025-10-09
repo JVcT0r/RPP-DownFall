@@ -6,7 +6,7 @@ using static UnityEngine.SceneManagement.SceneManager;
 
 public class GameManager : MonoBehaviour
 {
-    
+    public bool paused = false;   
     public static GameManager instance;
 
     private void Awake()
@@ -18,8 +18,16 @@ public class GameManager : MonoBehaviour
         }
         //else Destroy(this.gameObject);
     }
-    
-    
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Pause();
+        }
+    }
+
+
     public void RestartGame()
     {
         Time.timeScale = 1f;
@@ -33,6 +41,24 @@ public class GameManager : MonoBehaviour
 #endif
         Application.Quit();
     }
+
+    public void Pause()
+    {
+        if (!paused)
+        {
+            Time.timeScale = 0f;
+            LoadScene("UI_PauseScreen", LoadSceneMode.Additive);
+            paused = true;
+        }
+    }
+
+    public void UnPause()
+    {
+        Time.timeScale = 1f;
+        paused = false;
+        UnloadSceneAsync("UI_PauseScreen");
+    }
+    
 
 
     private void Start()
