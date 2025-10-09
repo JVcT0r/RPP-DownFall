@@ -6,6 +6,8 @@ using UnityEngine.VFX;
 
 public class Player : MonoBehaviour
 {
+    public GameManager gameManager;
+    
     [Header("Movimento e Combate")]
     public float moveSpeed = 5f;
     public GameObject bulletPrefab;
@@ -49,7 +51,6 @@ public class Player : MonoBehaviour
     private float dashTime;
     private float lastDashTime;
     public bool dead = false;
-    public bool paused = false;
     
     private Rigidbody2D rb;
     
@@ -67,7 +68,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (!dead & !paused)
+        if (!dead & !gameManager.paused)
         {
             Movement();
             Shoot();
