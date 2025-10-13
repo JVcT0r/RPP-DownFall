@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public bool paused = false;   
     public static GameManager instance;
+    public GameObject pauseUI;
 
     private void Awake()
     {
@@ -47,7 +48,7 @@ public class GameManager : MonoBehaviour
         if (!paused)
         {
             Time.timeScale = 0f;
-            LoadScene("UI_PauseScreen", LoadSceneMode.Additive);
+            pauseUI.SetActive(true);
             paused = true;
         }
     }
@@ -55,8 +56,8 @@ public class GameManager : MonoBehaviour
     public void UnPause()
     {
         Time.timeScale = 1f;
+        pauseUI.SetActive(false);
         paused = false;
-        UnloadSceneAsync("UI_PauseScreen");
     }
     
 
