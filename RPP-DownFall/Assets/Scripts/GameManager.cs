@@ -7,18 +7,20 @@ using static UnityEngine.SceneManagement.SceneManager;
 public class GameManager : MonoBehaviour
 {
     public bool paused = false;   
-    public static GameManager instance;
+    public static GameManager Instance { get; private set; }
 
     private void Awake()
     {
-        if (instance == null)
+        if (Instance != null && Instance != this)
         {
-            instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            Destroy(gameObject);
         }
-        //else Destroy(this.gameObject);
+        else
+        {
+            Instance = this;
+            //DontDestroyOnLoad(gameObject);
+        }
     }
-
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
