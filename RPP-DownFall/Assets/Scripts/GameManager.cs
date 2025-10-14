@@ -57,8 +57,8 @@ public class GameManager : MonoBehaviour
     public void UnPause()
     {
         Time.timeScale = 1f;
-        paused = false;
         UnloadSceneAsync("UI_PauseScreen");
+        paused = false;
     }
     
 
