@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b0cfb99e1e1c1844297842f95855a8a1
+guid: 3366b22a9621e774a99af93b48105930
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5404173470970610670
-    second: SprPlayerHandgun_0
+      213: -5925057048170077541
+    second: SprPlayerHandgun_cores_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -85,32 +85,6 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Standalone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -139,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SprPlayerHandgun_0
+      name: SprPlayerHandgun_cores_0
       rect:
         serializedVersion: 2
-        x: 91
-        y: 13
-        width: 1770
-        height: 1031
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 29
+        width: 624
+        height: 353
+      alignment: 9
+      pivot: {x: 0.18244801, y: 0.3739854}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ee30bc9a32b7ffa40800000000000000
-      internalID: 5404173470970610670
+      spriteID: b92e5e9c108f5cda0800000000000000
+      internalID: -5925057048170077541
       vertices: []
       indices: 
       edges: []
@@ -164,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 8fc45218377799e40bf8be46cd613f5e
     internalID: 0
     vertices: []
     indices: 
@@ -174,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      SprPlayerHandgun_0: 5404173470970610670
+      SprPlayerHandgun_cores_0: -5925057048170077541
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
