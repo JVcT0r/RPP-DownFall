@@ -6,7 +6,8 @@ using static UnityEngine.SceneManagement.SceneManager;
 
 public class GameManager : MonoBehaviour
 {
-    public bool paused = false;   
+    public bool paused = false;
+    public Canvas PauseScreen;
     public static GameManager Instance { get; private set; }
 
     private void Awake()
@@ -49,7 +50,7 @@ public class GameManager : MonoBehaviour
         if (!paused)
         {
             Time.timeScale = 0f;
-            LoadScene("UI_PauseScreen", LoadSceneMode.Additive);
+            PauseScreen.gameObject.SetActive(true);
             paused = true;
         }
     }
@@ -57,7 +58,7 @@ public class GameManager : MonoBehaviour
     public void UnPause()
     {
         Time.timeScale = 1f;
-        UnloadSceneAsync("UI_PauseScreen");
+        PauseScreen.gameObject.SetActive(false);
         paused = false;
     }
     
