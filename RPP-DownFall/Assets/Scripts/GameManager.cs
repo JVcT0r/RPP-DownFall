@@ -1,8 +1,5 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEngine.SceneManagement.SceneManager;
-
 
 public class GameManager : MonoBehaviour
 {
@@ -19,17 +16,21 @@ public class GameManager : MonoBehaviour
         else
         {
             Instance = this;
-            //DontDestroyOnLoad(gameObject);
-        }
-    }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Pause();
         }
     }
 
+    private void Start()
+    {
+        // 🔹 Garante que a UI (HUD + AmmoManager) seja carregada antes do jogo começar
+        if (!SceneManager.GetSceneByName("UI").isLoaded)
+            SceneManager.LoadScene("UI", LoadSceneMode.Additive);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Pause();
+    }
 
     public void RestartGame()
     {
@@ -50,7 +51,8 @@ public class GameManager : MonoBehaviour
         if (!paused)
         {
             Time.timeScale = 0f;
-            PauseScreen.gameObject.SetActive(true);
+            if (PauseScreen != null)
+                PauseScreen.gameObject.SetActive(true);
             paused = true;
         }
     }
@@ -58,14 +60,8 @@ public class GameManager : MonoBehaviour
     public void UnPause()
     {
         Time.timeScale = 1f;
-        PauseScreen.gameObject.SetActive(false);
+        if (PauseScreen != null)
+            PauseScreen.gameObject.SetActive(false);
         paused = false;
-    }
-    
-
-
-    private void Start()
-    {
-        LoadScene("UI", LoadSceneMode.Additive);
     }
 }

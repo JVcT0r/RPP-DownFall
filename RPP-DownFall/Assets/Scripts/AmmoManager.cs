@@ -1,34 +1,43 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
-
 
 public class AmmoManager : MonoBehaviour
 {
-    [SerializeField]
-    public TMP_Text ammoText;
+    [SerializeField] private TMP_Text ammoText;
 
     public static int ReloadTime = 1;
-    
-    public static int BulletsMax;
-    public static int MagazineMax;
-    
-    public static int Bullets;
-    public static int Magazine;
+    public static int BulletsMax = 12;
+    public static int MagazineMax = 60;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static int Bullets = 12;
+    public static int Magazine = 60;
+
+    private void Awake()
     {
-        BulletsMax = 12;
-        MagazineMax = 60;
-        
-        Bullets = 12;
-        Magazine = 60;
+        // Garante que sempre começa cheio
+        Bullets = BulletsMax;
+        Magazine = MagazineMax;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-      ammoText.text = "Ammo: " + Bullets + "/" + Magazine;  
+        UpdateUI();
+    }
+
+    private void Update()
+    {
+        UpdateUI();
+    }
+
+    private void UpdateUI()
+    {
+        if (ammoText != null)
+            ammoText.text = $"{Bullets}/{Magazine}";
+    }
+
+    public static void ResetAmmo()
+    {
+        Bullets = BulletsMax;
+        Magazine = MagazineMax;
     }
 }

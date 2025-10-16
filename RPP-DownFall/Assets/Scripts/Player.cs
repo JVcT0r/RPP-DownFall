@@ -1,13 +1,13 @@
-using Mono.Cecil;
+using System;
+using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
-using UnityEngine.SceneManagement;
-using UnityEngine.VFX;
 
 public class Player : MonoBehaviour
 {
     public GameManager gameManager;
-    
+
     [Header("Movimento e Combate")]
     public float moveSpeed = 5f;
     public GameObject bulletPrefab;
@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     public float dashDuration = 0.2f;
     public float dashCooldown = 1f;
 
-    [Header("Tremor da Cam")] 
+    [Header("Tremor da Câmera")] 
     [SerializeField]
     private CameraShakeController camShake;
     [SerializeField]
@@ -38,29 +38,31 @@ public class Player : MonoBehaviour
 
     [Header("Vida")]
     public int maxHealth = 3;
-
     public int CurrentHealth { get; private set; }
     public GameObject deathScreen;
 
+    private WeaponManager weaponManager;
     private Vector2 moveInput;
     private Vector2 mousePos;
     private Camera mainCam;
-
     private bool isDashing = false;
     private bool isReloading = false;
     private float dashTime;
     private float lastDashTime;
     public bool dead = false;
-    
+
     private Rigidbody2D rb;
-    
     private Animator anim;
 
     void Awake()
     {
         mainCam = Camera.main;
         CurrentHealth = maxHealth;
-        rb = GetComponent<Rigidbody2D>(); 
+        rb = GetComponent<Rigidbody2D>();
+
+        weaponManager = GetComponent<WeaponManager>();
+        if (weaponManager == null)
+            weaponManager = GetComponentInParent<WeaponManager>();
 
         if (deathScreen != null)
             deathScreen.SetActive(false);
@@ -68,16 +70,20 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (!dead & !gameManager.paused)
+        if (!dead && !gameManager.paused)
         {
             Movement();
-            Shoot();
-            ShootShotgun();
+
+            
+            if (weaponManager == null || weaponManager.Current == WeaponType.Pistol)
+                ShootPistol();
+            else if (weaponManager.Current == WeaponType.Shotgun)
+                ShootShotgun();
+
             Reload();
             TryInteract();
             DashInput();
             Flashlight();
-            //DeathAnimation();
         }
     }
 
@@ -85,7 +91,7 @@ public class Player : MonoBehaviour
     {
         if (!isDashing)
         {
-           Vector2 targetPosition = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
+            Vector2 targetPosition = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
             rb.MovePosition(targetPosition);
         }
 
@@ -102,8 +108,9 @@ public class Player : MonoBehaviour
         ).normalized;
         mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
     }
-    
-    void Shoot()
+
+    // --- Pistola ---
+    void ShootPistol()
     {
         if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets > 0 && !isReloading)
         {
@@ -111,61 +118,57 @@ public class Player : MonoBehaviour
             Particles.PlayFireVFX();
 
             if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
-            {
                 bulletRb.linearVelocity = firePoint.right * bulletSpeed;
-            }
-            AmmoManager.Bullets--;
 
+            AmmoManager.Bullets--;
             camShake.ShakeCamera(shakeIntensity, shakeTime);
             Destroy(bullet, 3f);
         }
-       
     }
-    
+
+    // --- Shotgun ---
     void ShootShotgun()
     {
-        if (Input.GetMouseButtonDown(1) && AmmoManager.Bullets > 0 && !isReloading)
+        if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets > 0 && !isReloading)
         {
             AmmoManager.Bullets--;
-            
-            for (int i = 8; i >=0;)
-            {
-                camShake.ShakeCamera(shakeIntensity, shakeTime);
-                GameObject bullet = Instantiate(bulletPrefab, firePoint.position,
-                    firePoint.rotation * Quaternion.Euler(0, 0, Random.Range(-15, 15))); //tentativa de fazer os tiro espalhar, funciona, mas com a bala usando constant force ao inves da função abaixo.
-                
-                if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
-                {
-                    bulletRb.linearVelocity = firePoint.right * bulletSpeed; //comentando essa funçao e ativando o constant force no bullet prefab, as balas vao espalhar
-                }
 
-                i--;                
-                Destroy(bullet, 3f);
+            
+            for (int i = 0; i < 6; i++)
+            {
+                GameObject bullet = Instantiate(
+                    bulletPrefab,
+                    firePoint.position,
+                    firePoint.rotation * Quaternion.Euler(0, 0, UnityEngine.Random.Range(-12, 12))
+                );
+
+                if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
+                    bulletRb.linearVelocity = firePoint.right * bulletSpeed * UnityEngine.Random.Range(0.9f, 1.1f);
+
+                camShake.ShakeCamera(shakeIntensity, shakeTime);
+                Destroy(bullet, 2f);
             }
-          
+
+            Particles.PlayFireVFX();
         }
-       
     }
-    
 
     void Reload()
     {
         int MaxBullets = AmmoManager.BulletsMax;
         int MaxMagazine = AmmoManager.MagazineMax;
-        
+
         if (AmmoManager.Magazine > 0 && AmmoManager.Bullets < MaxBullets &&
             !isReloading && Input.GetKey(KeyCode.R))
         {
             int BulletsNeeded = MaxBullets - AmmoManager.Bullets;
             int bFromMagazine = Mathf.Min(BulletsNeeded, AmmoManager.Magazine);
-            
+
             AmmoManager.Bullets += bFromMagazine;
             AmmoManager.Magazine -= bFromMagazine;
-            
         }
-        
     }
-    
+
     private void Flashlight()
     {
         if (Input.GetKeyDown(KeyCode.F) && flashlight != null)
@@ -173,7 +176,7 @@ public class Player : MonoBehaviour
             var light2D = flashlight.GetComponent<Light2D>();
             if (light2D != null)
                 light2D.enabled = !light2D.enabled;
-        }  
+        }
     }
 
     void TryInteract()
@@ -182,7 +185,6 @@ public class Player : MonoBehaviour
         {
             Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange, interactableLayer);
             float coneAngle = 80f;
-
             Vector2 forward = transform.right;
 
             foreach (var hit in hits)
@@ -201,15 +203,13 @@ public class Player : MonoBehaviour
                 }
             }
         }
-        
     }
 
-    private System.Collections.IEnumerator Dash()
+    private IEnumerator Dash()
     {
         isDashing = true;
         dashTime = 0f;
         lastDashTime = Time.time;
-
         Vector2 dashDirection = moveInput;
 
         while (dashTime < dashDuration)
@@ -221,71 +221,35 @@ public class Player : MonoBehaviour
 
         isDashing = false;
     }
-    
+
     private void DashInput()
     {
-        {
-            if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= lastDashTime + dashCooldown && moveInput != Vector2.zero)
-            {
-                StartCoroutine(Dash());
-            }
-        }
+        if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= lastDashTime + dashCooldown && moveInput != Vector2.zero)
+            StartCoroutine(Dash());
     }
-
-    
 
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, interactRange);
-
-        float coneAngle = 80f;
-        Vector3 rightDir = transform.right;
-
-        Quaternion leftRot = Quaternion.Euler(0, 0, -coneAngle);
-        Quaternion rightRot = Quaternion.Euler(0, 0, coneAngle);
-
-        Vector3 leftDir = leftRot * rightDir * interactRange;
-        Vector3 rightDirFinal = rightRot * rightDir * interactRange;
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawRay(transform.position, leftDir);
-        Gizmos.DrawRay(transform.position, rightDirFinal);
     }
-    
 
     public void TakeDamage(int amount)
     {
-        camShake.ShakeCamera(3f, 0.5f);
-        ParticlesDmg.PlayBloodVFX();
+        if (dead) return;
+
         CurrentHealth -= amount;
-        
+        ParticlesDmg.PlayBloodVFX();
 
-        
         if (CurrentHealth <= 0)
-        {
             Die();
-        }
-    }
-
-    void DeathAnimation()
-    {
-        if (CurrentHealth <= 0)
-        {
-                
-            Time.timeScale = 0.1f;
-
-            Invoke("Die", 0.5f);
-        }
     }
 
     void Die()
     {
+        dead = true;
+        rb.linearVelocity = Vector2.zero;
         if (deathScreen != null)
             deathScreen.SetActive(true);
-
-        Time.timeScale = 0f;
-        gameObject.SetActive(false);
-        dead =  true;
     }
 }
