@@ -6,7 +6,7 @@ using UnityEngine.Rendering.Universal;
 
 public class Player : MonoBehaviour
 {
-    public GameManager gameManager;
+    private GameManager gameManager;
 
     [Header("Movimento e Combate")]
     public float moveSpeed = 5f;
@@ -56,6 +56,8 @@ public class Player : MonoBehaviour
 
     void Awake()
     {
+        gameManager =  GameObject.Find("GameManager").GetComponent<GameManager>();
+        
         mainCam = Camera.main;
         CurrentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
@@ -70,7 +72,9 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (!dead && !gameManager.paused)
+        if (gameManager.GetPaused()) return;
+        
+        if (!dead)
         {
             Movement();
 
@@ -240,6 +244,7 @@ public class Player : MonoBehaviour
 
         CurrentHealth -= amount;
         ParticlesDmg.PlayBloodVFX();
+        camShake.ShakeCamera(2f, 0.5f);
 
         if (CurrentHealth <= 0)
             Die();
