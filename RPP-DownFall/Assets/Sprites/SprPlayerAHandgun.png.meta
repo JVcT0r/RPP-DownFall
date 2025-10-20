@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 5da9424aaf1bbd84ba66aad11066fad3
+guid: b0e3bbfb15235704ab1b24c476d1bfc1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3564186762206377305
-    second: Fundo armas_0
+      213: 2252633026609451862
+    second: SprPlayerAHandgun_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -109,27 +109,53 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Fundo armas_0
+      name: SprPlayerAHandgun_0
       rect:
         serializedVersion: 2
-        x: 69
-        y: 87
-        width: 360
-        height: 357
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 8
+        width: 313
+        height: 186
+      alignment: 9
+      pivot: {x: 0.19638239, y: 0.42390466}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 955f572f9f8867130800000000000000
-      internalID: 3564186762206377305
+      spriteID: 6539e508dc5f24f10800000000000000
+      internalID: 2252633026609451862
       vertices: []
       indices: 
       edges: []
@@ -138,7 +164,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 3db246123b00c2b44a56acea0432e230
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Fundo armas_0: 3564186762206377305
+      SprPlayerAHandgun_0: 2252633026609451862
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

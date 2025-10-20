@@ -3,10 +3,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public bool paused = false;
-    public Canvas PauseScreen;
+    public bool paused;
+    public GameObject pauseScreen;
     public static GameManager Instance { get; private set; }
-
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -48,20 +47,21 @@ public class GameManager : MonoBehaviour
 
     public void Pause()
     {
-        if (!paused)
-        {
-            Time.timeScale = 0f;
-            if (PauseScreen != null)
-                PauseScreen.gameObject.SetActive(true);
-            paused = true;
-        }
+       
+        paused = !paused;
+        Time.timeScale = paused ? 0 : 1;
+        pauseScreen.SetActive(paused);
     }
-
-    public void UnPause()
+    
+    public bool GetPaused()
     {
-        Time.timeScale = 1f;
-        if (PauseScreen != null)
-            PauseScreen.gameObject.SetActive(false);
-        paused = false;
+        return paused;
     }
+    
+    // public void UnPause()
+    // {
+    //     Time.timeScale = 1f;
+    //     pauseScreen.SetActive(false);
+    //     paused = false;
+    // }
 }
