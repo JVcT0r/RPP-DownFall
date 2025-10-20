@@ -188,33 +188,27 @@ public class Player : MonoBehaviour
     // -------------------- INTERAÇÃO --------------------
     void TryInteract()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (!Input.GetKeyDown(KeyCode.E)) return;
+        
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
+        Vector2 forward = transform.right;
+        float coneAngle = 70f; 
+
+        foreach (var hit in hits)
         {
+            if (hit.gameObject == gameObject) continue;
+
+            Vector2 dirToTarget = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+            float angle = Vector2.Angle(forward, dirToTarget);
             
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange, interactableLayer);
-            float coneAngle = 80f;
-            Vector2 forward = transform.right;
-
-            foreach (var hit in hits)
+            if (angle <= coneAngle / 2f && hit.CompareTag("Interagir"))
             {
-                Vector2 dirToTarget = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
-                float angle = Vector2.Angle(forward, dirToTarget);
-
-                if (angle <= coneAngle)
-                {
-                    
-                    if (hit.CompareTag("Interagir"))
-                    {
-                        Debug.Log("Interagiu com: " + hit.name);
-
-                        
-                        hit.SendMessage("OnInteracted", SendMessageOptions.DontRequireReceiver);
-                        break;
-                    }
-                }
+                hit.SendMessage("OnInteracted", SendMessageOptions.DontRequireReceiver);
+                break;
             }
         }
     }
+
 
 
     // -------------------- DASH --------------------
@@ -277,6 +271,26 @@ public class Player : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
+        
         Gizmos.DrawWireSphere(transform.position, interactRange);
+        
+        float coneAngle = 70f; 
+        int rayCount = 20;     
+
+        Vector2 forward = transform.right;
+        float halfAngle = coneAngle / 2f;
+
+        for (int i = 0; i <= rayCount; i++)
+        {
+            float t = Mathf.Lerp(-halfAngle, halfAngle, (float)i / rayCount);
+            Quaternion rot = Quaternion.Euler(0, 0, t);
+            Vector2 dir = rot * forward;
+
+            Gizmos.DrawLine(transform.position, (Vector2)transform.position + dir * interactRange);
+        }
+        
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, (Vector2)transform.position + forward * interactRange);
     }
+
 }

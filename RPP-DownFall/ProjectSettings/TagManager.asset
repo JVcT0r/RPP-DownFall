@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Inimigo
   - GameManager
+  - Interagir
   layers:
   - Default
   - TransparentFX
