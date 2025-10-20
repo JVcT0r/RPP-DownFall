@@ -41,6 +41,9 @@ public class Player : MonoBehaviour
     public int CurrentHealth { get; private set; }
     public GameObject deathScreen;
 
+    [Header("Cura")]
+    public int healAmount = 1; // 🔹 Ajustável no Inspector
+
     private WeaponManager weaponManager;
     private Vector2 moveInput;
     private Vector2 mousePos;
@@ -52,7 +55,6 @@ public class Player : MonoBehaviour
     public bool dead = false;
 
     private Rigidbody2D rb;
-    private Animator anim;
 
     void Awake()
     {
@@ -74,7 +76,7 @@ public class Player : MonoBehaviour
         {
             Movement();
 
-            
+            // Controle de tiro baseado na arma
             if (weaponManager == null || weaponManager.Current == WeaponType.Pistol)
                 ShootPistol();
             else if (weaponManager.Current == WeaponType.Shotgun)
@@ -109,7 +111,7 @@ public class Player : MonoBehaviour
         mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
     }
 
-    // --- Pistola ---
+    // -------------------- TIRO PISTOLA --------------------
     void ShootPistol()
     {
         if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets > 0 && !isReloading)
@@ -126,14 +128,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    // --- Shotgun ---
+    // -------------------- TIRO SHOTGUN --------------------
     void ShootShotgun()
     {
         if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets > 0 && !isReloading)
         {
             AmmoManager.Bullets--;
 
-            
             for (int i = 0; i < 6; i++)
             {
                 GameObject bullet = Instantiate(
@@ -153,6 +154,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    // -------------------- RELOAD --------------------
     void Reload()
     {
         int MaxBullets = AmmoManager.BulletsMax;
@@ -169,6 +171,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    // -------------------- LANTERNA --------------------
     private void Flashlight()
     {
         if (Input.GetKeyDown(KeyCode.F) && flashlight != null)
@@ -179,6 +182,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    // -------------------- INTERAÇÃO --------------------
     void TryInteract()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -205,6 +209,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    // -------------------- DASH --------------------
     private IEnumerator Dash()
     {
         isDashing = true;
@@ -228,12 +233,19 @@ public class Player : MonoBehaviour
             StartCoroutine(Dash());
     }
 
-    void OnDrawGizmosSelected()
+    // -------------------- CURA --------------------
+    public void Heal()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, interactRange);
+        if (dead) return;
+
+        CurrentHealth += healAmount;
+        if (CurrentHealth > maxHealth)
+            CurrentHealth = maxHealth;
+
+        Debug.Log($"[Player] Curado em {healAmount} pontos. Vida atual: {CurrentHealth}");
     }
 
+    // -------------------- DANO E MORTE --------------------
     public void TakeDamage(int amount)
     {
         if (dead) return;
@@ -251,5 +263,11 @@ public class Player : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         if (deathScreen != null)
             deathScreen.SetActive(true);
+    }
+    
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, interactRange);
     }
 }
