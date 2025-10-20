@@ -1,10 +1,22 @@
 fileFormatVersion: 2
-guid: 260de29f5944fc54582c90fd968c0ee9
+guid: f46a29b24eb94c8419da4691c18a387f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2945982591876544094
-    second: Enraizado1AttackFrame0002_0
+      213: -6233125063815553423
+    second: Enraizado1AttackFrame0001_0
+  - first:
+      213: 8827882723854300876
+    second: Enraizado1AttackFrame0001_1
+  - first:
+      213: 769975764273027858
+    second: Enraizado1AttackFrame0001_2
+  - first:
+      213: 6124551799221818754
+    second: Enraizado1AttackFrame0001_3
+  - first:
+      213: 2589080037042628110
+    second: Enraizado1AttackFrame0001_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +49,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -49,8 +61,8 @@ TextureImporter:
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
+  alignment: 9
+  spritePivot: {x: 0.2957731, y: 0.4899604}
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -75,7 +87,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -126,23 +138,111 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Enraizado1AttackFrame0002_0
+      name: Enraizado1AttackFrame0001_0
       rect:
         serializedVersion: 2
-        x: 57
-        y: 201
-        width: 374
-        height: 499
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 500
+        height: 700
+      alignment: 9
+      pivot: {x: 0.2957731, y: 0.4899604}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2a9c6b0f074cd17d0800000000000000
-      internalID: -2945982591876544094
+      spriteID: 17e90ba67cd7f79a0800000000000000
+      internalID: -6233125063815553423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enraizado1AttackFrame0001_1
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 26
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc6b422b090f28a70800000000000000
+      internalID: 8827882723854300876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enraizado1AttackFrame0001_2
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 27
+        width: 14
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21b572bc0e08faa00800000000000000
+      internalID: 769975764273027858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enraizado1AttackFrame0001_3
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 33
+        width: 19
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28598118967cef450800000000000000
+      internalID: 6124551799221818754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Enraizado1AttackFrame0001_4
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 32
+        width: 20
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e062bfe73924ee320800000000000000
+      internalID: 2589080037042628110
       vertices: []
       indices: 
       edges: []
@@ -151,7 +251,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -160,7 +260,12 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Enraizado1AttackFrame0001_0: -6233125063815553423
+      Enraizado1AttackFrame0001_1: 8827882723854300876
+      Enraizado1AttackFrame0001_2: 769975764273027858
+      Enraizado1AttackFrame0001_3: 6124551799221818754
+      Enraizado1AttackFrame0001_4: 2589080037042628110
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
