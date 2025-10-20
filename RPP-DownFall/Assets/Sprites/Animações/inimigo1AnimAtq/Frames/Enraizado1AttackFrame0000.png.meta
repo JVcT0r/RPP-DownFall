@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2680518474b06a944bdc60a37aad3d30
+guid: d8e728c228e99db4f9fb76ab35f9bc1f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8206437859059991084
-    second: Enraizado1AttackFrame0005_0
+      213: -6726930438447824614
+    second: Enraizado1AttackFrame0000_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -49,8 +49,8 @@ TextureImporter:
   spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
+  alignment: 9
+  spritePivot: {x: 0.2957731, y: 0.4899604}
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -126,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Enraizado1AttackFrame0005_0
+      name: Enraizado1AttackFrame0000_0
       rect:
         serializedVersion: 2
-        x: 56
-        y: 7
-        width: 433
-        height: 653
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 500
+        height: 700
+      alignment: 9
+      pivot: {x: 0.2957731, y: 0.4899604}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4dd796b2f30ec1e80800000000000000
-      internalID: -8206437859059991084
+      spriteID: a110e83386425a2a0800000000000000
+      internalID: -6726930438447824614
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Enraizado1AttackFrame0000_0: -6726930438447824614
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
