@@ -79,8 +79,7 @@ public class Player : MonoBehaviour
         if (!dead)
         {
             Movement();
-
-            // Controle de tiro baseado na arma
+            
             if (weaponManager == null || weaponManager.Current == WeaponType.Pistol)
                 ShootPistol();
             else if (weaponManager.Current == WeaponType.Shotgun)
@@ -191,6 +190,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
+            
             Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange, interactableLayer);
             float coneAngle = 80f;
             Vector2 forward = transform.right;
@@ -202,16 +202,20 @@ public class Player : MonoBehaviour
 
                 if (angle <= coneAngle)
                 {
-                    var interactable = hit.GetComponent<IInteractable>();
-                    if (interactable != null)
+                    
+                    if (hit.CompareTag("Interagir"))
                     {
-                        interactable.Interact();
+                        Debug.Log("Interagiu com: " + hit.name);
+
+                        
+                        hit.SendMessage("OnInteracted", SendMessageOptions.DontRequireReceiver);
                         break;
                     }
                 }
             }
         }
     }
+
 
     // -------------------- DASH --------------------
     private IEnumerator Dash()
