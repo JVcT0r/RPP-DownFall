@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class AmmoPickup : MonoBehaviour
 {
-    [Header("Munição para o Player")]
-    public int ammoAmount = 10; 
+    [Header("Configuração da Munição")]
+    public WeaponType weaponType = WeaponType.Pistol;
+    public int ammoAmount = 10;
 
     private bool collected = false;
 
@@ -12,9 +13,27 @@ public class AmmoPickup : MonoBehaviour
         if (collected) return;
         collected = true;
 
-        
-        AmmoManager.Magazine += ammoAmount;
-        
+        switch (weaponType)
+        {
+            case WeaponType.Pistol:
+                AmmoManager.pistolMagazine = Mathf.Clamp(
+                    AmmoManager.pistolMagazine + ammoAmount,
+                    0,
+                    AmmoManager.pistolMagazineMax
+                );
+                
+                break;
+
+            case WeaponType.Shotgun:
+                AmmoManager.shotgunMagazine = Mathf.Clamp(
+                    AmmoManager.shotgunMagazine + ammoAmount,
+                    0,
+                    AmmoManager.shotgunMagazineMax
+                );
+                
+                break;
+        }
+
         Destroy(gameObject);
     }
 }

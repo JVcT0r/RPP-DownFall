@@ -23,57 +23,75 @@ public class HUDManager : MonoBehaviour
     [Header("Poção / Cura")]
     public Image potionIcon;
     public TMP_Text potionCountText;
-    public int potionCount = 3; // 🔹 Quantidade inicial de poções
+    public int potionCount = 3;
 
     private float pulseT;
     private bool doPulse;
 
-    void OnEnable()
-    {
-        WeaponManager.OnWeaponChanged += HandleWeaponChanged;
-    }
-
-    void OnDisable()
-    {
-        WeaponManager.OnWeaponChanged -= HandleWeaponChanged;
-    }
+    void OnEnable()  { WeaponManager.OnWeaponChanged += HandleWeaponChanged; }
+    void OnDisable() { WeaponManager.OnWeaponChanged -= HandleWeaponChanged; }
 
     void Start()
     {
         UpdateAmmoUI();
         HandleWeaponChanged(WeaponType.Pistol);
         UpdatePotionUI();
-
-        if (weaponSelectionGlow != null)
-            weaponSelectionGlow.enabled = false;
+        if (weaponSelectionGlow != null) weaponSelectionGlow.enabled = false;
     }
 
     void Update()
     {
         UpdateAmmoUI();
 
-        
-        if (Input.GetKeyDown(KeyCode.H))
+        // tecla H cura
+        if (Input.GetKeyDown(KeyCode.H)) UsePotion();
+
+        // pulso do anel de seleção
+        if (doPulse && weaponSelectionGlow != null)
         {
-            UsePotion();
+            pulseT += Time.unscaledDeltaTime * Mathf.Lerp(2f, 8f, selectionPulseSpeed);
+            var c = weaponSelectionGlow.color;
+            c.a = Mathf.Abs(Mathf.Sin(pulseT)) * 0.6f + 0.2f;
+            weaponSelectionGlow.color = c;
+            if (pulseT > Mathf.PI) { doPulse = false; weaponSelectionGlow.enabled = false; }
         }
-        
     }
 
-    // ------------------- ATUALIZAÇÃO DE MUNIÇÃO -------------------
+    // -------------------- ATUALIZAÇÃO DE MUNIÇÃO --------------------
     void UpdateAmmoUI()
     {
-        if (ammoCircle != null)
+        if (WeaponManager.Instance == null) return;
+
+        switch (WeaponManager.Instance.Current)
         {
-            float fill = AmmoManager.BulletsMax > 0
-                ? (float)AmmoManager.Bullets / AmmoManager.BulletsMax
-                : 0f;
+            case WeaponType.Pistol:
+                if (ammoCircle != null)
+                {
+                    float fill = AmmoManager.pistolBulletsMax > 0
+                        ? (float)AmmoManager.pistolBullets / AmmoManager.pistolBulletsMax
+                        : 0f;
+                    ammoCircle.fillAmount = Mathf.Clamp01(fill);
+                }
+                if (ammoText != null)
+                    ammoText.text = $"{AmmoManager.pistolBullets}/{AmmoManager.pistolMagazine}";
+                break;
 
-            ammoCircle.fillAmount = Mathf.Clamp01(fill);
+            case WeaponType.Shotgun:
+                if (ammoCircle != null)
+                {
+                    float fill = AmmoManager.shotgunBulletsMax > 0
+                        ? (float)AmmoManager.shotgunBullets / AmmoManager.shotgunBulletsMax
+                        : 0f;
+                    ammoCircle.fillAmount = Mathf.Clamp01(fill);
+                }
+                if (ammoText != null)
+                    ammoText.text = $"{AmmoManager.shotgunBullets}/{AmmoManager.shotgunMagazine}";
+                break;
+
+            // se adicionar outras armas depois, acrescente aqui
+            // case WeaponType.Slot3: ...
+            // case WeaponType.Slot4: ...
         }
-
-        if (ammoText != null)
-            ammoText.text = $"{AmmoManager.Bullets}/{AmmoManager.Magazine}";
     }
 
     // ------------------- ATUALIZAÇÃO DAS POÇÕES -------------------
@@ -90,10 +108,10 @@ public class HUDManager : MonoBehaviour
         {
             switch (wt)
             {
-                case WeaponType.Pistol: weaponIcon.sprite = pistolSprite; break;
+                case WeaponType.Pistol:  weaponIcon.sprite = pistolSprite;  break;
                 case WeaponType.Shotgun: weaponIcon.sprite = shotgunSprite; break;
-                case WeaponType.Slot3: weaponIcon.sprite = slot3Sprite; break;
-                case WeaponType.Slot4: weaponIcon.sprite = slot4Sprite; break;
+                // case WeaponType.Slot3:   weaponIcon.sprite = slot3Sprite;   break;
+                // case WeaponType.Slot4:   weaponIcon.sprite = slot4Sprite;   break;
             }
             weaponIcon.enabled = weaponIcon.sprite != null;
         }
@@ -106,26 +124,17 @@ public class HUDManager : MonoBehaviour
         }
     }
 
-    // ------------------- USAR POÇÃO  -------------------
+    // ------------------- USAR POÇÃO -------------------
     public void UsePotion()
     {
-        if (potionCount > 0)
-        {
-            potionCount--;
-            UpdatePotionUI();
+        if (potionCount <= 0) { Debug.Log("[HUD] Sem poções restantes!"); return; }
 
-            
-            Player player = FindAnyObjectByType<Player>();
-            if (player != null)
-            {
-                player.Heal();
-            }
+        potionCount--;
+        UpdatePotionUI();
 
-            Debug.Log("[HUD] Poção usada! Cura aplicada.");
-        }
-        else
-        {
-            Debug.Log("[HUD] Sem poções restantes!");
-        }
+        var player = FindAnyObjectByType<Player>();
+        if (player != null) player.Heal();
+
+        Debug.Log("[HUD] Poção usada! Cura aplicada.");
     }
 }

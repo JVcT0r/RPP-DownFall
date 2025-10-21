@@ -3,41 +3,42 @@ using TMPro;
 
 public class AmmoManager : MonoBehaviour
 {
-    [SerializeField] private TMP_Text ammoText;
+    [Header("UI")]
+    public TMP_Text ammoText;
 
-    public static int ReloadTime = 1;
-    public static int BulletsMax = 12;
-    public static int MagazineMax = 60;
+    // 🔹 Armas e munições
+    public static int pistolBullets = 12;
+    public static int pistolMagazine = 60;
 
-    public static int Bullets = 12;
-    public static int Magazine = 60;
+    public static int shotgunBullets = 6;
+    public static int shotgunMagazine = 30;
 
-    private void Awake()
+    // 🔹 Valores máximos
+    public static int pistolBulletsMax = 12;
+    public static int pistolMagazineMax = 60;
+
+    public static int shotgunBulletsMax = 6;
+    public static int shotgunMagazineMax = 30;
+
+    void Update()
     {
-        // Garante que sempre começa cheio
-        Bullets = BulletsMax;
-        Magazine = MagazineMax;
-    }
+        if (WeaponManager.Instance == null || ammoText == null)
+            return;
 
-    private void Start()
-    {
-        UpdateUI();
-    }
+        
+        switch (WeaponManager.Instance.Current)
+        {
+            case WeaponType.Pistol:
+                ammoText.text = $"{pistolBullets}/{pistolMagazine}";
+                break;
 
-    private void Update()
-    {
-        UpdateUI();
-    }
+            case WeaponType.Shotgun:
+                ammoText.text = $"{shotgunBullets}/{shotgunMagazine}";
+                break;
 
-    private void UpdateUI()
-    {
-        if (ammoText != null)
-            ammoText.text = $"{Bullets}/{Magazine}";
-    }
-
-    public static void ResetAmmo()
-    {
-        Bullets = BulletsMax;
-        Magazine = MagazineMax;
+            default:
+                ammoText.text = "-/-";
+                break;
+        }
     }
 }

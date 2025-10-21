@@ -117,7 +117,7 @@ public class Player : MonoBehaviour
     // -------------------- TIRO PISTOLA --------------------
     void ShootPistol()
     {
-        if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets > 0 && !isReloading)
+        if (Input.GetMouseButtonDown(0) && AmmoManager.pistolBullets > 0)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
             Particles.PlayFireVFX();
@@ -125,7 +125,7 @@ public class Player : MonoBehaviour
             if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
                 bulletRb.linearVelocity = firePoint.right * bulletSpeed;
 
-            AmmoManager.Bullets--;
+            AmmoManager.pistolBullets--;
             camShake.ShakeCamera(shakeIntensity, shakeTime);
             Destroy(bullet, 3f);
         }
@@ -134,9 +134,9 @@ public class Player : MonoBehaviour
     // -------------------- TIRO SHOTGUN --------------------
     void ShootShotgun()
     {
-        if (Input.GetMouseButtonDown(0) && AmmoManager.Bullets > 0 && !isReloading)
+        if (Input.GetMouseButtonDown(0) && AmmoManager.shotgunBullets > 0)
         {
-            AmmoManager.Bullets--;
+            AmmoManager.shotgunBullets--;
 
             for (int i = 0; i < 6; i++)
             {
@@ -160,19 +160,40 @@ public class Player : MonoBehaviour
     // -------------------- RELOAD --------------------
     void Reload()
     {
-        int MaxBullets = AmmoManager.BulletsMax;
-        int MaxMagazine = AmmoManager.MagazineMax;
+        if (isReloading)
+            return;
 
-        if (AmmoManager.Magazine > 0 && AmmoManager.Bullets < MaxBullets &&
-            !isReloading && Input.GetKey(KeyCode.R))
+        if (Input.GetKey(KeyCode.R))
         {
-            int BulletsNeeded = MaxBullets - AmmoManager.Bullets;
-            int bFromMagazine = Mathf.Min(BulletsNeeded, AmmoManager.Magazine);
+            switch (WeaponManager.Instance.Current)
+            {
+                // ---------------- PISTOLA ----------------
+                case WeaponType.Pistol:
+                    if (AmmoManager.pistolMagazine > 0 && AmmoManager.pistolBullets < AmmoManager.pistolBulletsMax)
+                    {
+                        int bulletsNeeded = AmmoManager.pistolBulletsMax - AmmoManager.pistolBullets;
+                        int bFromMagazine = Mathf.Min(bulletsNeeded, AmmoManager.pistolMagazine);
 
-            AmmoManager.Bullets += bFromMagazine;
-            AmmoManager.Magazine -= bFromMagazine;
+                        AmmoManager.pistolBullets += bFromMagazine;
+                        AmmoManager.pistolMagazine -= bFromMagazine;
+                    }
+                    break;
+
+                // ---------------- SHOTGUN ----------------
+                case WeaponType.Shotgun:
+                    if (AmmoManager.shotgunMagazine > 0 && AmmoManager.shotgunBullets < AmmoManager.shotgunBulletsMax)
+                    {
+                        int bulletsNeeded = AmmoManager.shotgunBulletsMax - AmmoManager.shotgunBullets;
+                        int bFromMagazine = Mathf.Min(bulletsNeeded, AmmoManager.shotgunMagazine);
+
+                        AmmoManager.shotgunBullets += bFromMagazine;
+                        AmmoManager.shotgunMagazine -= bFromMagazine;
+                    }
+                    break;
+            }
         }
     }
+
 
     // -------------------- LANTERNA --------------------
     private void Flashlight()
