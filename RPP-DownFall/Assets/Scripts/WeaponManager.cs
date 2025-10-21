@@ -8,8 +8,7 @@ public class WeaponManager : MonoBehaviour
     public static event Action<WeaponType> OnWeaponChanged;
 
     public WeaponType Current { get; private set; } = WeaponType.Pistol;
-
-    // 🔹 Cada arma guarda sua própria munição
+    
     private int pistolBullets = 12;
     private int pistolMagazine = 60;
 
@@ -37,14 +36,11 @@ public class WeaponManager : MonoBehaviour
     public void SetWeapon(WeaponType type)
     {
         if (type == Current) return;
-
-        // 🔹 Salva a munição da arma anterior
+        
         SaveCurrentAmmo();
-
-        // 🔹 Troca de arma
+        
         Current = type;
-
-        // 🔹 Carrega a munição correspondente à nova arma
+        
         switch (Current)
         {
             case WeaponType.Pistol:
