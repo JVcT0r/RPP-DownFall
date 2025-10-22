@@ -1,112 +1,76 @@
 using UnityEngine;
-using UnityEngine.AI;
-using System.Collections;
 
-[RequireComponent(typeof(BoxCollider2D))]
 public class AutoDoorMoverNavmesh : MonoBehaviour
 {
-     [Header("Quem pode abrir")]
-    public string[] allowedTags = { "Player", "Inimigo" };
-
-    [Header("Referências")]
-    public Transform doorTransform;           
-    public Collider2D blockingCollider;       
-    public NavMeshObstacle navObstacle;      
+    public Transform door;
     public Vector3 openOffset = new Vector3(1.5f, 0, 0);
-
-    [Header("Tempos")]
     public float openTime = 0.25f;
     public float closeDelay = 1.5f;
+    public string[] allowedTags = { "Player", "Inimigo" };
 
     private Vector3 closedPos;
-    private Vector3 openPos;
     private bool isOpen = false;
-    private Coroutine closeCoroutine;
 
-    private void Start()
+    void Start()
     {
-        if (doorTransform == null) doorTransform = transform;
-        closedPos = doorTransform.localPosition;
-        openPos = closedPos + openOffset;
-
-        if (blockingCollider == null)
-            blockingCollider = GetComponent<Collider2D>();
-
-        if (navObstacle == null)
-            navObstacle = GetComponent<NavMeshObstacle>();
+        closedPos = door.localPosition;
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         foreach (var tag in allowedTags)
         {
             if (other.CompareTag(tag))
             {
-                if (!isOpen)
-                    StartCoroutine(OpenDoor());
-                return;
+                StopAllCoroutines();
+                StartCoroutine(OpenDoor());
+                break;
             }
         }
     }
 
-    private void OnTriggerExit2D(Collider2D other)
+    void OnTriggerExit2D(Collider2D other)
     {
         foreach (var tag in allowedTags)
         {
             if (other.CompareTag(tag))
             {
-                if (closeCoroutine != null)
-                    StopCoroutine(closeCoroutine);
-                closeCoroutine = StartCoroutine(CloseDoorAfterDelay());
-                return;
+                StopAllCoroutines();
+                StartCoroutine(CloseDoor());
+                break;
             }
         }
     }
 
-    private IEnumerator OpenDoor()
+    private System.Collections.IEnumerator OpenDoor()
     {
+        if (isOpen) yield break;
         isOpen = true;
 
-        
-        if (blockingCollider != null) blockingCollider.enabled = false;
-        if (navObstacle != null) navObstacle.carving = false;
-
-        Vector3 startPos = doorTransform.localPosition;
-        float elapsed = 0f;
-
-        while (elapsed < openTime)
+        Vector3 target = closedPos + openOffset;
+        float t = 0;
+        while (t < openTime)
         {
-            doorTransform.localPosition = Vector3.Lerp(startPos, openPos, elapsed / openTime);
-            elapsed += Time.deltaTime;
+            door.localPosition = Vector3.Lerp(closedPos, target, t / openTime);
+            t += Time.deltaTime;
             yield return null;
         }
-        doorTransform.localPosition = openPos;
-
-        
-        NavMeshUpdater.UpdateNavMeshGlobal();
+        door.localPosition = target;
     }
 
-    private IEnumerator CloseDoorAfterDelay()
+    private System.Collections.IEnumerator CloseDoor()
     {
         yield return new WaitForSeconds(closeDelay);
-
-        Vector3 startPos = doorTransform.localPosition;
-        float elapsed = 0f;
-
-        while (elapsed < openTime)
+        Vector3 target = closedPos;
+        Vector3 start = door.localPosition;
+        float t = 0;
+        while (t < openTime)
         {
-            doorTransform.localPosition = Vector3.Lerp(startPos, closedPos, elapsed / openTime);
-            elapsed += Time.deltaTime;
+            door.localPosition = Vector3.Lerp(start, target, t / openTime);
+            t += Time.deltaTime;
             yield return null;
         }
-        doorTransform.localPosition = closedPos;
-
-        if (blockingCollider != null) blockingCollider.enabled = true;
-        if (navObstacle != null) navObstacle.carving = true;
-
-        
-        NavMeshUpdater.UpdateNavMeshGlobal();
-
+        door.localPosition = target;
         isOpen = false;
     }
 }
