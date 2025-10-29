@@ -56,6 +56,8 @@ public class Player : MonoBehaviour
     public bool dead = false;
 
     private Rigidbody2D rb;
+    
+    private Animator anim;
 
     void Awake()
     {
@@ -71,6 +73,12 @@ public class Player : MonoBehaviour
 
         if (deathScreen != null)
             deathScreen.SetActive(false);
+    }
+
+    private void Start()
+    {
+        anim = GetComponent<Animator>();
+        
     }
 
     void Update()
@@ -112,8 +120,10 @@ public class Player : MonoBehaviour
     // -------------------- TIRO PISTOLA --------------------
     void ShootPistol()
     {
+        if(isReloading) return;
         if (Input.GetMouseButtonDown(0) && AmmoManager.pistolBullets > 0)
         {
+            
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
             Particles?.PlayFireVFX();
 
@@ -155,31 +165,37 @@ public class Player : MonoBehaviour
     // -------------------- RELOAD --------------------
     void Reload()
     {
-        if (isReloading) return;
+        //if (isReloading) return;
 
-        if (Input.GetKey(KeyCode.R))
+        if (Input.GetKey(KeyCode.R) && !isReloading)
         {
             switch (WeaponManager.Instance.Current)
             {
                 case WeaponType.Pistol:
                     if (AmmoManager.pistolMagazine > 0 && AmmoManager.pistolBullets < AmmoManager.pistolBulletsMax)
                     {
+                        isReloading = true;
+                        
                         int bulletsNeeded = AmmoManager.pistolBulletsMax - AmmoManager.pistolBullets;
                         int bFromMagazine = Mathf.Min(bulletsNeeded, AmmoManager.pistolMagazine);
-
+                        anim.Play("HandgunReload");
                         AmmoManager.pistolBullets += bFromMagazine;
                         AmmoManager.pistolMagazine -= bFromMagazine;
+                        isReloading = false;
+                       
                     }
                     break;
 
                 case WeaponType.Shotgun:
                     if (AmmoManager.shotgunMagazine > 0 && AmmoManager.shotgunBullets < AmmoManager.shotgunBulletsMax)
                     {
+                        isReloading = true;
                         int bulletsNeeded = AmmoManager.shotgunBulletsMax - AmmoManager.shotgunBullets;
                         int bFromMagazine = Mathf.Min(bulletsNeeded, AmmoManager.shotgunMagazine);
 
                         AmmoManager.shotgunBullets += bFromMagazine;
                         AmmoManager.shotgunMagazine -= bFromMagazine;
+                        isReloading = false;
                     }
                     break;
             }
