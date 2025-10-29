@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2360541484061833441}
   - component: {fileID: 7210138024058815486}
   - component: {fileID: 5210553240032714968}
+  - component: {fileID: 6358728037701523183}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -192,6 +193,7 @@ MonoBehaviour:
   maxHealth: 5
   deathScreen: {fileID: 0}
   healAmount: 1
+  potionCount: 3
   dead: 0
 --- !u!114 &5210553240032714968
 MonoBehaviour:
@@ -205,6 +207,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da7d1d655b79ca545b3674b5b16f0fa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &6358728037701523183
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2184013265652513130}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f11f7a6ee307b494ab5e0da638eaac31, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2673606008756780284
 GameObject:
   m_ObjectHideFlags: 0

@@ -155,8 +155,9 @@ MonoBehaviour:
   maxHealth: 10
   Particles: {fileID: 4973923001054968070}
   bulletScript: {fileID: 925674296409163778, guid: 8a23ac776f3d9434fa7abb7f16363c3a, type: 3}
-  _knockbackTime: 0.25
-  _knockbackForce: 50
+  _knockbackTime: 0
+  _knockbackForce: 0
+  enemyID: 
 --- !u!50 &5400735887143428794
 Rigidbody2D:
   serializedVersion: 5
