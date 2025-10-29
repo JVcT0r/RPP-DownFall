@@ -292,6 +292,7 @@ public class Player : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         if (deathScreen != null)
             deathScreen.SetActive(true);
+            Time.timeScale = 0;
     }
 
     // -------------------- GIZMOS --------------------
