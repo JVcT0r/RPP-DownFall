@@ -4,8 +4,49 @@ using UnityEngine.SceneManagement;
 
 public static class SaveSystem
 {
-    private static string savePath = Application.persistentDataPath + "/save.json";
+    private static readonly string savePath = Path.Combine(Application.persistentDataPath, "save.json");
 
+    [System.Serializable]
+    public class SaveData
+    {
+        public float[] playerPosition = new float[3];
+        public int currentHealth;
+
+        public int pistolBullets, pistolMagazine, pistolReserve;
+        public int shotgunBullets, shotgunMagazine, shotgunReserve;
+
+        public int potionCount;
+        public string currentScene;
+    }
+
+    // ---------------- INICIALIZAÇÃO AUTOMÁTICA ----------------
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void OnSceneLoadedInit()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        
+        if (!HasSave()) return;
+
+        string json = File.ReadAllText(savePath);
+        var data = JsonUtility.FromJson<SaveData>(json);
+
+        
+        if (data.currentScene == scene.name)
+        {
+            var player = Object.FindAnyObjectByType<Player>();
+            if (player != null)
+            {
+                LoadGame(player);
+                Debug.Log($"[SaveSystem] Jogo carregado automaticamente ({scene.name})");
+            }
+        }
+    }
+
+    // ---------------- SALVAR ----------------
     public static void SaveGame(Player player)
     {
         var data = new SaveData();
@@ -17,10 +58,17 @@ public static class SaveSystem
 
         data.currentHealth = player.CurrentHealth;
 
-        data.pistolBullets = AmmoManager.pistolBullets;
-        data.pistolMagazine = AmmoManager.pistolMagazine;
-        data.shotgunBullets = AmmoManager.shotgunBullets;
+        data.pistolBullets   = AmmoManager.pistolBullets;
+        data.pistolMagazine  = AmmoManager.pistolMagazine;
+        
+
+        data.shotgunBullets  = AmmoManager.shotgunBullets;
         data.shotgunMagazine = AmmoManager.shotgunMagazine;
+        
+
+        var hud = Object.FindAnyObjectByType<HUDManager>();
+        if (hud != null)
+            data.potionCount = hud.potionCount;
 
         data.currentScene = SceneManager.GetActiveScene().name;
 
@@ -28,6 +76,19 @@ public static class SaveSystem
         Debug.Log("[SaveSystem] Jogo salvo em: " + savePath);
     }
 
+    // ---------------- VERIFICAR SAVE ----------------
+    public static bool HasSave() => File.Exists(savePath);
+
+    public static string GetSavedScene()
+    {
+        if (!File.Exists(savePath)) return null;
+
+        string json = File.ReadAllText(savePath);
+        var data = JsonUtility.FromJson<SaveData>(json);
+        return data.currentScene;
+    }
+
+    // ---------------- CARREGAR ----------------
     public static void LoadGame(Player player)
     {
         if (!File.Exists(savePath))
@@ -46,18 +107,16 @@ public static class SaveSystem
 
         player.CurrentHealth = data.currentHealth;
 
-        AmmoManager.pistolBullets = data.pistolBullets;
-        AmmoManager.pistolMagazine = data.pistolMagazine;
-        AmmoManager.shotgunBullets = data.shotgunBullets;
+        AmmoManager.pistolBullets   = data.pistolBullets;
+        AmmoManager.pistolMagazine  = data.pistolMagazine;
+        
+
+        AmmoManager.shotgunBullets  = data.shotgunBullets;
         AmmoManager.shotgunMagazine = data.shotgunMagazine;
+        
 
-        Debug.Log("[SaveSystem] Jogo carregado com sucesso!");
-    }
-
-    public static string GetSavedScene()
-    {
-        if (!File.Exists(savePath)) return "";
-        var data = JsonUtility.FromJson<SaveData>(File.ReadAllText(savePath));
-        return data.currentScene;
+        var hud = Object.FindAnyObjectByType<HUDManager>();
+        if (hud != null)
+            hud.potionCount = data.potionCount;
     }
 }
