@@ -38,11 +38,12 @@ public class Player : MonoBehaviour
 
     [Header("Vida")]
     public int maxHealth = 3;
-    public int CurrentHealth { get; private set; }
+    public int CurrentHealth { get; set; }  
     public GameObject deathScreen;
 
     [Header("Cura")]
-    public int healAmount = 1; // 🔹 Ajustável no Inspector
+    public int healAmount = 1;
+    public int potionCount = 3; 
 
     private WeaponManager weaponManager;
     private Vector2 moveInput;
@@ -58,11 +59,11 @@ public class Player : MonoBehaviour
 
     void Awake()
     {
-        gameManager =  GameObject.Find("GameManager").GetComponent<GameManager>();
-        
+        gameManager = GameObject.Find("GameManager")?.GetComponent<GameManager>();
         mainCam = Camera.main;
-        CurrentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
+
+        CurrentHealth = maxHealth;
 
         weaponManager = GetComponent<WeaponManager>();
         if (weaponManager == null)
@@ -74,22 +75,19 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (gameManager.GetPaused()) return;
-        
-        if (!dead)
-        {
-            Movement();
-            
-            if (weaponManager == null || weaponManager.Current == WeaponType.Pistol)
-                ShootPistol();
-            else if (weaponManager.Current == WeaponType.Shotgun)
-                ShootShotgun();
+        if (gameManager != null && gameManager.GetPaused()) return;
+        if (dead) return;
 
-            Reload();
-            TryInteract();
-            DashInput();
-            Flashlight();
-        }
+        Movement();
+        DashInput();
+        Flashlight();
+        TryInteract();
+        Reload();
+
+        if (weaponManager == null || weaponManager.Current == WeaponType.Pistol)
+            ShootPistol();
+        else if (weaponManager.Current == WeaponType.Shotgun)
+            ShootShotgun();
     }
 
     void FixedUpdate()
@@ -107,10 +105,7 @@ public class Player : MonoBehaviour
 
     private void Movement()
     {
-        moveInput = new Vector2(
-            Input.GetAxisRaw("Horizontal"),
-            Input.GetAxisRaw("Vertical")
-        ).normalized;
+        moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
         mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
     }
 
@@ -120,13 +115,13 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && AmmoManager.pistolBullets > 0)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            Particles.PlayFireVFX();
+            Particles?.PlayFireVFX();
 
             if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
                 bulletRb.linearVelocity = firePoint.right * bulletSpeed;
 
             AmmoManager.pistolBullets--;
-            camShake.ShakeCamera(shakeIntensity, shakeTime);
+            camShake?.ShakeCamera(shakeIntensity, shakeTime);
             Destroy(bullet, 3f);
         }
     }
@@ -149,25 +144,23 @@ public class Player : MonoBehaviour
                 if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
                     bulletRb.linearVelocity = firePoint.right * bulletSpeed * UnityEngine.Random.Range(0.9f, 1.1f);
 
-                camShake.ShakeCamera(shakeIntensity, shakeTime);
+                camShake?.ShakeCamera(shakeIntensity, shakeTime);
                 Destroy(bullet, 2f);
             }
 
-            Particles.PlayFireVFX();
+            Particles?.PlayFireVFX();
         }
     }
 
     // -------------------- RELOAD --------------------
     void Reload()
     {
-        if (isReloading)
-            return;
+        if (isReloading) return;
 
         if (Input.GetKey(KeyCode.R))
         {
             switch (WeaponManager.Instance.Current)
             {
-                // ---------------- PISTOLA ----------------
                 case WeaponType.Pistol:
                     if (AmmoManager.pistolMagazine > 0 && AmmoManager.pistolBullets < AmmoManager.pistolBulletsMax)
                     {
@@ -179,7 +172,6 @@ public class Player : MonoBehaviour
                     }
                     break;
 
-                // ---------------- SHOTGUN ----------------
                 case WeaponType.Shotgun:
                     if (AmmoManager.shotgunMagazine > 0 && AmmoManager.shotgunBullets < AmmoManager.shotgunBulletsMax)
                     {
@@ -193,7 +185,6 @@ public class Player : MonoBehaviour
             }
         }
     }
-
 
     // -------------------- LANTERNA --------------------
     private void Flashlight()
@@ -210,10 +201,10 @@ public class Player : MonoBehaviour
     void TryInteract()
     {
         if (!Input.GetKeyDown(KeyCode.E)) return;
-        
+
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
         Vector2 forward = transform.right;
-        float coneAngle = 70f; 
+        float coneAngle = 70f;
 
         foreach (var hit in hits)
         {
@@ -221,7 +212,7 @@ public class Player : MonoBehaviour
 
             Vector2 dirToTarget = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
             float angle = Vector2.Angle(forward, dirToTarget);
-            
+
             if (angle <= coneAngle / 2f && hit.CompareTag("Interagir"))
             {
                 hit.SendMessage("OnInteracted", SendMessageOptions.DontRequireReceiver);
@@ -229,8 +220,6 @@ public class Player : MonoBehaviour
             }
         }
     }
-
-
 
     // -------------------- DASH --------------------
     private IEnumerator Dash()
@@ -274,8 +263,8 @@ public class Player : MonoBehaviour
         if (dead) return;
 
         CurrentHealth -= amount;
-        ParticlesDmg.PlayBloodVFX();
-        camShake.ShakeCamera(2f, 0.5f);
+        ParticlesDmg?.PlayBloodVFX();
+        camShake?.ShakeCamera(2f, 0.5f);
 
         if (CurrentHealth <= 0)
             Die();
@@ -288,16 +277,15 @@ public class Player : MonoBehaviour
         if (deathScreen != null)
             deathScreen.SetActive(true);
     }
-    
+
+    // -------------------- GIZMOS --------------------
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        
         Gizmos.DrawWireSphere(transform.position, interactRange);
-        
-        float coneAngle = 70f; 
-        int rayCount = 20;     
 
+        float coneAngle = 70f;
+        int rayCount = 20;
         Vector2 forward = transform.right;
         float halfAngle = coneAngle / 2f;
 
@@ -306,12 +294,7 @@ public class Player : MonoBehaviour
             float t = Mathf.Lerp(-halfAngle, halfAngle, (float)i / rayCount);
             Quaternion rot = Quaternion.Euler(0, 0, t);
             Vector2 dir = rot * forward;
-
             Gizmos.DrawLine(transform.position, (Vector2)transform.position + dir * interactRange);
         }
-        
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, (Vector2)transform.position + forward * interactRange);
     }
-
 }
