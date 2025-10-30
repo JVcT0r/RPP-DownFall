@@ -127,12 +127,15 @@ public class HUDManager : MonoBehaviour
     // ------------------- USAR POÇÃO -------------------
     public void UsePotion()
     {
+        var player = FindAnyObjectByType<Player>();
         if (potionCount <= 0) { Debug.Log("[HUD] Sem poções restantes!"); return; }
+
+        if (player.CurrentHealth >= player.maxHealth){Debug.Log("Vida já está completa"); return;}
 
         potionCount--;
         UpdatePotionUI();
 
-        var player = FindAnyObjectByType<Player>();
+        
         if (player != null) player.Heal();
 
         Debug.Log("[HUD] Poção usada! Cura aplicada.");

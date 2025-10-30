@@ -39,6 +39,7 @@ public class Player : MonoBehaviour
     [Header("Vida")]
     public int maxHealth = 3;
     public int CurrentHealth { get; set; }  
+    public FullScreenFXController fullScreenFX;
     public GameObject deathScreen;
 
     [Header("Cura")]
@@ -54,6 +55,8 @@ public class Player : MonoBehaviour
     private float dashTime;
     private float lastDashTime;
     public bool dead = false;
+
+    
 
     private Rigidbody2D rb;
     
@@ -85,6 +88,12 @@ public class Player : MonoBehaviour
     {
         if (gameManager != null && gameManager.GetPaused()) return;
         if (dead) return;
+
+        if (CurrentHealth <= 2)
+        {
+            fullScreenFX.Hurt();
+        }
+        else fullScreenFX.NotHurt();
 
         Movement();
         DashInput();
