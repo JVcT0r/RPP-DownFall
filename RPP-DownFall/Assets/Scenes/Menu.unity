@@ -382,7 +382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 116427385}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  normalColor: {r: 0, g: 0, b: 0, a: 1}
   highlightColor: {r: 1, g: 0.39061034, b: 0, a: 1}
 --- !u!1 &88982788
 GameObject:
@@ -817,7 +817,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 1077231884}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  normalColor: {r: 0, g: 0, b: 0, a: 1}
   highlightColor: {r: 1, g: 0.39061034, b: 0, a: 1}
 --- !u!1 &622505090
 GameObject:
@@ -1280,7 +1280,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 1188723768}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  normalColor: {r: 0, g: 0, b: 0, a: 1}
   highlightColor: {r: 1, g: 0.39061034, b: 0, a: 1}
 --- !u!1 &1186652018
 GameObject:
@@ -1994,7 +1994,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 1397935872}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  normalColor: {r: 0, g: 0, b: 0, a: 1}
   highlightColor: {r: 1, g: 0.39061034, b: 0, a: 1}
 --- !u!1 &2061492762
 GameObject:
