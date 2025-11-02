@@ -171,6 +171,15 @@ public class Player : MonoBehaviour
         }
     }
 
+    void SetIsReloadingToTrue()
+    {
+        isReloading = true;
+    }
+    void SetIsReloadingToFalse()
+    {
+        isReloading = false;
+    }
+
     // -------------------- RELOAD --------------------
     void Reload()
     {
