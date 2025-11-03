@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using Random = System.Random;
 
 public class Player : MonoBehaviour
 {
@@ -143,6 +144,7 @@ public class Player : MonoBehaviour
             
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
             Particles?.PlayFireVFX();
+            audioSource.pitch = UnityEngine.Random.Range(1f, 1.1f);
             audioSource.PlayOneShot(sfxTiro);
 
             if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
@@ -231,6 +233,7 @@ public class Player : MonoBehaviour
 
     void ReloadSFX()
     {
+        audioSource.pitch = UnityEngine.Random.Range(1f, 1.1f);
         audioSource.PlayOneShot(sfxReload, 0.3f);
     }
 
