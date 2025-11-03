@@ -106,6 +106,8 @@ public class Player : MonoBehaviour
         else fullScreenFX.NotHurt();
 
         Movement();
+        moveSpeed = isReloading ? 2.5f : 5f;
+        
         DashInput();
         Flashlight();
         TryInteract();
@@ -293,7 +295,10 @@ public class Player : MonoBehaviour
 
     private void DashInput()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift) && Time.time >= lastDashTime + dashCooldown && moveInput != Vector2.zero)
+        if (Input.GetKeyDown(KeyCode.LeftShift) 
+            && Time.time >= lastDashTime + dashCooldown 
+            && moveInput != Vector2.zero
+            && !isReloading)
             StartCoroutine(Dash());
     }
 
