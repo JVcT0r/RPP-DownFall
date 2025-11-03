@@ -45,6 +45,11 @@ public class Player : MonoBehaviour
     [Header("Cura")]
     public int healAmount = 1;
     public int potionCount = 3; 
+    
+    [Header("Audio")]
+    private AudioSource audioSource;
+    public AudioClip sfxTiro;
+    public AudioClip sfxReload;
 
     private WeaponManager weaponManager;
     private Vector2 moveInput;
@@ -55,6 +60,8 @@ public class Player : MonoBehaviour
     private float dashTime;
     private float lastDashTime;
     public bool dead = false;
+    
+    
 
     
 
@@ -67,6 +74,7 @@ public class Player : MonoBehaviour
         gameManager = GameObject.Find("GameManager")?.GetComponent<GameManager>();
         mainCam = Camera.main;
         rb = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
 
         CurrentHealth = maxHealth;
 
@@ -135,6 +143,7 @@ public class Player : MonoBehaviour
             
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
             Particles?.PlayFireVFX();
+            audioSource.PlayOneShot(sfxTiro);
 
             if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
                 bulletRb.linearVelocity = firePoint.right * bulletSpeed;
@@ -218,6 +227,11 @@ public class Player : MonoBehaviour
                     break;
             }
         }
+    }
+
+    void ReloadSFX()
+    {
+        audioSource.PlayOneShot(sfxReload);
     }
 
     // -------------------- LANTERNA --------------------
