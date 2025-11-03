@@ -3,6 +3,8 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
+    private static readonly int IsFollowing = Animator.StringToHash("IsFollowing");
+
     [Header("Referências")]
     [SerializeField] private Transform target; // Jogador
     private NavMeshAgent agent;
@@ -24,11 +26,14 @@ public class EnemyAI : MonoBehaviour
 
     // Direção “virtual” da frente
     private Vector2 facingDir = Vector2.right;
+    
+    private Animator _animator;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
 
         agent.updateRotation = false;
         agent.updateUpAxis = false;
@@ -65,9 +70,18 @@ public class EnemyAI : MonoBehaviour
         bool shouldChase = canSeePlayer || lastSeenTimer <= memorySeconds;
 
         if (shouldChase)
+        {
             agent.SetDestination(target.position);
+            _animator.SetBool(IsFollowing, true);
+        }
+
         else
+        {
             agent.ResetPath();
+            _animator.SetBool(IsFollowing, false);
+        }
+
+            
 
         // Flip visual
         if (spriteRenderer != null)

@@ -175,6 +175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   bulletPrefab: {fileID: 1489640080764844140, guid: 8a23ac776f3d9434fa7abb7f16363c3a, type: 3}
+  bulletShotgunPrefab: {fileID: 1489640080764844140, guid: 2a50cda2ea10f494bab91a9d6800eb14, type: 3}
   firePoint: {fileID: 7634583541783006331}
   bulletSpeed: 100
   Particles: {fileID: 3714491560530818072}
@@ -191,9 +192,12 @@ MonoBehaviour:
   shakeIntensity: 2
   shakeTime: 0.07
   maxHealth: 5
+  fullScreenFX: {fileID: 0}
   deathScreen: {fileID: 0}
   healAmount: 1
   potionCount: 3
+  sfxTiro: {fileID: 0}
+  sfxReload: {fileID: 0}
   dead: 0
 --- !u!114 &5210553240032714968
 MonoBehaviour:
