@@ -231,7 +231,7 @@ public class Player : MonoBehaviour
 
     void ReloadSFX()
     {
-        audioSource.PlayOneShot(sfxReload);
+        audioSource.PlayOneShot(sfxReload, 0.3f);
     }
 
     // -------------------- LANTERNA --------------------
