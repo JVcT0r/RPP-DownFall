@@ -9,8 +9,9 @@ public class EnemyAttack : MonoBehaviour
     void Start()
     {
         damageArea = GameObject.Find("DamageArea");
+        damageArea.SetActive(false);
         _collider2D = damageArea.GetComponent<PolygonCollider2D>();
-        _collider2D.enabled = false;
+        //_collider2D.enabled = false;
         
     }
 
@@ -24,14 +25,14 @@ public class EnemyAttack : MonoBehaviour
     void EnableDamageArea()
     {
         damageArea.SetActive(true);
-        _collider2D.enabled = true;
+        //_collider2D.enabled = true;
         
     }
 
     void DisableDamageArea()
     {
         damageArea.SetActive(false);
-        _collider2D.enabled = false;
+        //_collider2D.enabled = false;
     }
     
 }
