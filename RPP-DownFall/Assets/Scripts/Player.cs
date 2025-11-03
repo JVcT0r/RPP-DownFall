@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     [Header("Movimento e Combate")]
     public float moveSpeed = 5f;
     public GameObject bulletPrefab;
+    public GameObject bulletShotgunPrefab;
     public Transform firePoint;
     public float bulletSpeed = 500f;
     public SpawnDamageParticles Particles;
@@ -166,9 +167,9 @@ public class Player : MonoBehaviour
             for (int i = 0; i < 6; i++)
             {
                 GameObject bullet = Instantiate(
-                    bulletPrefab,
+                    bulletShotgunPrefab,
                     firePoint.position,
-                    firePoint.rotation * Quaternion.Euler(0, 0, UnityEngine.Random.Range(-12, 12))
+                    firePoint.rotation * Quaternion.Euler(0, 0, UnityEngine.Random.Range(-80, 80))
                 );
 
                 if (bullet.TryGetComponent<Rigidbody2D>(out var bulletRb))
