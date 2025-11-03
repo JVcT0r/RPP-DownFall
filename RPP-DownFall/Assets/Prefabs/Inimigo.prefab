@@ -47,6 +47,9 @@ GameObject:
   - component: {fileID: 220783860290728474}
   - component: {fileID: 2030187291056756077}
   - component: {fileID: 3632091940014468223}
+  - component: {fileID: 7383458286178578915}
+  - component: {fileID: 7218250468025944821}
+  - component: {fileID: 6508252126938157011}
   m_Layer: 0
   m_Name: Inimigo
   m_TagString: Inimigo
@@ -284,12 +287,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   viewDistance: 10
-  viewAngle: 100
+  viewAngle: 120
   obstacleMask:
     serializedVersion: 2
     m_Bits: 128
   checkInterval: 0.1
-  memorySeconds: 1
+  memorySeconds: 0.5
   canSeePlayer: 0
 --- !u!195 &3632091940014468223
 NavMeshAgent:
@@ -301,7 +304,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1
-  m_Speed: 2
+  m_Speed: 4
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -313,6 +316,43 @@ NavMeshAgent:
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &7383458286178578915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6333794214620058320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2684440193f5cf24a990976238a9085c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7218250468025944821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6333794214620058320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd88cd417d857a948922dcaccb45b610, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6508252126938157011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6333794214620058320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6953e02dfaa5d0d4fa56b8237b13bbfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  angularSpeed: 120
 --- !u!1001 &905550735848017648
 PrefabInstance:
   m_ObjectHideFlags: 0
