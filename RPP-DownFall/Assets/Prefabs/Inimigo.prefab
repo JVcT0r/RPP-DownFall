@@ -360,7 +360,7 @@ MonoBehaviour:
       m_Center: {x: -0.16527557, y: 1.1921997, z: 0}
       m_Extent: {x: 3.3399887, y: 2.0549927, z: 0}
     m_EdgeProcessing: 1
-    m_TrimEdge: 0.08
+    m_TrimEdge: 0.3
     m_FlipX: 0
     m_FlipY: 0
     m_InitialTrim: 0
