@@ -11,9 +11,14 @@ public class AutoDoorMoverNavmesh : MonoBehaviour
     private Vector3 closedPos;
     private bool isOpen = false;
 
+    private AudioSource audioSource;
+    public AudioClip portaAbrindoSFX;
+    public AudioClip portaFechandoSFX;
+
     void Start()
     {
         closedPos = door.localPosition;
+        audioSource = GetComponent<AudioSource>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -45,6 +50,7 @@ public class AutoDoorMoverNavmesh : MonoBehaviour
     private System.Collections.IEnumerator OpenDoor()
     {
         if (isOpen) yield break;
+        audioSource.PlayOneShot(portaAbrindoSFX);
         isOpen = true;
 
         Vector3 target = closedPos + openOffset;
@@ -71,6 +77,7 @@ public class AutoDoorMoverNavmesh : MonoBehaviour
             yield return null;
         }
         door.localPosition = target;
+        audioSource.PlayOneShot(portaFechandoSFX);
         isOpen = false;
     }
 }
