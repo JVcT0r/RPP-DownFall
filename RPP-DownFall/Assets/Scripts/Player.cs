@@ -49,9 +49,10 @@ public class Player : MonoBehaviour
     public int potionCount = 3; 
     
     [Header("Audio")]
-    private AudioSource audioSource;
     public AudioClip sfxTiro;
     public AudioClip sfxReload;
+    private AudioSource audioSource;
+    
 
     private WeaponManager weaponManager;
     private Vector2 moveInput;
