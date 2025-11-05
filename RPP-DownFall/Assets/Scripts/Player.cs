@@ -29,6 +29,10 @@ public class Player : MonoBehaviour
     public float dashSpeed = 15f;
     public float dashDuration = 0.2f;
     public float dashCooldown = 1f;
+    [Tooltip("Layers consideradas como obstáculos")]
+    public LayerMask dashObstacleMask;
+    [Tooltip("Distância mínima da parede ao terminar o dash")]
+    public float dashSkin = 0.08f;
 
     [Header("Tremor da Câmera")] 
     [SerializeField]
@@ -52,24 +56,20 @@ public class Player : MonoBehaviour
     public AudioClip sfxTiro;
     public AudioClip sfxReload;
     private AudioSource audioSource;
-    
 
     private WeaponManager weaponManager;
     private Vector2 moveInput;
     private Vector2 mousePos;
     private Camera mainCam;
+
     private bool isDashing = false;
     private bool isReloading = false;
     private float dashTime;
     private float lastDashTime;
     public bool dead = false;
-    
-    
-
-    
 
     private Rigidbody2D rb;
-    
+    private CapsuleCollider2D capsule;
     private Animator anim;
 
     void Awake()
@@ -77,6 +77,7 @@ public class Player : MonoBehaviour
         gameManager = GameObject.Find("GameManager")?.GetComponent<GameManager>();
         mainCam = Camera.main;
         rb = GetComponent<Rigidbody2D>();
+        capsule = GetComponent<CapsuleCollider2D>();
         audioSource = GetComponent<AudioSource>();
 
         CurrentHealth = maxHealth;
@@ -92,7 +93,6 @@ public class Player : MonoBehaviour
     private void Start()
     {
         anim = GetComponent<Animator>();
-        
     }
 
     void Update()
@@ -100,15 +100,12 @@ public class Player : MonoBehaviour
         if (gameManager != null && gameManager.GetPaused()) return;
         if (dead) return;
 
-        if (CurrentHealth <= 2)
-        {
-            fullScreenFX.Hurt();
-        }
+        if (CurrentHealth <= 2) fullScreenFX.Hurt();
         else fullScreenFX.NotHurt();
 
         Movement();
         moveSpeed = isReloading ? 2.5f : 5f;
-        
+
         DashInput();
         Flashlight();
         TryInteract();
@@ -142,10 +139,9 @@ public class Player : MonoBehaviour
     // -------------------- TIRO PISTOLA --------------------
     void ShootPistol()
     {
-        if(isReloading) return;
+        if (isReloading) return;
         if (Input.GetMouseButtonDown(0) && AmmoManager.pistolBullets > 0)
         {
-            
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
             Particles?.PlayFireVFX();
             audioSource.pitch = UnityEngine.Random.Range(1f, 1.1f);
@@ -186,20 +182,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    void SetIsReloadingToTrue()
-    {
-        isReloading = true;
-    }
-    void SetIsReloadingToFalse()
-    {
-        isReloading = false;
-    }
+    void SetIsReloadingToTrue() => isReloading = true;
+    void SetIsReloadingToFalse() => isReloading = false;
 
     // -------------------- RELOAD --------------------
     void Reload()
     {
-        //if (isReloading) return;
-
         if (Input.GetKey(KeyCode.R) && !isReloading)
         {
             switch (WeaponManager.Instance.Current)
@@ -208,14 +196,12 @@ public class Player : MonoBehaviour
                     if (AmmoManager.pistolMagazine > 0 && AmmoManager.pistolBullets < AmmoManager.pistolBulletsMax)
                     {
                         isReloading = true;
-                        
                         int bulletsNeeded = AmmoManager.pistolBulletsMax - AmmoManager.pistolBullets;
                         int bFromMagazine = Mathf.Min(bulletsNeeded, AmmoManager.pistolMagazine);
                         anim.Play("HandgunReload");
                         AmmoManager.pistolBullets += bFromMagazine;
                         AmmoManager.pistolMagazine -= bFromMagazine;
                         isReloading = false;
-                       
                     }
                     break;
 
@@ -279,28 +265,61 @@ public class Player : MonoBehaviour
     // -------------------- DASH --------------------
     private IEnumerator Dash()
     {
+        if (isDashing) yield break;
+
         isDashing = true;
         dashTime = 0f;
         lastDashTime = Time.time;
-        Vector2 dashDirection = moveInput;
 
-        while (dashTime < dashDuration)
+        Vector2 dashDir = moveInput.sqrMagnitude > 0.01f
+            ? moveInput
+            : (mousePos - (Vector2)transform.position).normalized;
+
+        float desiredDistance = dashSpeed * dashDuration;
+        float allowedDistance = desiredDistance;
+
+        // checa colisão
+        if (capsule != null)
         {
-            transform.position += (Vector3)(dashDirection * dashSpeed * Time.deltaTime);
-            dashTime += Time.deltaTime;
-            yield return null;
+            RaycastHit2D hit = Physics2D.CapsuleCast(
+                rb.position,
+                capsule.size,
+                CapsuleDirection2D.Vertical,
+                0f,
+                dashDir,
+                desiredDistance,
+                dashObstacleMask
+            );
+            if (hit.collider != null)
+                allowedDistance = Mathf.Max(0f, hit.distance - dashSkin);
         }
 
+        Vector2 startPos = rb.position;
+        Vector2 endPos = startPos + dashDir * allowedDistance;
+
+        float elapsed = 0f;
+        float speed = allowedDistance / dashDuration;
+
+        // movimento constante
+        while (elapsed < dashDuration)
+        {
+            rb.MovePosition(rb.position + dashDir * speed * Time.fixedDeltaTime);
+            elapsed += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+
+        rb.MovePosition(endPos);
         isDashing = false;
     }
 
     private void DashInput()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift) 
-            && Time.time >= lastDashTime + dashCooldown 
-            && moveInput != Vector2.zero
+        if (Input.GetKeyDown(KeyCode.LeftShift)
+            && Time.time >= lastDashTime + dashCooldown
             && !isReloading)
+        {
             StartCoroutine(Dash());
+        }
     }
 
     // -------------------- CURA --------------------
@@ -334,7 +353,7 @@ public class Player : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         if (deathScreen != null)
             deathScreen.SetActive(true);
-            Time.timeScale = 0;
+        Time.timeScale = 0;
     }
 
     // -------------------- GIZMOS --------------------
