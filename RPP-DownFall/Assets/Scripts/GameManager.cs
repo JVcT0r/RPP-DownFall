@@ -5,7 +5,13 @@ public class GameManager : MonoBehaviour
 {
     public bool paused;
     public GameObject pauseScreen;
+
+    // 🟢 Novos painéis
+    public GameObject pausePanel;
+    public GameObject optionsPanel;
+
     public static GameManager Instance { get; private set; }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -20,7 +26,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // 🔹 Garante que a UI (HUD + AmmoManager) seja carregada antes do jogo começar
         if (!SceneManager.GetSceneByName("UI").isLoaded)
             SceneManager.LoadScene("UI", LoadSceneMode.Additive);
     }
@@ -39,29 +44,48 @@ public class GameManager : MonoBehaviour
 
     public void QuitGame()
     {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-        Application.Quit();
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Menu");
     }
 
     public void Pause()
     {
-       
         paused = !paused;
         Time.timeScale = paused ? 0 : 1;
         pauseScreen.SetActive(paused);
+
+        // Se estiver pausado, garante que o painel de pausa aparece
+        if (paused && pausePanel != null)
+        {
+            pausePanel.SetActive(true);
+        }
+
+        
+        if (optionsPanel != null)
+        {
+            optionsPanel.SetActive(false);
+        }
     }
-    
+
     public bool GetPaused()
     {
         return paused;
     }
-    
-    // public void UnPause()
-    // {
-    //     Time.timeScale = 1f;
-    //     pauseScreen.SetActive(false);
-    //     paused = false;
-    // }
+
+   
+    public void ToggleOptions(bool open)
+    {
+        if (optionsPanel == null || pausePanel == null) return;
+
+        if (open)
+        {
+            optionsPanel.SetActive(true);
+            pausePanel.SetActive(false);
+        }
+        else
+        {
+            optionsPanel.SetActive(false);
+            pausePanel.SetActive(true);
+        }
+    }
 }
