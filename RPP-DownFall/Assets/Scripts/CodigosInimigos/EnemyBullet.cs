@@ -24,7 +24,6 @@ public class EnemyBullet : MonoBehaviour
         {
             rb.isKinematic = false;
             rb.gravityScale = 0;
-            rb.linearVelocity = transform.right * 10f; 
         }
 
         Destroy(gameObject, 3f); 
@@ -42,7 +41,7 @@ public class EnemyBullet : MonoBehaviour
         }
 
         
-        if (collision.CompareTag("Enemy"))
+        if (collision.CompareTag("Inimigo"))
             return;
 
         

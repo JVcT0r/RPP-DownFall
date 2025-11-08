@@ -50,6 +50,7 @@ GameObject:
   - component: {fileID: 7218250468025944821}
   - component: {fileID: 6508252126938157011}
   - component: {fileID: 8967528074536065693}
+  - component: {fileID: 8446297134665483011}
   m_Layer: 0
   m_Name: InimigoAtirador
   m_TagString: Inimigo
@@ -353,11 +354,34 @@ MonoBehaviour:
   fireRate: 1.2
   bulletSpeed: 10
   memorySeconds: 2
+  checkInterval: 0.1
   viewDistance: 13
   viewAngle: 130
   obstacleMask:
     serializedVersion: 2
     m_Bits: 128
+--- !u!95 &8446297134665483011
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6333794214620058320}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 17f18cba2ba4e43419a86953130c4ebe, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7771080292290017850
 GameObject:
   m_ObjectHideFlags: 0

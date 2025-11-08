@@ -3,12 +3,20 @@ using UnityEngine.AI;
 
 public class EnemyShooter : MonoBehaviour
 {
+    private static readonly int IsShooting = Animator.StringToHash("IsShooting");
+
     [Header("Referências")]
     [SerializeField] private Transform firePoint;        // ponto de onde as balas saem
     [SerializeField] private GameObject bulletPrefab;    // prefab da bala
     [SerializeField] private Transform viewPivot;        // define a direção do cone (opcional)
     private Transform target;
     private NavMeshAgent agent;
+    
+    private SpriteRenderer spriteRenderer;
+    
+    private Vector2 facingDir = Vector2.right;
+    private Animator _animator;
+
 
     [Header("Comportamento")]
     public float moveSpeed = 3.5f;
@@ -16,6 +24,10 @@ public class EnemyShooter : MonoBehaviour
     public float fireRate = 1.2f;
     public float bulletSpeed = 10f;
     public float memorySeconds = 2f;
+    public float checkInterval = 0.1f;
+
+    private float checkTimer;
+
 
     [Header("Visão (Cone)")]
     public float viewDistance = 10f;
@@ -28,6 +40,8 @@ public class EnemyShooter : MonoBehaviour
 
     private void Awake()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
@@ -43,97 +57,85 @@ public class EnemyShooter : MonoBehaviour
             Debug.LogWarning($"[EnemyShooter] FirePoint não atribuído em {gameObject.name}");
     }
 
+    
     private void Update()
     {
         if (target == null) return;
 
-        canSeePlayer = CheckPlayerInVision();
+        // Atualiza a frente com base na movimentação e no player
+        UpdateFacingDirection();
 
-        if (canSeePlayer)
+        // Faz checagem de visão
+        checkTimer += Time.deltaTime;
+        if (checkTimer >= checkInterval)
         {
-            lastSeenTimer = 0f;
-            float distance = Vector2.Distance(transform.position, target.position);
-
-            if (distance > attackRange)
-            {
-                agent.SetDestination(target.position);
-            }
-            else
-            {
-                agent.ResetPath();
-                agent.velocity = Vector3.zero;
-                TryShoot();
-            }
+            checkTimer = 0f;
+            canSeePlayer = CheckPlayerInVision();
+            if (canSeePlayer) lastSeenTimer = 0f;
         }
+
+        if (!canSeePlayer) lastSeenTimer += Time.deltaTime;
+
+        bool shouldChase = canSeePlayer || lastSeenTimer <= memorySeconds;
+
+        if (shouldChase)
+        {
+            agent.SetDestination(target.position);
+            _animator.SetBool("IsShooting", true);
+            TryShoot();
+        }
+
         else
         {
-            lastSeenTimer += Time.deltaTime;
-
-            if (lastSeenTimer <= memorySeconds)
-            {
-                agent.SetDestination(target.position);
-            }
-            else
-            {
-                agent.ResetPath();
-                agent.velocity = Vector3.zero;
-            }
+            agent.ResetPath();
+            _animator.SetBool("IsShooting", false);
         }
 
-        // Mantém o inimigo no plano 2D
-        Vector3 pos = transform.position;
-        pos.z = 0f;
-        transform.position = pos;
+            
 
-        // --- Rotação suave do corpo na direção do movimento ---
-        Vector3 velocity = agent.velocity;
-
-        if (velocity.sqrMagnitude > 0.01f)
+        // Flip visual
+        if (spriteRenderer != null)
         {
-            float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Lerp(
-                transform.rotation,
-                Quaternion.Euler(0, 0, angle),
-                Time.deltaTime * 10f
-            );
-        }
-        else if (canSeePlayer && target != null)
-        {
-            // se parado, gira o corpo pra mirar no player
-            Vector2 dir = (target.position - transform.position).normalized;
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Lerp(
-                transform.rotation,
-                Quaternion.Euler(0, 0, angle),
-                Time.deltaTime * 10f
-            );
+            if (facingDir.x > 0.05f) spriteRenderer.flipX = false;
+            else if (facingDir.x < -0.05f) spriteRenderer.flipX = true;
         }
     }
 
-    // -------------------- VISÃO EM CONE --------------------
+    private void UpdateFacingDirection()
+    {
+        Vector2 dirToPlayer = ((Vector2)target.position - (Vector2)transform.position).normalized;
+
+        // Se o player estiver visível, olhe diretamente para ele
+        if (canSeePlayer)
+        {
+            facingDir = Vector2.Lerp(facingDir, dirToPlayer, Time.deltaTime * 10f);
+        }
+        else if (agent.desiredVelocity.sqrMagnitude > 0.001f)
+        {
+            // Caso contrário, siga a direção do movimento do NavMesh
+            facingDir = Vector2.Lerp(facingDir, agent.desiredVelocity.normalized, Time.deltaTime * 5f);
+        }
+    }
+
     private bool CheckPlayerInVision()
     {
-        if (target == null) return false;
-
         Vector2 origin = transform.position;
         Vector2 toPlayer = ((Vector2)target.position - origin);
         float dist = toPlayer.magnitude;
+
         if (dist > viewDistance) return false;
 
-        Vector2 dirToPlayer = toPlayer.normalized;
-        Vector2 forward = viewPivot ? (Vector2)viewPivot.right : (Vector2)transform.right;
+        Vector2 dirToPlayer = toPlayer / (dist > 0.001f ? dist : 1f);
+        float angle = Vector2.Angle(facingDir, dirToPlayer);
+        if (angle > viewAngle * 0.5f) return false;
 
-        float angle = Vector2.Angle(forward, dirToPlayer);
-        if (angle > viewAngle / 2f)
-            return false;
-
+        // Bloqueio de obstáculos
         if (Physics2D.Raycast(origin, dirToPlayer, dist, obstacleMask))
             return false;
 
         return true;
     }
-
-    // -------------------- TIRO --------------------
+    
     private void TryShoot()
     {
         if (Time.time < nextFireTime) return;
@@ -147,34 +149,32 @@ public class EnemyShooter : MonoBehaviour
         {
             rb.isKinematic = false;
             rb.gravityScale = 0;
-            rb.linearVelocity = firePoint.right * bulletSpeed;
+            rb.linearVelocity = firePoint.transform.up * bulletSpeed;
         }
 
         Destroy(bullet, 3f);
     }
 
-    // -------------------- GIZMOS --------------------
+
     private void OnDrawGizmos()
     {
-        Vector3 origin = transform.position;
+        // Mostra alcance
         Gizmos.color = canSeePlayer ? Color.red : Color.yellow;
-        Gizmos.DrawWireSphere(origin, viewDistance);
+        Gizmos.DrawWireSphere(transform.position, viewDistance);
 
-        Vector3 baseForward = viewPivot ? viewPivot.right : transform.right;
-        Vector3 rightBoundary = Quaternion.Euler(0, 0, viewAngle / 2f) * baseForward;
-        Vector3 leftBoundary = Quaternion.Euler(0, 0, -viewAngle / 2f) * baseForward;
+        // Direção atual do inimigo
+        Vector2 dir = facingDir.sqrMagnitude < 0.001f ? Vector2.right : facingDir.normalized;
 
-        Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
-        Gizmos.DrawLine(origin, origin + rightBoundary * viewDistance);
-        Gizmos.DrawLine(origin, origin + leftBoundary * viewDistance);
+        // Desenha cone
+        Vector3 origin = transform.position;
+        Quaternion qRight = Quaternion.Euler(0, 0, viewAngle * 0.5f);
+        Quaternion qLeft = Quaternion.Euler(0, 0, -viewAngle * 0.5f);
 
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(origin, attackRange);
+        Vector3 rightBound = qRight * (Vector3)dir;
+        Vector3 leftBound = qLeft * (Vector3)dir;
 
-        if (viewPivot)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawLine(origin, origin + viewPivot.right * viewDistance * 0.8f);
-        }
+        Gizmos.color = new Color(1f, 0.5f, 0f, 0.4f);
+        Gizmos.DrawLine(origin, origin + rightBound * viewDistance);
+        Gizmos.DrawLine(origin, origin + leftBound * viewDistance);
     }
 }
