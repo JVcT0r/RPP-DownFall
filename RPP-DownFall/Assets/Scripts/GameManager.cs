@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
     public bool paused;
     public GameObject pauseScreen;
 
-    // 🟢 Novos painéis
+   
     public GameObject pausePanel;
     public GameObject optionsPanel;
 
@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = paused ? 0 : 1;
         pauseScreen.SetActive(paused);
 
-        // Se estiver pausado, garante que o painel de pausa aparece
+        
         if (paused && pausePanel != null)
         {
             pausePanel.SetActive(true);
