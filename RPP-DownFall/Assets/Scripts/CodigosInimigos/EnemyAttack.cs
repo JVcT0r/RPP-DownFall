@@ -8,7 +8,7 @@ public class EnemyAttack : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        damageArea = GameObject.Find("DamageArea");
+        damageArea = transform.Find("DamageArea").gameObject;
         damageArea.SetActive(false);
         _collider2D = damageArea.GetComponent<PolygonCollider2D>();
         //_collider2D.enabled = false;
