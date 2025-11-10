@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -37,6 +38,14 @@ public class PauseOptionsMenu : MonoBehaviour
         UpdateVolumeLabel(savedVolume);
 
         initialized = true;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            optionsPanel.SetActive(false);
+        }
     }
 
     private void OnSliderValueChanged(float value)
