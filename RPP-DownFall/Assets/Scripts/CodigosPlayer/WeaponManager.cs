@@ -7,7 +7,7 @@ public class WeaponManager : MonoBehaviour
 {
     public static WeaponManager Instance { get; private set; }
     public static event Action<WeaponType> OnWeaponChanged;
-    public Animator animator;
+    private Animator animator;
 
     public WeaponType Current { get; private set; } = WeaponType.Pistol;
 
