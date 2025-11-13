@@ -28,13 +28,11 @@ public static class SaveSystem
 
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        
         if (!HasSave()) return;
 
         string json = File.ReadAllText(savePath);
         var data = JsonUtility.FromJson<SaveData>(json);
 
-        
         if (data.currentScene == scene.name)
         {
             var player = Object.FindAnyObjectByType<Player>();
@@ -51,27 +49,29 @@ public static class SaveSystem
     {
         var data = new SaveData();
 
+        // posição
         var p = player.transform.position;
         data.playerPosition[0] = p.x;
         data.playerPosition[1] = p.y;
         data.playerPosition[2] = p.z;
 
+        // vida
         data.currentHealth = player.CurrentHealth;
 
-        data.pistolBullets   = AmmoManager.pistolBullets;
-        data.pistolMagazine  = AmmoManager.pistolMagazine;
-        
+        // munição
+        data.pistolBullets  = AmmoManager.pistolBullets;
+        data.pistolMagazine = AmmoManager.pistolMagazine;
 
         data.shotgunBullets  = AmmoManager.shotgunBullets;
         data.shotgunMagazine = AmmoManager.shotgunMagazine;
-        
 
-        var hud = Object.FindAnyObjectByType<HUDManager>();
-        if (hud != null)
-            data.potionCount = hud.potionCount;
+        // poções — AGORA SALVA DO HEALTHMANAGER
+        data.potionCount = HealthManager.potionCount;
 
+        // cena
         data.currentScene = SceneManager.GetActiveScene().name;
 
+        // salvar arquivo
         File.WriteAllText(savePath, JsonUtility.ToJson(data, true));
         Debug.Log("[SaveSystem] Jogo salvo em: " + savePath);
     }
@@ -99,24 +99,29 @@ public static class SaveSystem
 
         var data = JsonUtility.FromJson<SaveData>(File.ReadAllText(savePath));
 
+        // posição
         player.transform.position = new Vector3(
             data.playerPosition[0],
             data.playerPosition[1],
             data.playerPosition[2]
         );
 
+        // vida
         player.CurrentHealth = data.currentHealth;
 
-        AmmoManager.pistolBullets   = data.pistolBullets;
-        AmmoManager.pistolMagazine  = data.pistolMagazine;
-        
+        // munição
+        AmmoManager.pistolBullets  = data.pistolBullets;
+        AmmoManager.pistolMagazine = data.pistolMagazine;
 
         AmmoManager.shotgunBullets  = data.shotgunBullets;
         AmmoManager.shotgunMagazine = data.shotgunMagazine;
-        
 
+        
+        HealthManager.potionCount = data.potionCount;
+
+        
         var hud = Object.FindAnyObjectByType<HUDManager>();
         if (hud != null)
-            hud.potionCount = data.potionCount;
+            hud.SendMessage("UpdatePotionUI", SendMessageOptions.DontRequireReceiver);
     }
 }

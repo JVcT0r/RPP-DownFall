@@ -7,54 +7,43 @@ public class HUDManager : MonoBehaviour
     [Header("Ammo UI (Círculo)")]
     public Image ammoCircle;
     public TMP_Text ammoText;
-
-    [Header("Weapon Slot (Círculo Claro)")]
-    public Image weaponSlotRing;
-    public Image weaponSelectionGlow;
-    [Range(0f, 1f)] public float selectionPulseSpeed = 6f;
+    
 
     [Header("Ícone de Arma")]
     public Image weaponIcon;
     public Sprite pistolSprite;
     public Sprite shotgunSprite;
-    public Sprite slot3Sprite;
-    public Sprite slot4Sprite;
+    //public Sprite slot3Sprite;
+    //public Sprite slot4Sprite;
 
     [Header("Poção / Cura")]
     public Image potionIcon;
     public TMP_Text potionCountText;
-    public int potionCount = 3;
 
-    private float pulseT;
-    private bool doPulse;
+    void OnEnable()
+    {
+        WeaponManager.OnWeaponChanged += HandleWeaponChanged;
+    }
 
-    void OnEnable()  { WeaponManager.OnWeaponChanged += HandleWeaponChanged; }
-    void OnDisable() { WeaponManager.OnWeaponChanged -= HandleWeaponChanged; }
+    void OnDisable()
+    {
+        WeaponManager.OnWeaponChanged -= HandleWeaponChanged;
+    }
 
     void Start()
     {
         UpdateAmmoUI();
         HandleWeaponChanged(WeaponType.Pistol);
         UpdatePotionUI();
-        if (weaponSelectionGlow != null) weaponSelectionGlow.enabled = false;
     }
 
     void Update()
     {
         UpdateAmmoUI();
 
-        // tecla H cura
-        if (Input.GetKeyDown(KeyCode.H)) UsePotion();
-
-        // pulso do anel de seleção
-        if (doPulse && weaponSelectionGlow != null)
-        {
-            pulseT += Time.unscaledDeltaTime * Mathf.Lerp(2f, 8f, selectionPulseSpeed);
-            var c = weaponSelectionGlow.color;
-            c.a = Mathf.Abs(Mathf.Sin(pulseT)) * 0.6f + 0.2f;
-            weaponSelectionGlow.color = c;
-            if (pulseT > Mathf.PI) { doPulse = false; weaponSelectionGlow.enabled = false; }
-        }
+        
+        if (Input.GetKeyDown(KeyCode.H))
+            UsePotion();
     }
 
     // -------------------- ATUALIZAÇÃO DE MUNIÇÃO --------------------
@@ -72,6 +61,7 @@ public class HUDManager : MonoBehaviour
                         : 0f;
                     ammoCircle.fillAmount = Mathf.Clamp01(fill);
                 }
+
                 if (ammoText != null)
                     ammoText.text = $"{AmmoManager.pistolBullets}/{AmmoManager.pistolMagazine}";
                 break;
@@ -84,13 +74,10 @@ public class HUDManager : MonoBehaviour
                         : 0f;
                     ammoCircle.fillAmount = Mathf.Clamp01(fill);
                 }
+
                 if (ammoText != null)
                     ammoText.text = $"{AmmoManager.shotgunBullets}/{AmmoManager.shotgunMagazine}";
                 break;
-
-            // se adicionar outras armas depois, acrescente aqui
-            // case WeaponType.Slot3: ...
-            // case WeaponType.Slot4: ...
         }
     }
 
@@ -98,46 +85,57 @@ public class HUDManager : MonoBehaviour
     void UpdatePotionUI()
     {
         if (potionCountText != null)
-            potionCountText.text = potionCount.ToString();
-    }
-
-    // ------------------- TROCA DE ARMA (para HUD) -------------------
-    void HandleWeaponChanged(WeaponType wt)
-    {
-        if (weaponIcon != null)
-        {
-            switch (wt)
-            {
-                case WeaponType.Pistol:  weaponIcon.sprite = pistolSprite;  break;
-                case WeaponType.Shotgun: weaponIcon.sprite = shotgunSprite; break;
-                // case WeaponType.Slot3:   weaponIcon.sprite = slot3Sprite;   break;
-                // case WeaponType.Slot4:   weaponIcon.sprite = slot4Sprite;   break;
-            }
-            weaponIcon.enabled = weaponIcon.sprite != null;
-        }
-
-        if (weaponSelectionGlow != null)
-        {
-            weaponSelectionGlow.enabled = true;
-            pulseT = 0f;
-            doPulse = true;
-        }
+            potionCountText.text = HealthManager.potionCount.ToString();
     }
 
     // ------------------- USAR POÇÃO -------------------
     public void UsePotion()
     {
         var player = FindAnyObjectByType<Player>();
-        if (potionCount <= 0) { Debug.Log("[HUD] Sem poções restantes!"); return; }
 
-        if (player.CurrentHealth >= player.maxHealth){Debug.Log("Vida já está completa"); return;}
+        
+        if (HealthManager.potionCount <= 0)
+        {
+            Debug.Log("[HUD] Sem poções restantes!");
+            return;
+        }
 
-        potionCount--;
+       
+        if (player.CurrentHealth >= player.maxHealth)
+        {
+            Debug.Log("[HUD] Vida já está cheia!");
+            return;
+        }
+
+        
+        HealthManager.potionCount--;
         UpdatePotionUI();
 
         
-        if (player != null) player.Heal();
+        if (player != null)
+            player.Heal();
 
-        Debug.Log("[HUD] Poção usada! Cura aplicada.");
+        Debug.Log("[HUD] Poção usada!");
+    }
+
+    // ------------------- TROCA DE ARMA (HUD) -------------------
+    void HandleWeaponChanged(WeaponType wt)
+    {
+        if (weaponIcon != null)
+        {
+            switch (wt)
+            {
+                case WeaponType.Pistol:
+                    weaponIcon.sprite = pistolSprite;
+                    break;
+
+                case WeaponType.Shotgun:
+                    weaponIcon.sprite = shotgunSprite;
+                    break;
+            }
+
+            weaponIcon.enabled = weaponIcon.sprite != null;
+        }
+        
     }
 }
