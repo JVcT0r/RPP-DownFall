@@ -249,6 +249,7 @@ MonoBehaviour:
   firstGameplayScene: Testes
   mainMenuPanel: {fileID: 39135677}
   optionsPanel: {fileID: 1190026270}
+  gameSettings: {fileID: 11400000, guid: 25cce87754793b348b78d82af50cb9e7, type: 2}
 --- !u!1 &62551937
 GameObject:
   m_ObjectHideFlags: 0

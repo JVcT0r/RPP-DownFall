@@ -49,31 +49,35 @@ public static class SaveSystem
     {
         var data = new SaveData();
 
-        // posição
         var p = player.transform.position;
         data.playerPosition[0] = p.x;
         data.playerPosition[1] = p.y;
         data.playerPosition[2] = p.z;
 
-        // vida
         data.currentHealth = player.CurrentHealth;
 
-        // munição
         data.pistolBullets  = AmmoManager.pistolBullets;
         data.pistolMagazine = AmmoManager.pistolMagazine;
 
         data.shotgunBullets  = AmmoManager.shotgunBullets;
         data.shotgunMagazine = AmmoManager.shotgunMagazine;
 
-        // poções — AGORA SALVA DO HEALTHMANAGER
         data.potionCount = HealthManager.potionCount;
 
-        // cena
         data.currentScene = SceneManager.GetActiveScene().name;
 
-        // salvar arquivo
         File.WriteAllText(savePath, JsonUtility.ToJson(data, true));
         Debug.Log("[SaveSystem] Jogo salvo em: " + savePath);
+    }
+
+    // ---------------- APAGAR SAVE ----------------
+    public static void DeleteSave()
+    {
+        if (File.Exists(savePath))
+        {
+            File.Delete(savePath);
+            Debug.Log("[SaveSystem] Save deletado!");
+        }
     }
 
     // ---------------- VERIFICAR SAVE ----------------
@@ -99,27 +103,22 @@ public static class SaveSystem
 
         var data = JsonUtility.FromJson<SaveData>(File.ReadAllText(savePath));
 
-        // posição
         player.transform.position = new Vector3(
             data.playerPosition[0],
             data.playerPosition[1],
             data.playerPosition[2]
         );
 
-        // vida
         player.CurrentHealth = data.currentHealth;
 
-        // munição
         AmmoManager.pistolBullets  = data.pistolBullets;
         AmmoManager.pistolMagazine = data.pistolMagazine;
 
         AmmoManager.shotgunBullets  = data.shotgunBullets;
         AmmoManager.shotgunMagazine = data.shotgunMagazine;
 
-        
         HealthManager.potionCount = data.potionCount;
 
-        
         var hud = Object.FindAnyObjectByType<HUDManager>();
         if (hud != null)
             hud.SendMessage("UpdatePotionUI", SendMessageOptions.DontRequireReceiver);

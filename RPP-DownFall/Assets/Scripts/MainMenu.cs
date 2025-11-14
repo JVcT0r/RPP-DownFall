@@ -10,9 +10,32 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject optionsPanel;
 
+    [Header("Configurações do Jogo")]
+    [SerializeField] private GameSettings gameSettings;
+
     public void NovoJogo()
     {
+        SaveSystem.DeleteSave();
+        ApplyInitialSettings();
         SceneManager.LoadScene(firstGameplayScene);
+    }
+
+    private void ApplyInitialSettings()
+    {
+        HealthManager.potionCount = gameSettings.startPotions;
+        HealthManager.maxPotions = gameSettings.maxPotions;
+
+        
+        AmmoManager.pistolBullets = gameSettings.pistolStartBullets;
+        AmmoManager.pistolMagazine = gameSettings.pistolStartMagazine;
+
+        
+        AmmoManager.shotgunBullets = gameSettings.shotgunStartBullets;
+        AmmoManager.shotgunMagazine = gameSettings.shotgunStartMagazine;
+
+        // Futuro: desbloquear armas
+        // WeaponManager.pistolUnlocked   = gameSettings.pistolUnlocked;
+        // WeaponManager.shotgunUnlocked  = gameSettings.shotgunUnlocked;
     }
 
     public void CarregarJogo()
