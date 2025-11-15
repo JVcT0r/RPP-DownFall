@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5241336801866448591
+--- !u!1 &5807621714714558749
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,10 +8,43 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4308800503376840113}
-  - component: {fileID: 4368205034850775567}
-  - component: {fileID: 291857673586446012}
-  - component: {fileID: 3753898004208242910}
+  - component: {fileID: 2455756942971724569}
+  m_Layer: 0
+  m_Name: PortaAutomatica 1 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2455756942971724569
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5807621714714558749}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: 11.505364, y: -3.0941064, z: 10.066285}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7713904572816688735}
+  - {fileID: 382448992178719694}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+--- !u!1 &9067399868109938721
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 382448992178719694}
+  - component: {fileID: 5873511288008477084}
+  - component: {fileID: 4691230075014996403}
+  - component: {fileID: 2493458748717782179}
   m_Layer: 0
   m_Name: DoorTrigger
   m_TagString: Untagged
@@ -19,28 +52,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4308800503376840113
+--- !u!4 &382448992178719694
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5241336801866448591}
+  m_GameObject: {fileID: 9067399868109938721}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.15, y: -1.03, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5676190250932612222}
+  m_Father: {fileID: 2455756942971724569}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &4368205034850775567
+--- !u!61 &5873511288008477084
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5241336801866448591}
+  m_GameObject: {fileID: 9067399868109938721}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -80,34 +113,34 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.11198, y: 3.1947813}
   m_EdgeRadius: 0
---- !u!114 &291857673586446012
+--- !u!114 &4691230075014996403
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5241336801866448591}
+  m_GameObject: {fileID: 9067399868109938721}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3a7e75954e69394a9024daf69ac3ad1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  door: {fileID: 8735365920663634770}
+  door: {fileID: 7713904572816688735}
   openOffset: {x: 3, y: 0, z: 0}
   openTime: 0.1
-  closeDelay: 1
+  closeDelay: 2
   allowedTags:
   - Player
   - Inimigo
   portaAbrindoSFX: {fileID: 8300000, guid: 9f1f5e8afbbeb9d4ba1a3982670ca544, type: 3}
   portaFechandoSFX: {fileID: 8300000, guid: 7bb66802ac8c43c4faa88e52958ffab2, type: 3}
---- !u!82 &3753898004208242910
+--- !u!82 &2493458748717782179
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5241336801866448591}
+  m_GameObject: {fileID: 9067399868109938721}
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
@@ -198,46 +231,13 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!1 &6504130250128556044
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5676190250932612222}
-  m_Layer: 0
-  m_Name: PortaAutomatica 1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5676190250932612222
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6504130250128556044}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.07672031, y: 5.710787, z: 0.0826484}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8735365920663634770}
-  - {fileID: 4308800503376840113}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &7248191518827589512
+--- !u!1001 &8548313248229894789
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 5676190250932612222}
+    m_TransformParent: {fileID: 2455756942971724569}
     m_Modifications:
     - target: {fileID: 1890530237053306970, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_SortingOrder
@@ -340,8 +340,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
---- !u!4 &8735365920663634770 stripped
+--- !u!4 &7713904572816688735 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2138364081588022490, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
-  m_PrefabInstance: {fileID: 7248191518827589512}
+  m_PrefabInstance: {fileID: 8548313248229894789}
   m_PrefabAsset: {fileID: 0}
