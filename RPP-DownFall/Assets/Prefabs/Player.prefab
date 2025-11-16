@@ -205,6 +205,7 @@ MonoBehaviour:
   sfxTiro: {fileID: 8300000, guid: 743ee36eb47797b47b4f550514592351, type: 3}
   sfxReload: {fileID: 8300000, guid: 416ae6ace453de646a604fd7799d7249, type: 3}
   DeathSound: {fileID: 8300000, guid: bcc45d0cc2add064e9380d0301a82597, type: 3}
+  sfxPlayerHit: {fileID: 8300000, guid: 30584825e211d124c8c8da1ea5a56bc8, type: 3}
   painelDocumento: {fileID: 0}
   textoDocumento: {fileID: 0}
   isReadingDocument: 0

@@ -53,6 +53,7 @@ public class Player : MonoBehaviour
     public AudioClip sfxTiro;
     public AudioClip sfxReload;
     public AudioClip DeathSound;
+    public AudioClip sfxPlayerHit;
     private AudioSource audioSource;
 
     [Header("Documentos")]
@@ -425,6 +426,7 @@ public class Player : MonoBehaviour
 
         CurrentHealth -= amount;
         ParticlesDmg?.PlayBloodVFX();
+        audioSource.PlayOneShot(sfxPlayerHit, 0.3f);
         camShake?.ShakeCamera(2f, 0.5f);
 
         if (CurrentHealth <= 0)
