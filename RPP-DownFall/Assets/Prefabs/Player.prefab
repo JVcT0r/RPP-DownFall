@@ -186,6 +186,7 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
+  hintLerDocumento: {fileID: 0}
   flashlight: {fileID: 1704335520273380475}
   dashSpeed: 16
   dashDuration: 0.3
@@ -206,6 +207,7 @@ MonoBehaviour:
   sfxReload: {fileID: 8300000, guid: 416ae6ace453de646a604fd7799d7249, type: 3}
   painelDocumento: {fileID: 0}
   textoDocumento: {fileID: 0}
+  isReadingDocument: 0
   dead: 0
 --- !u!114 &5210553240032714968
 MonoBehaviour:
@@ -568,7 +570,7 @@ MonoBehaviour:
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.8
+  m_Intensity: 0.3
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: 51119af9
