@@ -3,7 +3,6 @@ using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
-using Random = System.Random;
 
 public class Player : MonoBehaviour
 {
@@ -22,6 +21,9 @@ public class Player : MonoBehaviour
     public float interactRange = 1.5f;
     public LayerMask interactableLayer;
 
+    [Header("UI de Interação")]
+    public GameObject hintLerDocumento;  // <-- Texto "Aperte E para ler"
+
     [Header("Lanterna")]
     public Transform flashlight;
 
@@ -29,18 +31,13 @@ public class Player : MonoBehaviour
     public float dashSpeed = 15f;
     public float dashDuration = 0.2f;
     public float dashCooldown = 1f;
-    [Tooltip("Layers consideradas como obstáculos")]
     public LayerMask dashObstacleMask;
-    [Tooltip("Distância mínima da parede ao terminar o dash")]
     public float dashSkin = 0.08f;
 
     [Header("Tremor da Câmera")] 
-    [SerializeField]
-    private CameraShakeController camShake;
-    [SerializeField]
-    private float shakeIntensity = 5f;
-    [SerializeField]
-    private float shakeTime = 0.2f;
+    [SerializeField] private CameraShakeController camShake;
+    [SerializeField] private float shakeIntensity = 5f;
+    [SerializeField] private float shakeTime = 0.2f;
 
     [Header("Vida")]
     public int maxHealth = 3;
@@ -57,6 +54,11 @@ public class Player : MonoBehaviour
     public AudioClip sfxReload;
     private AudioSource audioSource;
 
+    [Header("Documentos")]
+    public GameObject painelDocumento;
+    public TMPro.TMP_Text textoDocumento;
+    public bool isReadingDocument = false;
+
     private WeaponManager weaponManager;
     private Vector2 moveInput;
     private Vector2 mousePos;
@@ -64,7 +66,6 @@ public class Player : MonoBehaviour
 
     private bool isDashing = false;
     private bool isReloading = false;
-    private float dashTime;
     private float lastDashTime;
     public bool dead = false;
 
@@ -81,22 +82,26 @@ public class Player : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         CurrentHealth = maxHealth;
-
-        weaponManager = GetComponent<WeaponManager>();
-        if (weaponManager == null)
-            weaponManager = GetComponentInParent<WeaponManager>();
+        weaponManager = GetComponent<WeaponManager>() ?? GetComponentInParent<WeaponManager>();
 
         if (deathScreen != null)
             deathScreen.SetActive(false);
     }
 
-    private void Start()
+    void Start()
     {
         anim = GetComponent<Animator>();
     }
 
     void Update()
     {
+        // BLOQUEIO AO LER DOCUMENTO
+        if (isReadingDocument)
+        {
+            if (hintLerDocumento != null) hintLerDocumento.SetActive(false);
+            return;
+        }
+
         if (gameManager != null && gameManager.GetPaused()) return;
         if (dead) return;
 
@@ -119,7 +124,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isDashing)
+        if (!isDashing && !isReadingDocument)
         {
             Vector2 targetPosition = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
             rb.MovePosition(targetPosition);
@@ -139,7 +144,8 @@ public class Player : MonoBehaviour
     // -------------------- TIRO PISTOLA --------------------
     void ShootPistol()
     {
-        if (isReloading) return;
+        if (isReloading || isReadingDocument) return;
+
         if (Input.GetMouseButtonDown(0) && AmmoManager.pistolBullets > 0)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
@@ -159,6 +165,8 @@ public class Player : MonoBehaviour
     // -------------------- TIRO SHOTGUN --------------------
     void ShootShotgun()
     {
+        if (isReadingDocument) return;
+
         if (Input.GetMouseButtonDown(0) && AmmoManager.shotgunBullets > 0)
         {
             AmmoManager.shotgunBullets--;
@@ -182,12 +190,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    void SetIsReloadingToTrue() => isReloading = true;
-    void SetIsReloadingToFalse() => isReloading = false;
-
     // -------------------- RELOAD --------------------
     void Reload()
     {
+        if (isReadingDocument) return;
+
         if (Input.GetKey(KeyCode.R) && !isReloading)
         {
             switch (WeaponManager.Instance.Current)
@@ -211,7 +218,6 @@ public class Player : MonoBehaviour
                         isReloading = true;
                         int bulletsNeeded = AmmoManager.shotgunBulletsMax - AmmoManager.shotgunBullets;
                         int bFromMagazine = Mathf.Min(bulletsNeeded, AmmoManager.shotgunMagazine);
-
                         AmmoManager.shotgunBullets += bFromMagazine;
                         AmmoManager.shotgunMagazine -= bFromMagazine;
                         isReloading = false;
@@ -230,6 +236,8 @@ public class Player : MonoBehaviour
     // -------------------- LANTERNA --------------------
     private void Flashlight()
     {
+        if (isReadingDocument) return;
+
         if (Input.GetKeyDown(KeyCode.F) && flashlight != null)
         {
             var light2D = flashlight.GetComponent<Light2D>();
@@ -238,23 +246,75 @@ public class Player : MonoBehaviour
         }
     }
 
-    // -------------------- INTERAÇÃO --------------------
+    // -------------------- INTERAÇÃO + HINT + DOCUMENTO --------------------
     void TryInteract()
     {
+        if (isReadingDocument) return;
+
+        //----------------------------------------------------
+        // MOSTRAR / ESCONDER "APERTE E PARA LER"
+        //----------------------------------------------------
+        bool encontrouDocumento = false;
+
+        Collider2D[] hitsDocsHint = Physics2D.OverlapCircleAll(transform.position, interactRange);
+        Vector2 forwardHint = transform.right;
+        float coneHint = 70f;
+
+        foreach (var hit in hitsDocsHint)
+        {
+            var doc = hit.GetComponent<DocumentObject>();
+            if (doc == null) continue;
+
+            Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+            float ang = Vector2.Angle(forwardHint, dir);
+
+            if (ang <= coneHint / 2f)
+            {
+                encontrouDocumento = true;
+                break;
+            }
+        }
+
+        if (hintLerDocumento != null)
+            hintLerDocumento.SetActive(encontrouDocumento);
+
+        //----------------------------------------------------
+        // SE NÃO APERTOU E, NÃO INTERAGIR
+        //----------------------------------------------------
         if (!Input.GetKeyDown(KeyCode.E)) return;
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
-        Vector2 forward = transform.right;
-        float coneAngle = 70f;
+        //----------------------------------------------------
+        // TENTAR ABRIR DOCUMENTO
+        //----------------------------------------------------
+        Collider2D[] hitsDocs = Physics2D.OverlapCircleAll(transform.position, interactRange);
 
+        foreach (var hit in hitsDocs)
+        {
+            var doc = hit.GetComponent<DocumentObject>();
+            if (doc == null) continue;
+
+            Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+            float ang = Vector2.Angle(transform.right, dir);
+
+            if (ang <= 70f / 2f)
+            {
+                AbrirDocumento(doc);
+                return;
+            }
+        }
+
+        //----------------------------------------------------
+        // INTERAÇÕES NORMAIS
+        //----------------------------------------------------
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
         foreach (var hit in hits)
         {
             if (hit.gameObject == gameObject) continue;
 
-            Vector2 dirToTarget = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
-            float angle = Vector2.Angle(forward, dirToTarget);
+            Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+            float ang = Vector2.Angle(transform.right, dir);
 
-            if (angle <= coneAngle / 2f && hit.CompareTag("Interagir"))
+            if (ang <= 70f / 2f && hit.CompareTag("Interagir"))
             {
                 hit.SendMessage("OnInteracted", SendMessageOptions.DontRequireReceiver);
                 break;
@@ -262,14 +322,35 @@ public class Player : MonoBehaviour
         }
     }
 
+    // -------------------- ABRIR / FECHAR DOCUMENTO --------------------
+    void AbrirDocumento(DocumentObject doc)
+    {
+        isReadingDocument = true;
+        Time.timeScale = 0f;
+
+        if (hintLerDocumento != null) hintLerDocumento.SetActive(false);
+        if (painelDocumento != null) painelDocumento.SetActive(true);
+
+        textoDocumento.text = doc.documentText;
+    }
+
+    public void FecharDocumento()
+    {
+        isReadingDocument = false;
+        Time.timeScale = 1f;
+
+        if (painelDocumento != null)
+            painelDocumento.SetActive(false);
+
+        textoDocumento.text = "";
+    }
+
     // -------------------- DASH --------------------
     private IEnumerator Dash()
     {
-        if (isDashing) yield break;
+        if (isDashing || isReadingDocument) yield break;
 
         isDashing = true;
-        dashTime = 0f;
-        lastDashTime = Time.time;
 
         Vector2 dashDir = moveInput.sqrMagnitude > 0.01f
             ? moveInput
@@ -278,29 +359,22 @@ public class Player : MonoBehaviour
         float desiredDistance = dashSpeed * dashDuration;
         float allowedDistance = desiredDistance;
 
-        // checa colisão
-        if (capsule != null)
-        {
-            RaycastHit2D hit = Physics2D.CapsuleCast(
-                rb.position,
-                capsule.size,
-                CapsuleDirection2D.Vertical,
-                0f,
-                dashDir,
-                desiredDistance,
-                dashObstacleMask
-            );
-            if (hit.collider != null)
-                allowedDistance = Mathf.Max(0f, hit.distance - dashSkin);
-        }
+        RaycastHit2D hit = Physics2D.CapsuleCast(
+            rb.position,
+            capsule.size,
+            CapsuleDirection2D.Vertical,
+            0f,
+            dashDir,
+            desiredDistance,
+            dashObstacleMask
+        );
 
-        Vector2 startPos = rb.position;
-        Vector2 endPos = startPos + dashDir * allowedDistance;
+        if (hit.collider != null)
+            allowedDistance = Mathf.Max(0f, hit.distance - dashSkin);
 
         float elapsed = 0f;
         float speed = allowedDistance / dashDuration;
 
-        // movimento constante
         while (elapsed < dashDuration)
         {
             rb.MovePosition(rb.position + dashDir * speed * Time.fixedDeltaTime);
@@ -308,16 +382,18 @@ public class Player : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        rb.MovePosition(endPos);
         isDashing = false;
     }
 
     private void DashInput()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift)
-            && Time.time >= lastDashTime + dashCooldown
-            && !isReloading)
+        if (isReadingDocument) return;
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) &&
+            Time.time >= lastDashTime + dashCooldown &&
+            !isReloading)
         {
+            lastDashTime = Time.time;
             StartCoroutine(Dash());
         }
     }
@@ -325,19 +401,17 @@ public class Player : MonoBehaviour
     // -------------------- CURA --------------------
     public void Heal()
     {
-        if (dead) return;
+        if (dead || isReadingDocument) return;
 
         CurrentHealth += healAmount;
         if (CurrentHealth > maxHealth)
             CurrentHealth = maxHealth;
-
-        Debug.Log($"[Player] Curado em {healAmount} pontos. Vida atual: {CurrentHealth}");
     }
 
-    // -------------------- DANO E MORTE --------------------
+    // -------------------- DANO --------------------
     public void TakeDamage(int amount)
     {
-        if (dead) return;
+        if (dead || isReadingDocument) return;
 
         CurrentHealth -= amount;
         ParticlesDmg?.PlayBloodVFX();
@@ -365,13 +439,11 @@ public class Player : MonoBehaviour
         float coneAngle = 70f;
         int rayCount = 20;
         Vector2 forward = transform.right;
-        float halfAngle = coneAngle / 2f;
 
         for (int i = 0; i <= rayCount; i++)
         {
-            float t = Mathf.Lerp(-halfAngle, halfAngle, (float)i / rayCount);
-            Quaternion rot = Quaternion.Euler(0, 0, t);
-            Vector2 dir = rot * forward;
+            float t = Mathf.Lerp(-coneAngle / 2, coneAngle / 2, (float)i / rayCount);
+            Vector2 dir = Quaternion.Euler(0, 0, t) * forward;
             Gizmos.DrawLine(transform.position, (Vector2)transform.position + dir * interactRange);
         }
     }

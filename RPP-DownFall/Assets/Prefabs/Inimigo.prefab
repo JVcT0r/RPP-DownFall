@@ -151,6 +151,7 @@ GameObject:
   - component: {fileID: 6508252126938157011}
   - component: {fileID: 8978350134674852301}
   - component: {fileID: 3132714149052235892}
+  - component: {fileID: 7191010567771989387}
   m_Layer: 0
   m_Name: Inimigo
   m_TagString: Inimigo
@@ -357,15 +358,15 @@ MonoBehaviour:
   m_ShadowMesh:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
-      m_Center: {x: -0.16527557, y: 1.1921997, z: 0}
-      m_Extent: {x: 3.3399887, y: 2.0549927, z: 0}
+      m_Center: {x: 0.94109344, y: -0.065719604, z: 0}
+      m_Extent: {x: 1.5299911, y: 1.6499939, z: 0}
     m_EdgeProcessing: 1
-    m_TrimEdge: 0.3
+    m_TrimEdge: 0.25
     m_FlipX: 0
     m_FlipY: 0
     m_InitialTrim: 0
   m_CastingOption: 1
-  m_PreviousTrimEdge: 0.08
+  m_PreviousTrimEdge: 0.25
   m_PreviousEdgeProcessing: 1
   m_PreviousShadowCastingSource: 2
   m_PreviousShadowShape2DSource: {fileID: 7921381380677891546}
@@ -490,6 +491,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageArea: {fileID: 2426376292934376356}
+--- !u!114 &7191010567771989387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6333794214620058320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8f9a9be12b212a40abe172513400a60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chanceDropPistola: 0.3
+  chanceDropShotgun: 0.3
+  chanceDropPocao: 0.1
+  dropPistola: {fileID: 8413232171380955219, guid: 7e85379c42562c84bb33d7176a53fa1f, type: 3}
+  dropShotgun: {fileID: 2785173847364699582, guid: b4a144e5ef8da7b42bbfcb78b6a2c2c0, type: 3}
+  dropPocao: {fileID: 4645774621514273115, guid: 1df8f759f5971c64aaca954ec0c89883, type: 3}
+  alturaDrop: 0.2
 --- !u!1001 &905550735848017648
 PrefabInstance:
   m_ObjectHideFlags: 0

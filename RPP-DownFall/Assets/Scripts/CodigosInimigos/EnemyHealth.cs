@@ -82,9 +82,16 @@ public class EnemyHealth : MonoBehaviour
     {
         IsDead = true;
         currentHealth = 0;
-        gameObject.SetActive(false); 
-        Debug.Log($"[Enemy] {gameObject.name} ({enemyID}) morreu.");
+
+        
+        EnemyDrop drop = GetComponent<EnemyDrop>();
+        if (drop != null)
+            drop.DroparItens();
+
+        gameObject.SetActive(false);
+        
     }
+
 
     // -------------------- DANO NO PLAYER --------------------
     private void OnCollisionEnter2D(Collision2D collision)
