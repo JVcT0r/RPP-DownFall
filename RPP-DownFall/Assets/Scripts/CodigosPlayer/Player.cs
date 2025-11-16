@@ -167,11 +167,13 @@ public class Player : MonoBehaviour
     // -------------------- TIRO SHOTGUN --------------------
     void ShootShotgun()
     {
-        if (isReadingDocument) return;
+        if (isReloading || isReadingDocument) return;
 
         if (Input.GetMouseButtonDown(0) && AmmoManager.shotgunBullets > 0)
         {
             AmmoManager.shotgunBullets--;
+            anim.Play("ShotgunPumpAnim");
+            
 
             for (int i = 0; i < 6; i++)
             {
