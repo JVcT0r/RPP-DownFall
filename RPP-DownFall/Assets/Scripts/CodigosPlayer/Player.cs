@@ -227,6 +227,15 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void SetIsReloadingToTrue()
+    {
+        isReloading = true;
+    }
+    public void SetIsReloadingToFalse()
+    {
+        isReloading = false;
+    }
+
     void ReloadSFX()
     {
         audioSource.pitch = UnityEngine.Random.Range(1f, 1.1f);
