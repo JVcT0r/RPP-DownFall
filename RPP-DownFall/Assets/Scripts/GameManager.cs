@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private AudioSource audioSource;
     public bool paused;
     public GameObject pauseScreen;
 
@@ -10,10 +11,14 @@ public class GameManager : MonoBehaviour
     public GameObject pausePanel;
     public GameObject optionsPanel;
 
+    [Header("Audios")] 
+    public AudioClip InitialOneShotMelody;
+
     public static GameManager Instance { get; private set; }
 
     private void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -26,6 +31,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        audioSource.PlayOneShot(InitialOneShotMelody, 0.5f);
         if (!SceneManager.GetSceneByName("UI").isLoaded)
             SceneManager.LoadScene("UI", LoadSceneMode.Additive);
     }

@@ -52,6 +52,7 @@ public class Player : MonoBehaviour
     [Header("Audio")]
     public AudioClip sfxTiro;
     public AudioClip sfxReload;
+    public AudioClip DeathSound;
     private AudioSource audioSource;
 
     [Header("Documentos")]
@@ -437,6 +438,7 @@ public class Player : MonoBehaviour
         if (deathScreen != null)
             deathScreen.SetActive(true);
         Time.timeScale = 0;
+        audioSource.PlayOneShot(DeathSound);
     }
 
     // -------------------- GIZMOS --------------------
