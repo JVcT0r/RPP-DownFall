@@ -246,7 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f491dd8f9afa4d44db54c882dd856027, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firstGameplayScene: Testes
+  firstGameplayScene: Fase1
   mainMenuPanel: {fileID: 39135677}
   optionsPanel: {fileID: 1190026270}
   gameSettings: {fileID: 11400000, guid: 25cce87754793b348b78d82af50cb9e7, type: 2}
