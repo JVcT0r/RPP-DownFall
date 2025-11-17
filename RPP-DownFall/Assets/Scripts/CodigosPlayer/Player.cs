@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class Player : MonoBehaviour
     public LayerMask interactableLayer;
 
     [Header("UI de Interação")]
-    public GameObject hintLerDocumento;  // <-- Texto "Aperte E para ler"
+    public GameObject hintLerDocumento;
 
     [Header("Lanterna")]
     public Transform flashlight;
@@ -41,15 +42,14 @@ public class Player : MonoBehaviour
 
     [Header("Vida")]
     public int maxHealth = 3;
-    public int CurrentHealth { get; set; }  
+    public int CurrentHealth { get; set; }
     public FullScreenFXController fullScreenFX;
     public GameObject deathScreen;
 
     [Header("Cura")]
     public int healAmount = 1;
-    public int potionCount = 3; 
-    
-    [Header("Audio")]
+
+    [Header("Áudio")]
     public AudioClip sfxTiro;
     public AudioClip sfxReload;
     public AudioClip DeathSound;
@@ -60,6 +60,9 @@ public class Player : MonoBehaviour
     public GameObject painelDocumento;
     public TMPro.TMP_Text textoDocumento;
     public bool isReadingDocument = false;
+
+    [Header("Chave / Cartão futurista")]
+    public bool temChave = false;
 
     private WeaponManager weaponManager;
     private Vector2 moveInput;
@@ -84,7 +87,14 @@ public class Player : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         CurrentHealth = maxHealth;
-        weaponManager = GetComponent<WeaponManager>() ?? GetComponentInParent<WeaponManager>();
+        
+        weaponManager = GetComponent<WeaponManager>();
+        if (weaponManager != null)
+        {
+            weaponManager.pistolUnlocked = false;
+            weaponManager.shotgunUnlocked = false;
+            weaponManager.SetWeapon(WeaponType.None);
+        }
 
         if (deathScreen != null)
             deathScreen.SetActive(false);
@@ -97,7 +107,6 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        // BLOQUEIO AO LER DOCUMENTO
         if (isReadingDocument)
         {
             if (hintLerDocumento != null) hintLerDocumento.SetActive(false);
@@ -118,10 +127,13 @@ public class Player : MonoBehaviour
         TryInteract();
         Reload();
 
-        if (weaponManager == null || weaponManager.Current == WeaponType.Pistol)
-            ShootPistol();
-        else if (weaponManager.Current == WeaponType.Shotgun)
-            ShootShotgun();
+        if (weaponManager != null)
+        {
+            if (weaponManager.Current == WeaponType.Pistol)
+                ShootPistol();
+            else if (weaponManager.Current == WeaponType.Shotgun)
+                ShootShotgun();
+        }
     }
 
     void FixedUpdate()
@@ -151,7 +163,6 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && AmmoManager.pistolBullets > 0)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            Particles?.PlayFireVFX();
             audioSource.pitch = UnityEngine.Random.Range(1f, 1.1f);
             audioSource.PlayOneShot(sfxTiro);
 
@@ -173,7 +184,6 @@ public class Player : MonoBehaviour
         {
             AmmoManager.shotgunBullets--;
             anim.Play("ShotgunPumpAnim");
-            
 
             for (int i = 0; i < 6; i++)
             {
@@ -201,7 +211,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKey(KeyCode.R) && !isReloading)
         {
-            switch (WeaponManager.Instance.Current)
+            switch (weaponManager.Current)
             {
                 case WeaponType.Pistol:
                     if (AmmoManager.pistolMagazine > 0 && AmmoManager.pistolBullets < AmmoManager.pistolBulletsMax)
@@ -231,14 +241,8 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void SetIsReloadingToTrue()
-    {
-        isReloading = true;
-    }
-    public void SetIsReloadingToFalse()
-    {
-        isReloading = false;
-    }
+    public void SetIsReloadingToTrue() => isReloading = true;
+    public void SetIsReloadingToFalse() => isReloading = false;
 
     void ReloadSFX()
     {
@@ -259,14 +263,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    // -------------------- INTERAÇÃO + HINT + DOCUMENTO --------------------
+    // -------------------- INTERAÇÃO --------------------
     void TryInteract()
     {
         if (isReadingDocument) return;
 
-        //----------------------------------------------------
-        // MOSTRAR / ESCONDER "APERTE E PARA LER"
-        //----------------------------------------------------
         bool encontrouDocumento = false;
 
         Collider2D[] hitsDocsHint = Physics2D.OverlapCircleAll(transform.position, interactRange);
@@ -282,26 +283,18 @@ public class Player : MonoBehaviour
             float ang = Vector2.Angle(forwardHint, dir);
 
             if (ang <= coneHint / 2f)
-            {
                 encontrouDocumento = true;
-                break;
-            }
         }
 
         if (hintLerDocumento != null)
             hintLerDocumento.SetActive(encontrouDocumento);
 
-        //----------------------------------------------------
-        // SE NÃO APERTOU E, NÃO INTERAGIR
-        //----------------------------------------------------
         if (!Input.GetKeyDown(KeyCode.E)) return;
 
-        //----------------------------------------------------
-        // TENTAR ABRIR DOCUMENTO
-        //----------------------------------------------------
-        Collider2D[] hitsDocs = Physics2D.OverlapCircleAll(transform.position, interactRange);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
 
-        foreach (var hit in hitsDocs)
+        // DOCUMENTO
+        foreach (var hit in hits)
         {
             var doc = hit.GetComponent<DocumentObject>();
             if (doc == null) continue;
@@ -316,10 +309,50 @@ public class Player : MonoBehaviour
             }
         }
 
-        //----------------------------------------------------
-        // INTERAÇÕES NORMAIS
-        //----------------------------------------------------
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
+        // PEGAR CHAVE / CARTÃO
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Chave") || hit.CompareTag("Cartao"))
+            {
+                Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+                float ang = Vector2.Angle(transform.right, dir);
+
+                if (ang <= 70f / 2f)
+                {
+                    temChave = true;
+                    Debug.Log("[PLAYER] Chave/Cartão coletado!");
+                    Destroy(hit.gameObject);
+                    return;
+                }
+            }
+        }
+
+        // PORTA DE SAÍDA
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("PortaSaida"))
+            {
+                Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+                float ang = Vector2.Angle(transform.right, dir);
+
+                if (ang <= 70f / 2f)
+                {
+                    if (temChave)
+                    {
+                        Debug.Log("[PLAYER] Porta aberta! Indo para Fase 2...");
+                        SceneManager.LoadScene("Fase2");
+                    }
+                    else
+                    {
+                        Debug.Log("[PLAYER] Você precisa da chave/cartão!");
+                    }
+
+                    return;
+                }
+            }
+        }
+
+        // INTERAÇÃO NORMAL
         foreach (var hit in hits)
         {
             if (hit.gameObject == gameObject) continue;
@@ -335,7 +368,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    // -------------------- ABRIR / FECHAR DOCUMENTO --------------------
+    // -------------------- DOCUMENTOS --------------------
     void AbrirDocumento(DocumentObject doc)
     {
         isReadingDocument = true;

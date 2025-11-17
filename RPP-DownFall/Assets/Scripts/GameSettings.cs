@@ -1,24 +1,43 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "GameSettings", menuName = "DownFall/Game Settings")]
-public class GameSettings : ScriptableObject
+public class GameSettings : MonoBehaviour
 {
-    [Header("Vida Inicial")]
-    public int startHealth = 3;
+    [Header("Posição inicial do jogador")]
+    public Vector3 startPosition = Vector3.zero;
 
-    [Header("Poções")]
-    public int startPotions = 3;
-    public int maxPotions = 9;
+    public void ApplyInitialSettings(Player player)
+    {
+        if (player == null) return;
 
-    [Header("Pistola")]
-    public int pistolStartBullets = 12;
-    public int pistolStartMagazine = 60;
+        // -------------------------------
+        // ➤ VIDA
+        // -------------------------------
+        player.CurrentHealth = player.maxHealth;
+        player.transform.position = startPosition;
 
-    [Header("Shotgun")]
-    public int shotgunStartBullets = 6;
-    public int shotgunStartMagazine = 30;
+        // -------------------------------
+        // ➤ ARMAS (player começa SEM armas)
+        // -------------------------------
+        if (player.TryGetComponent<WeaponManager>(out var wm))
+        {
+            wm.pistolUnlocked = false;
+            wm.shotgunUnlocked = false;
+            wm.SetWeapon(WeaponType.None);
+        }
 
-    [Header("Armas Liberadas")]
-    public bool pistolUnlocked = true;
-    public bool shotgunUnlocked = true;
+        // -------------------------------
+        // ➤ MUNIÇÃO INICIAL (ZERO)
+        // -------------------------------
+        AmmoManager.pistolBullets = 0;
+        AmmoManager.pistolMagazine = 0;
+        AmmoManager.shotgunBullets = 0;
+        AmmoManager.shotgunMagazine = 0;
+
+        // -------------------------------
+        // ➤ POÇÕES INICIAIS (ZERO)
+        // -------------------------------
+        HealthManager.potionCount = 0;
+
+        Debug.Log("[GameSettings] Novo jogo iniciado com valores zerados.");
+    }
 }

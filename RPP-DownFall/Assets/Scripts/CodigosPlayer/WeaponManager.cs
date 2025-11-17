@@ -1,15 +1,20 @@
 using UnityEngine;
 using System;
 
-public enum WeaponType { Pistol, Shotgun }
+public enum WeaponType { None, Pistol, Shotgun }
 
 public class WeaponManager : MonoBehaviour
 {
     public static WeaponManager Instance { get; private set; }
     public static event Action<WeaponType> OnWeaponChanged;
+
     private Animator animator;
 
-    public WeaponType Current { get; private set; } = WeaponType.Pistol;
+    public WeaponType Current { get; private set; } = WeaponType.None;
+
+    [Header("Armas liberadas")]
+    public bool pistolUnlocked = false;
+    public bool shotgunUnlocked = false;
 
     void Awake()
     {
@@ -19,12 +24,12 @@ public class WeaponManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1) && pistolUnlocked)
         {
             animator.SetBool("Shotgun", false);
             SetWeapon(WeaponType.Pistol);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && shotgunUnlocked)
         {
             animator.SetBool("Shotgun", true);
             SetWeapon(WeaponType.Shotgun);
@@ -33,10 +38,7 @@ public class WeaponManager : MonoBehaviour
 
     public void SetWeapon(WeaponType type)
     {
-        if (type == Current) return;
-
         Current = type;
         OnWeaponChanged?.Invoke(Current);
-        
     }
 }

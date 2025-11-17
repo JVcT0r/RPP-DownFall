@@ -22,21 +22,34 @@ public class MainMenu : MonoBehaviour
 
     private void ApplyInitialSettings()
     {
-        HealthManager.potionCount = gameSettings.startPotions;
-        HealthManager.maxPotions = gameSettings.maxPotions;
+        // -------------------------------
+        // ➤ POÇÕES INICIAIS (ZERO)
+        // -------------------------------
+        HealthManager.potionCount = 0;
+        HealthManager.maxPotions = 9; 
 
+        // -------------------------------
+        // ➤ MUNIÇÃO INICIAL (ZERO)
+        // -------------------------------
+        AmmoManager.pistolBullets = 0;
+        AmmoManager.pistolMagazine = 0;
+
+        AmmoManager.shotgunBullets = 0;
+        AmmoManager.shotgunMagazine = 0;
+
+        // -------------------------------
+        // ➤ ARMAS INICIAIS (bloqueadas)
+        // -------------------------------
+        if (WeaponManager.Instance != null)
+        {
+            WeaponManager.Instance.pistolUnlocked = false;
+            WeaponManager.Instance.shotgunUnlocked = false;
+            WeaponManager.Instance.SetWeapon(WeaponType.None);
+        }
         
-        AmmoManager.pistolBullets = gameSettings.pistolStartBullets;
-        AmmoManager.pistolMagazine = gameSettings.pistolStartMagazine;
-
-        
-        AmmoManager.shotgunBullets = gameSettings.shotgunStartBullets;
-        AmmoManager.shotgunMagazine = gameSettings.shotgunStartMagazine;
-
-        // Futuro: desbloquear armas
-        // WeaponManager.pistolUnlocked   = gameSettings.pistolUnlocked;
-        // WeaponManager.shotgunUnlocked  = gameSettings.shotgunUnlocked;
     }
+
+
 
     public void CarregarJogo()
     {
