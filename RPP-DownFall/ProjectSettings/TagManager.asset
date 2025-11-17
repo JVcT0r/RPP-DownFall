@@ -8,6 +8,8 @@ TagManager:
   - GameManager
   - Interagir
   - Documento
+  - Chave
+  - PortaSaida
   layers:
   - Default
   - TransparentFX
