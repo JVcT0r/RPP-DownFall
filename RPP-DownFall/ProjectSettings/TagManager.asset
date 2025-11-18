@@ -10,6 +10,7 @@ TagManager:
   - Documento
   - Chave
   - PortaSaida
+  - Pistola
   layers:
   - Default
   - TransparentFX

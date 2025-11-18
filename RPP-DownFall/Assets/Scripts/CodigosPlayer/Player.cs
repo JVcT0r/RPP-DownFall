@@ -293,7 +293,7 @@ public class Player : MonoBehaviour
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
 
-        // DOCUMENTO
+        // ---------------- DOCUMENTO ----------------
         foreach (var hit in hits)
         {
             var doc = hit.GetComponent<DocumentObject>();
@@ -309,7 +309,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        // PEGAR CHAVE / CARTÃO
+        // ---------------- PEGAR CHAVE / CARTÃO ----------------
         foreach (var hit in hits)
         {
             if (hit.CompareTag("Chave") || hit.CompareTag("Cartao"))
@@ -327,7 +327,26 @@ public class Player : MonoBehaviour
             }
         }
 
-        // PORTA DE SAÍDA
+        // ---------------- PEGAR PISTOLA  ----------------
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Pistola"))
+            {
+                Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+                float ang = Vector2.Angle(transform.right, dir);
+
+                if (ang <= 70f / 2f)
+                {
+                    Debug.Log("[PLAYER] Pistola coletada!");
+                    WeaponManager.Instance.pistolUnlocked = true;
+                    WeaponManager.Instance.SetWeapon(WeaponType.Pistol);
+                    Destroy(hit.gameObject);
+                    return;
+                }
+            }
+        }
+
+        // ---------------- PORTA DE SAÍDA ----------------
         foreach (var hit in hits)
         {
             if (hit.CompareTag("PortaSaida"))
@@ -352,7 +371,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        // INTERAÇÃO NORMAL
+        // ---------------- INTERAÇÃO NORMAL ----------------
         foreach (var hit in hits)
         {
             if (hit.gameObject == gameObject) continue;
