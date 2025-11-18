@@ -1,31 +1,30 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PortaSaida : MonoBehaviour
 {
-    public string proximaCena = "Fase2";
-    public AudioClip somAbrir;
-    private AudioSource audioSource;
+    public Animator animPorta;         
+    public GameObject portalTrigger;   
 
-    private void Start()
+    private bool aberta = false;
+
+    public void AbrirPorta(Player player)
     {
-        audioSource = GetComponent<AudioSource>();
-    }
-
-    public void OnInteracted()
-    {
-        Player player = FindAnyObjectByType<Player>();
-
-        if (player == null) return;
+        if (aberta) return;
 
         if (player.temChave)
         {
+            aberta = true;
+            Debug.Log("[PORTA] Porta destrancada!");
 
-            if (audioSource != null && somAbrir != null)
-                audioSource.PlayOneShot(somAbrir);
+            if (animPorta != null)
+                animPorta.SetTrigger("Abrir");
 
-            SceneManager.LoadScene(proximaCena);
+            if (portalTrigger != null)
+                portalTrigger.SetActive(true); // agora o portal funciona
         }
-        
+        else
+        {
+            Debug.Log("[PORTA] Você precisa do cartão para abrir.");
+        }
     }
 }

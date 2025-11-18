@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
     public float interactRange = 1.5f;
 
     [Header("UI de Interação")]
-    public GameObject hintLerDocumento;  // Texto "Aperte E para ler"
+    public GameObject hintLerDocumento;  
 
     [Header("Lanterna")]
     public Transform flashlight;
@@ -86,8 +86,7 @@ public class Player : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         CurrentHealth = maxHealth;
-
-        // PLAYER COMEÇA SEM ARMA
+        
         weaponManager = GetComponent<WeaponManager>();
         if (weaponManager != null)
         {
@@ -107,7 +106,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        // BLOQUEIO AO LER DOCUMENTO
+        
         if (isReadingDocument)
         {
             if (hintLerDocumento != null) hintLerDocumento.SetActive(false);
@@ -275,8 +274,7 @@ public class Player : MonoBehaviour
     void TryInteract()
     {
         if (isReadingDocument) return;
-
-        // ----- HINT DO DOCUMENTO (mostrar "Aperte E para ler") -----
+        
         bool encontrouDocumento = false;
 
         Collider2D[] hitsDocsHint = Physics2D.OverlapCircleAll(transform.position, interactRange);
@@ -300,27 +298,23 @@ public class Player : MonoBehaviour
 
         if (hintLerDocumento != null)
             hintLerDocumento.SetActive(encontrouDocumento);
-
-        // Se não apertou E, não interage
+        
         if (!Input.GetKeyDown(KeyCode.E)) return;
-
-        // Lista de objetos no alcance
+        
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
 
-        // ---------- 1) PISTOLA ----------
+        // ---------- COLETAR PISTOLA ----------
         foreach (var hit in hits)
         {
             if (hit.CompareTag("Pistola") && IsFacing(hit))
             {
-                Debug.Log("[PLAYER] Pistola coletada!");
 
                 if (WeaponManager.Instance != null)
                 {
                     WeaponManager.Instance.pistolUnlocked = true;
                     WeaponManager.Instance.SetWeapon(WeaponType.Pistol);
                 }
-
-                // Pega a pistola SEM munição
+                
                 AmmoManager.pistolBullets = 0;
                 AmmoManager.pistolMagazine = 0;
 
@@ -329,7 +323,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        // ---------- 2) MUNIÇÃO / POÇÃO (Interagir) ----------
+        // ---------- MUNIÇÃO / POÇÃO (COLETA) ----------
         foreach (var hit in hits)
         {
             if (hit.CompareTag("Interagir") && IsFacing(hit))
@@ -339,7 +333,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        // ---------- 3) DOCUMENTO ----------
+        // ---------- DOCUMENTO ----------
         foreach (var hit in hits)
         {
             var doc = hit.GetComponent<DocumentObject>();
@@ -350,7 +344,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        // ---------- 4) CHAVE ----------
+        // ---------- CHAVE ----------
         foreach (var hit in hits)
         {
             if (hit.CompareTag("Chave") && IsFacing(hit))
@@ -362,23 +356,22 @@ public class Player : MonoBehaviour
             }
         }
 
-        // ---------- 5) PORTA SAÍDA ----------
+        // ---------- PORTA DE SAÍDA ----------
         foreach (var hit in hits)
         {
             if (hit.CompareTag("PortaSaida") && IsFacing(hit))
             {
-                if (temChave)
-                {
-                    Debug.Log("[PLAYER] Porta aberta! Indo para Fase 2...");
-                    SceneManager.LoadScene("Fase2");
-                }
+                PortaSaida porta = hit.GetComponent<PortaSaida>();
+
+                if (porta != null)
+                    porta.AbrirPorta(this);
                 else
-                {
-                    Debug.Log("[PLAYER] Você precisa da chave/cartão!");
-                }
+                    Debug.LogError("PortaSaida.cs não encontrado no objeto da porta!");
+
                 return;
             }
         }
+
     }
 
     bool IsFacing(Collider2D hit)
