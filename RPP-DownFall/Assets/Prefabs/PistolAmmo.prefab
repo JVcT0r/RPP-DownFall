@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4f9fda54b1bef14bbc0d4a5fcb4626f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponType: 0
+  weaponType: 1
   ammoAmount: 10
 --- !u!61 &2634992142104788268
 BoxCollider2D:

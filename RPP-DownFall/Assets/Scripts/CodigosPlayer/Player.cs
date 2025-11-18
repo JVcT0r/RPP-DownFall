@@ -20,10 +20,9 @@ public class Player : MonoBehaviour
 
     [Header("Interação")]
     public float interactRange = 1.5f;
-    public LayerMask interactableLayer;
 
     [Header("UI de Interação")]
-    public GameObject hintLerDocumento;
+    public GameObject hintLerDocumento;  // Texto "Aperte E para ler"
 
     [Header("Lanterna")]
     public Transform flashlight;
@@ -35,7 +34,7 @@ public class Player : MonoBehaviour
     public LayerMask dashObstacleMask;
     public float dashSkin = 0.08f;
 
-    [Header("Tremor da Câmera")] 
+    [Header("Tremor da Câmera")]
     [SerializeField] private CameraShakeController camShake;
     [SerializeField] private float shakeIntensity = 5f;
     [SerializeField] private float shakeTime = 0.2f;
@@ -87,7 +86,8 @@ public class Player : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         CurrentHealth = maxHealth;
-        
+
+        // PLAYER COMEÇA SEM ARMA
         weaponManager = GetComponent<WeaponManager>();
         if (weaponManager != null)
         {
@@ -107,6 +107,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        // BLOQUEIO AO LER DOCUMENTO
         if (isReadingDocument)
         {
             if (hintLerDocumento != null) hintLerDocumento.SetActive(false);
@@ -163,6 +164,7 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && AmmoManager.pistolBullets > 0)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+            Particles?.PlayFireVFX();
             audioSource.pitch = UnityEngine.Random.Range(1f, 1.1f);
             audioSource.PlayOneShot(sfxTiro);
 
@@ -241,8 +243,14 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void SetIsReloadingToTrue() => isReloading = true;
-    public void SetIsReloadingToFalse() => isReloading = false;
+    public void SetIsReloadingToTrue()
+    {
+        isReloading = true;
+    }
+    public void SetIsReloadingToFalse()
+    {
+        isReloading = false;
+    }
 
     void ReloadSFX()
     {
@@ -268,6 +276,7 @@ public class Player : MonoBehaviour
     {
         if (isReadingDocument) return;
 
+        // ----- HINT DO DOCUMENTO (mostrar "Aperte E para ler") -----
         bool encontrouDocumento = false;
 
         Collider2D[] hitsDocsHint = Physics2D.OverlapCircleAll(transform.position, interactRange);
@@ -283,111 +292,103 @@ public class Player : MonoBehaviour
             float ang = Vector2.Angle(forwardHint, dir);
 
             if (ang <= coneHint / 2f)
+            {
                 encontrouDocumento = true;
+                break;
+            }
         }
 
         if (hintLerDocumento != null)
             hintLerDocumento.SetActive(encontrouDocumento);
 
+        // Se não apertou E, não interage
         if (!Input.GetKeyDown(KeyCode.E)) return;
 
+        // Lista de objetos no alcance
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
 
-        // ---------------- DOCUMENTO ----------------
+        // ---------- 1) PISTOLA ----------
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Pistola") && IsFacing(hit))
+            {
+                Debug.Log("[PLAYER] Pistola coletada!");
+
+                if (WeaponManager.Instance != null)
+                {
+                    WeaponManager.Instance.pistolUnlocked = true;
+                    WeaponManager.Instance.SetWeapon(WeaponType.Pistol);
+                }
+
+                // Pega a pistola SEM munição
+                AmmoManager.pistolBullets = 0;
+                AmmoManager.pistolMagazine = 0;
+
+                Destroy(hit.gameObject);
+                return;
+            }
+        }
+
+        // ---------- 2) MUNIÇÃO / POÇÃO (Interagir) ----------
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Interagir") && IsFacing(hit))
+            {
+                hit.SendMessage("OnInteracted", SendMessageOptions.DontRequireReceiver);
+                return;
+            }
+        }
+
+        // ---------- 3) DOCUMENTO ----------
         foreach (var hit in hits)
         {
             var doc = hit.GetComponent<DocumentObject>();
-            if (doc == null) continue;
-
-            Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
-            float ang = Vector2.Angle(transform.right, dir);
-
-            if (ang <= 70f / 2f)
+            if (doc != null && IsFacing(hit))
             {
                 AbrirDocumento(doc);
                 return;
             }
         }
 
-        // ---------------- PEGAR CHAVE / CARTÃO ----------------
+        // ---------- 4) CHAVE ----------
         foreach (var hit in hits)
         {
-            if (hit.CompareTag("Chave") || hit.CompareTag("Cartao"))
+            if (hit.CompareTag("Chave") && IsFacing(hit))
             {
-                Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
-                float ang = Vector2.Angle(transform.right, dir);
-
-                if (ang <= 70f / 2f)
-                {
-                    temChave = true;
-                    Debug.Log("[PLAYER] Chave/Cartão coletado!");
-                    Destroy(hit.gameObject);
-                    return;
-                }
+                temChave = true;
+                Debug.Log("[PLAYER] Chave / Cartão coletado!");
+                Destroy(hit.gameObject);
+                return;
             }
         }
 
-        // ---------------- PEGAR PISTOLA  ----------------
+        // ---------- 5) PORTA SAÍDA ----------
         foreach (var hit in hits)
         {
-            if (hit.CompareTag("Pistola"))
+            if (hit.CompareTag("PortaSaida") && IsFacing(hit))
             {
-                Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
-                float ang = Vector2.Angle(transform.right, dir);
-
-                if (ang <= 70f / 2f)
+                if (temChave)
                 {
-                    Debug.Log("[PLAYER] Pistola coletada!");
-                    WeaponManager.Instance.pistolUnlocked = true;
-                    WeaponManager.Instance.SetWeapon(WeaponType.Pistol);
-                    Destroy(hit.gameObject);
-                    return;
+                    Debug.Log("[PLAYER] Porta aberta! Indo para Fase 2...");
+                    SceneManager.LoadScene("Fase2");
                 }
-            }
-        }
-
-        // ---------------- PORTA DE SAÍDA ----------------
-        foreach (var hit in hits)
-        {
-            if (hit.CompareTag("PortaSaida"))
-            {
-                Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
-                float ang = Vector2.Angle(transform.right, dir);
-
-                if (ang <= 70f / 2f)
+                else
                 {
-                    if (temChave)
-                    {
-                        Debug.Log("[PLAYER] Porta aberta! Indo para Fase 2...");
-                        SceneManager.LoadScene("Fase2");
-                    }
-                    else
-                    {
-                        Debug.Log("[PLAYER] Você precisa da chave/cartão!");
-                    }
-
-                    return;
+                    Debug.Log("[PLAYER] Você precisa da chave/cartão!");
                 }
-            }
-        }
-
-        // ---------------- INTERAÇÃO NORMAL ----------------
-        foreach (var hit in hits)
-        {
-            if (hit.gameObject == gameObject) continue;
-
-            Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
-            float ang = Vector2.Angle(transform.right, dir);
-
-            if (ang <= 70f / 2f && hit.CompareTag("Interagir"))
-            {
-                hit.SendMessage("OnInteracted", SendMessageOptions.DontRequireReceiver);
-                break;
+                return;
             }
         }
     }
 
-    // -------------------- DOCUMENTOS --------------------
+    bool IsFacing(Collider2D hit)
+    {
+        Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+        float ang = Vector2.Angle(transform.right, dir);
+        return ang <= 70f / 2f;
+    }
+
+    // -------------------- ABRIR / FECHAR DOCUMENTO --------------------
     void AbrirDocumento(DocumentObject doc)
     {
         isReadingDocument = true;

@@ -3,7 +3,7 @@ using TMPro;
 
 public class HealthManager : MonoBehaviour
 {
-    public static int potionCount = 3; 
+    public static int potionCount = 0; 
     public static int maxPotions = 9;
 
     [Header("UI")]
