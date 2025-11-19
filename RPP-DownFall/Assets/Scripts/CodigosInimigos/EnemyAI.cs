@@ -6,7 +6,7 @@ public class EnemyAI : MonoBehaviour
     private static readonly int IsFollowing = Animator.StringToHash("IsFollowing");
 
     [Header("Referências")]
-    [SerializeField] private Transform target; // Jogador
+    [SerializeField] private Transform target; 
     private NavMeshAgent agent;
     private SpriteRenderer spriteRenderer;
 
@@ -24,7 +24,7 @@ public class EnemyAI : MonoBehaviour
     private float checkTimer;
     private float lastSeenTimer = Mathf.Infinity;
 
-    // Direção “virtual” da frente
+    
     private Vector2 facingDir = Vector2.right;
     
     private Animator _animator;
@@ -52,11 +52,9 @@ public class EnemyAI : MonoBehaviour
     private void Update()
     {
         if (target == null) return;
-
-        // Atualiza a frente com base na movimentação e no player
+        
         UpdateFacingDirection();
-
-        // Faz checagem de visão
+        
         checkTimer += Time.deltaTime;
         if (checkTimer >= checkInterval)
         {
@@ -80,10 +78,8 @@ public class EnemyAI : MonoBehaviour
             agent.ResetPath();
             _animator.SetBool(IsFollowing, false);
         }
-
-            
-
-        // Flip visual
+        
+       
         if (spriteRenderer != null)
         {
             if (facingDir.x > 0.05f) spriteRenderer.flipX = false;
@@ -95,14 +91,13 @@ public class EnemyAI : MonoBehaviour
     {
         Vector2 dirToPlayer = ((Vector2)target.position - (Vector2)transform.position).normalized;
 
-        // Se o player estiver visível, olhe diretamente para ele
+        
         if (canSeePlayer)
         {
             facingDir = Vector2.Lerp(facingDir, dirToPlayer, Time.deltaTime * 10f);
         }
         else if (agent.desiredVelocity.sqrMagnitude > 0.001f)
         {
-            // Caso contrário, siga a direção do movimento do NavMesh
             facingDir = Vector2.Lerp(facingDir, agent.desiredVelocity.normalized, Time.deltaTime * 5f);
         }
     }
@@ -119,7 +114,7 @@ public class EnemyAI : MonoBehaviour
         float angle = Vector2.Angle(facingDir, dirToPlayer);
         if (angle > viewAngle * 0.5f) return false;
 
-        // Bloqueio de obstáculos
+        
         if (Physics2D.Raycast(origin, dirToPlayer, dist, obstacleMask))
             return false;
 
@@ -128,14 +123,13 @@ public class EnemyAI : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        // Mostra alcance
+        
         Gizmos.color = canSeePlayer ? Color.red : Color.yellow;
         Gizmos.DrawWireSphere(transform.position, viewDistance);
 
-        // Direção atual do inimigo
+        
         Vector2 dir = facingDir.sqrMagnitude < 0.001f ? Vector2.right : facingDir.normalized;
-
-        // Desenha cone
+        
         Vector3 origin = transform.position;
         Quaternion qRight = Quaternion.Euler(0, 0, viewAngle * 0.5f);
         Quaternion qLeft = Quaternion.Euler(0, 0, -viewAngle * 0.5f);
