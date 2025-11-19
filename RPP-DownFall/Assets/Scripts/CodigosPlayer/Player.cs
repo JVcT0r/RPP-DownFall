@@ -54,6 +54,10 @@ public class Player : MonoBehaviour
     public AudioClip DeathSound;
     public AudioClip sfxPlayerHit;
     private AudioSource audioSource;
+    
+    [Header("Mensagens na tela")]
+    public TMPro.TMP_Text mensagemUI;
+    private Coroutine mensagemRoutine;
 
     [Header("Documentos")]
     public GameObject painelDocumento;
@@ -366,7 +370,9 @@ public class Player : MonoBehaviour
                 if (porta != null)
                     porta.AbrirPorta(this);
                 else
-                    Debug.LogError("PortaSaida.cs não encontrado no objeto da porta!");
+                {
+                    MostrarMensagem("Você precisa da chave/cartão!", 2f);
+                }
 
                 return;
             }
@@ -379,6 +385,28 @@ public class Player : MonoBehaviour
         Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
         float ang = Vector2.Angle(transform.right, dir);
         return ang <= 70f / 2f;
+    }
+    
+    // -------------------- MENSAGENS NA TELA --------------------
+    public void MostrarMensagem(string msg, float duracao = 2f)
+    {
+        if (mensagemUI == null) return;
+
+        if (mensagemRoutine != null)
+            StopCoroutine(mensagemRoutine);
+
+        mensagemRoutine = StartCoroutine(MensagemRoutine(msg, duracao));
+    }
+
+    private IEnumerator MensagemRoutine(string msg, float duracao)
+    {
+        mensagemUI.text = msg;
+        mensagemUI.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(duracao);
+
+        mensagemUI.gameObject.SetActive(false);
+        mensagemRoutine = null;
     }
 
     // -------------------- ABRIR / FECHAR DOCUMENTO --------------------

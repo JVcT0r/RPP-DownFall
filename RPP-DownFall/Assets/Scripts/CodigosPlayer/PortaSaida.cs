@@ -2,29 +2,47 @@ using UnityEngine;
 
 public class PortaSaida : MonoBehaviour
 {
-    public Animator animPorta;         
-    public GameObject portalTrigger;   
+    [Header("Movimento da Porta")]
+    public float distanciaAbrir = 1.5f;   
+    public float velocidade = 2f;         
+    public bool aberta = false;
+    
+    private Vector3 posicaoInicial;
+    private Vector3 posicaoFinal;
 
-    private bool aberta = false;
+    private void Start()
+    {
+        posicaoInicial = transform.localPosition;
+        posicaoFinal = posicaoInicial + new Vector3(0, distanciaAbrir, 0);
+        
+    }
 
     public void AbrirPorta(Player player)
     {
-        if (aberta) return;
+        if (player == null) return;
 
-        if (player.temChave)
+        if (!player.temChave)
+        {
+            player.MostrarMensagem("Você precisa do cartão!", 2f);
+            return;
+        }
+
+        if (!aberta)
         {
             aberta = true;
-            Debug.Log("[PORTA] Porta destrancada!");
-
-            if (animPorta != null)
-                animPorta.SetTrigger("Abrir");
-
-            if (portalTrigger != null)
-                portalTrigger.SetActive(true); // agora o portal funciona
+            StartCoroutine(MoverPorta());
         }
-        else
+    }
+
+    private System.Collections.IEnumerator MoverPorta()
+    {
+        float t = 0f;
+
+        while (t < 1f)
         {
-            Debug.Log("[PORTA] Você precisa do cartão para abrir.");
+            t += Time.deltaTime * velocidade;
+            transform.localPosition = Vector3.Lerp(posicaoInicial, posicaoFinal, t);
+            yield return null;
         }
     }
 }
