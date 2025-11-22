@@ -41,7 +41,7 @@ public class EnemyHealth : MonoBehaviour
 
         currentHealth -= damage;
 
-        // 🔥 ADICIONADO — inimigo percebe o tiro e vira para o player
+        
         GetComponent<EnemyAI>()?.OnHitByPlayer();
 
         Particles?.PlayBloodVFX();

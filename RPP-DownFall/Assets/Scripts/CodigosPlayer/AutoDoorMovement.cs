@@ -55,6 +55,9 @@ public class AutoDoorMoverNavmesh : MonoBehaviour
 
     private System.Collections.IEnumerator OpenDoor()
     {
+        
+        if (!gameObject.activeInHierarchy) yield break;
+
         if (isOpen) yield break;
 
         audioSource.PlayOneShot(portaAbrindoSFX);
@@ -75,6 +78,9 @@ public class AutoDoorMoverNavmesh : MonoBehaviour
 
     private System.Collections.IEnumerator CloseDoor()
     {
+        
+        if (!gameObject.activeInHierarchy) yield break;
+
         yield return new WaitForSeconds(closeDelay);
 
         Vector3 target = closedPos;

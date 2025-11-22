@@ -138,7 +138,7 @@ public class EnemyAI : MonoBehaviour
     }
 
     // -------------------------------
-    // 🔥 ADICIONADO: inimigo sente o tiro
+    //      inimigo sente o tiro
     // -------------------------------
     public void OnHitByPlayer()
     {
