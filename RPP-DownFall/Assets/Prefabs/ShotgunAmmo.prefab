@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6369654926227723295}
   m_Layer: 0
   m_Name: ShotgunAmmo
-  m_TagString: Untagged
+  m_TagString: Interagir
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
