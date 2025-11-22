@@ -24,9 +24,7 @@ public class EnemyAI : MonoBehaviour
     private float checkTimer;
     private float lastSeenTimer = Mathf.Infinity;
 
-    // DIREÇÃO DO INIMIGO (AGORA NÃO COMEÇA FIXA PRA DIREITA)
     private Vector2 facingDir;
-
     private Animator _animator;
 
     private void Awake()
@@ -48,7 +46,6 @@ public class EnemyAI : MonoBehaviour
                 target = p.transform;
         }
 
-        // DIREÇÃO INICIAL BASEADA NA ROTAÇÃO DO OBJETO
         facingDir = transform.right;
     }
 
@@ -80,8 +77,7 @@ public class EnemyAI : MonoBehaviour
             agent.ResetPath();
             _animator.SetBool(IsFollowing, false);
         }
-        
-        // FLIP DO SPRITE
+
         if (spriteRenderer != null)
         {
             if (facingDir.x > 0.05f) spriteRenderer.flipX = false;
@@ -123,11 +119,9 @@ public class EnemyAI : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        
         Gizmos.color = canSeePlayer ? Color.red : Color.yellow;
         Gizmos.DrawWireSphere(transform.position, viewDistance);
 
-        
         Vector2 dir = (facingDir.sqrMagnitude < 0.01f ? (Vector2)transform.right : facingDir).normalized;
 
         Vector3 origin = transform.position;
@@ -141,5 +135,22 @@ public class EnemyAI : MonoBehaviour
         Gizmos.color = new Color(1f, 0.5f, 0f, 0.4f);
         Gizmos.DrawLine(origin, origin + rightBound * viewDistance);
         Gizmos.DrawLine(origin, origin + leftBound * viewDistance);
+    }
+
+    // -------------------------------
+    // 🔥 ADICIONADO: inimigo sente o tiro
+    // -------------------------------
+    public void OnHitByPlayer()
+    {
+        if (target == null) return;
+
+        lastSeenTimer = 0f;
+        canSeePlayer = true;
+
+        Vector2 dirToPlayer = ((Vector2)target.position - (Vector2)transform.position).normalized;
+        facingDir = dirToPlayer;
+
+        agent.SetDestination(target.position);
+        _animator.SetBool(IsFollowing, true);
     }
 }

@@ -25,7 +25,6 @@ public class EnemyHealth : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        
         if (string.IsNullOrEmpty(enemyID))
             enemyID = Guid.NewGuid().ToString();
     }
@@ -35,36 +34,34 @@ public class EnemyHealth : MonoBehaviour
         currentHealth = maxHealth;
     }
     
-
     // -------------------- DANO --------------------
     public void TakeDamage(int damage)
     {
         if (IsDead) return;
 
         currentHealth -= damage;
-        
+
+        // 🔥 ADICIONADO — inimigo percebe o tiro e vira para o player
+        GetComponent<EnemyAI>()?.OnHitByPlayer();
+
         Particles?.PlayBloodVFX();
 
         if (currentHealth <= 0)
             Die();
     }
     
-
     // -------------------- MORTE --------------------
     private void Die()
     {
         IsDead = true;
         currentHealth = 0;
 
-        
         EnemyDrop drop = GetComponent<EnemyDrop>();
         if (drop != null)
             drop.DroparItens();
 
         gameObject.SetActive(false);
-        
     }
-
 
     // -------------------- DANO NO PLAYER --------------------
     private void OnCollisionEnter2D(Collision2D collision)

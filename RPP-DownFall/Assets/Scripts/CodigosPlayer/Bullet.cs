@@ -12,13 +12,11 @@ public class Bullet : MonoBehaviour
     private TrailRenderer trailRenderer;
     public Light2D light;
     
-
     private void Start()
     {
-      spriteRenderer = GetComponent<SpriteRenderer>();
-      capsuleCollider = GetComponent<CapsuleCollider2D>();
-      trailRenderer = GetComponent<TrailRenderer>();
-      
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
+        trailRenderer = GetComponent<TrailRenderer>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -29,9 +27,10 @@ public class Bullet : MonoBehaviour
             if (enemy != null)
             {
                 
-                //Particles.PlayBloodVFX();
-                enemy.TakeDamage(damage);
+                collision.GetComponent<EnemyAI>()?.OnHitByPlayer();
+
                 
+                enemy.TakeDamage(damage);
             }
         }
         
@@ -39,13 +38,6 @@ public class Bullet : MonoBehaviour
         light.enabled = false;
         trailRenderer.enabled = false;
         spriteRenderer.enabled = false;
-        capsuleCollider.enabled = false;
-        
+        capsuleCollider.enabled = false;   
     }
-
-    
- 
 }
-
-
-
