@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+    public static bool hasShotgun = false; 
+
     private GameManager gameManager;
 
     [Header("Movimento e Combate")]
@@ -22,7 +24,7 @@ public class Player : MonoBehaviour
     public float interactRange = 1.5f;
 
     [Header("UI de Interação")]
-    public GameObject hintLerDocumento;  
+    public GameObject hintLerDocumento;
 
     [Header("Lanterna")]
     public Transform flashlight;
@@ -54,7 +56,7 @@ public class Player : MonoBehaviour
     public AudioClip DeathSound;
     public AudioClip sfxPlayerHit;
     private AudioSource audioSource;
-    
+
     [Header("Mensagens na tela")]
     public TMPro.TMP_Text mensagemUI;
     private Coroutine mensagemRoutine;
@@ -90,7 +92,7 @@ public class Player : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         CurrentHealth = maxHealth;
-        
+
         weaponManager = GetComponent<WeaponManager>();
         if (weaponManager != null)
         {
@@ -110,7 +112,6 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        
         if (isReadingDocument)
         {
             if (hintLerDocumento != null) hintLerDocumento.SetActive(false);
@@ -246,14 +247,8 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void SetIsReloadingToTrue()
-    {
-        isReloading = true;
-    }
-    public void SetIsReloadingToFalse()
-    {
-        isReloading = false;
-    }
+    public void SetIsReloadingToTrue() { isReloading = true; }
+    public void SetIsReloadingToFalse() { isReloading = false; }
 
     void ReloadSFX()
     {
@@ -278,7 +273,7 @@ public class Player : MonoBehaviour
     void TryInteract()
     {
         if (isReadingDocument) return;
-        
+
         bool encontrouDocumento = false;
 
         Collider2D[] hitsDocsHint = Physics2D.OverlapCircleAll(transform.position, interactRange);
@@ -302,9 +297,9 @@ public class Player : MonoBehaviour
 
         if (hintLerDocumento != null)
             hintLerDocumento.SetActive(encontrouDocumento);
-        
+
         if (!Input.GetKeyDown(KeyCode.E)) return;
-        
+
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
 
         // ---------- COLETAR PISTOLA ----------
@@ -312,15 +307,35 @@ public class Player : MonoBehaviour
         {
             if (hit.CompareTag("Pistola") && IsFacing(hit))
             {
-
                 if (WeaponManager.Instance != null)
                 {
                     WeaponManager.Instance.pistolUnlocked = true;
                     WeaponManager.Instance.SetWeapon(WeaponType.Pistol);
                 }
-                
+
                 AmmoManager.pistolBullets = 0;
                 AmmoManager.pistolMagazine = 0;
+
+                Destroy(hit.gameObject);
+                return;
+            }
+        }
+
+        // ---------- COLETAR SHOTGUN ----------  
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Shotgun") && IsFacing(hit))
+            {
+                if (WeaponManager.Instance != null)
+                {
+                    WeaponManager.Instance.shotgunUnlocked = true;
+                    WeaponManager.Instance.SetWeapon(WeaponType.Shotgun);
+                }
+
+                Player.hasShotgun = true; 
+
+                AmmoManager.shotgunBullets = 0;
+                AmmoManager.shotgunMagazine = 0;
 
                 Destroy(hit.gameObject);
                 return;
@@ -386,8 +401,8 @@ public class Player : MonoBehaviour
         float ang = Vector2.Angle(transform.right, dir);
         return ang <= 70f / 2f;
     }
-    
-    // -------------------- MENSAGENS NA TELA --------------------
+
+    // -------------------- MENSAGENS --------------------
     public void MostrarMensagem(string msg, float duracao = 2f)
     {
         if (mensagemUI == null) return;
@@ -409,7 +424,7 @@ public class Player : MonoBehaviour
         mensagemRoutine = null;
     }
 
-    // -------------------- ABRIR / FECHAR DOCUMENTO --------------------
+    // -------------------- DOCUMENTOS --------------------
     void AbrirDocumento(DocumentObject doc)
     {
         isReadingDocument = true;

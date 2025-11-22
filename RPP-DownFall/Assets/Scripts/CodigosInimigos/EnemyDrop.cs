@@ -19,12 +19,15 @@ public class EnemyDrop : MonoBehaviour
     {
         Vector3 pos = transform.position + Vector3.up * alturaDrop;
 
+        
         if (Random.value <= chanceDropPistola && dropPistola != null)
             Instantiate(dropPistola, pos, Quaternion.identity);
 
-        if (Random.value <= chanceDropShotgun && dropShotgun != null)
+        
+        if (Player.hasShotgun && Random.value <= chanceDropShotgun && dropShotgun != null)
             Instantiate(dropShotgun, pos, Quaternion.identity);
 
+        
         if (Random.value <= chanceDropPocao && dropPocao != null)
             Instantiate(dropPocao, pos, Quaternion.identity);
     }
