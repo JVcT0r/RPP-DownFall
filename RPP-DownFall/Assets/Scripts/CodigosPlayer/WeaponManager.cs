@@ -24,6 +24,15 @@ public class WeaponManager : MonoBehaviour
 
     void Update()
     {
+        if (!pistolUnlocked && !shotgunUnlocked)
+        {
+            animator.SetBool("Desarmado", true);
+        }
+        else if (pistolUnlocked || shotgunUnlocked)
+        {
+            animator.SetBool("Desarmado", false);
+        }
+        
         if (Input.GetKeyDown(KeyCode.Alpha1) && pistolUnlocked)
         {
             animator.SetBool("Shotgun", false);
