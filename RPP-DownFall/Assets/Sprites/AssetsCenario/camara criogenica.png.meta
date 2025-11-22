@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      camara criogenica_0: 6853668527695083735
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
