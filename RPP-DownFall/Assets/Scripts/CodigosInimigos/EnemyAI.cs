@@ -24,9 +24,9 @@ public class EnemyAI : MonoBehaviour
     private float checkTimer;
     private float lastSeenTimer = Mathf.Infinity;
 
-    
-    private Vector2 facingDir = Vector2.right;
-    
+    // DIREÇÃO DO INIMIGO (AGORA NÃO COMEÇA FIXA PRA DIREITA)
+    private Vector2 facingDir;
+
     private Animator _animator;
 
     private void Awake()
@@ -47,6 +47,9 @@ public class EnemyAI : MonoBehaviour
             if (p != null)
                 target = p.transform;
         }
+
+        // DIREÇÃO INICIAL BASEADA NA ROTAÇÃO DO OBJETO
+        facingDir = transform.right;
     }
 
     private void Update()
@@ -72,14 +75,13 @@ public class EnemyAI : MonoBehaviour
             agent.SetDestination(target.position);
             _animator.SetBool(IsFollowing, true);
         }
-
         else
         {
             agent.ResetPath();
             _animator.SetBool(IsFollowing, false);
         }
         
-       
+        // FLIP DO SPRITE
         if (spriteRenderer != null)
         {
             if (facingDir.x > 0.05f) spriteRenderer.flipX = false;
@@ -91,7 +93,6 @@ public class EnemyAI : MonoBehaviour
     {
         Vector2 dirToPlayer = ((Vector2)target.position - (Vector2)transform.position).normalized;
 
-        
         if (canSeePlayer)
         {
             facingDir = Vector2.Lerp(facingDir, dirToPlayer, Time.deltaTime * 10f);
@@ -114,7 +115,6 @@ public class EnemyAI : MonoBehaviour
         float angle = Vector2.Angle(facingDir, dirToPlayer);
         if (angle > viewAngle * 0.5f) return false;
 
-        
         if (Physics2D.Raycast(origin, dirToPlayer, dist, obstacleMask))
             return false;
 
@@ -128,14 +128,15 @@ public class EnemyAI : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, viewDistance);
 
         
-        Vector2 dir = facingDir.sqrMagnitude < 0.001f ? Vector2.right : facingDir.normalized;
-        
+        Vector2 dir = (facingDir.sqrMagnitude < 0.01f ? (Vector2)transform.right : facingDir).normalized;
+
         Vector3 origin = transform.position;
+
         Quaternion qRight = Quaternion.Euler(0, 0, viewAngle * 0.5f);
-        Quaternion qLeft = Quaternion.Euler(0, 0, -viewAngle * 0.5f);
+        Quaternion qLeft  = Quaternion.Euler(0, 0, -viewAngle * 0.5f);
 
         Vector3 rightBound = qRight * (Vector3)dir;
-        Vector3 leftBound = qLeft * (Vector3)dir;
+        Vector3 leftBound  = qLeft * (Vector3)dir;
 
         Gizmos.color = new Color(1f, 0.5f, 0f, 0.4f);
         Gizmos.DrawLine(origin, origin + rightBound * viewDistance);

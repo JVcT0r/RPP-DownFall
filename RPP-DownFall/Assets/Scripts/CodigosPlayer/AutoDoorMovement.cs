@@ -28,7 +28,10 @@ public class AutoDoorMoverNavmesh : MonoBehaviour
             if (other.CompareTag(tag))
             {
                 StopAllCoroutines();
-                StartCoroutine(OpenDoor());
+
+                if (isActiveAndEnabled)
+                    StartCoroutine(OpenDoor());
+
                 break;
             }
         }
@@ -41,7 +44,10 @@ public class AutoDoorMoverNavmesh : MonoBehaviour
             if (other.CompareTag(tag))
             {
                 StopAllCoroutines();
-                StartCoroutine(CloseDoor());
+
+                if (isActiveAndEnabled)
+                    StartCoroutine(CloseDoor());
+
                 break;
             }
         }
@@ -50,33 +56,40 @@ public class AutoDoorMoverNavmesh : MonoBehaviour
     private System.Collections.IEnumerator OpenDoor()
     {
         if (isOpen) yield break;
+
         audioSource.PlayOneShot(portaAbrindoSFX);
         isOpen = true;
 
         Vector3 target = closedPos + openOffset;
-        float t = 0;
+        float t = 0f;
+
         while (t < openTime)
         {
             door.localPosition = Vector3.Lerp(closedPos, target, t / openTime);
             t += Time.deltaTime;
             yield return null;
         }
+
         door.localPosition = target;
     }
 
     private System.Collections.IEnumerator CloseDoor()
     {
         yield return new WaitForSeconds(closeDelay);
+
         Vector3 target = closedPos;
         Vector3 start = door.localPosition;
-        float t = 0;
+        float t = 0f;
+
         while (t < openTime)
         {
             door.localPosition = Vector3.Lerp(start, target, t / openTime);
             t += Time.deltaTime;
             yield return null;
         }
+
         door.localPosition = target;
+
         audioSource.PlayOneShot(portaFechandoSFX);
         isOpen = false;
     }
