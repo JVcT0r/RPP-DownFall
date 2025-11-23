@@ -52,6 +52,8 @@ public class Player : MonoBehaviour
 
     [Header("Áudio")]
     public AudioClip sfxTiro;
+    public AudioClip sfxTiroShotgun;
+    public AudioClip sfxPumpShotgun;
     public AudioClip sfxReload;
     public AudioClip DeathSound;
     public AudioClip sfxPlayerHit;
@@ -189,7 +191,8 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && AmmoManager.shotgunBullets > 0)
         {
             AmmoManager.shotgunBullets--;
-            anim.Play("ShotgunPumpAnim");
+            audioSource.PlayOneShot(sfxTiroShotgun, 0.5f);
+            
 
             for (int i = 0; i < 6; i++)
             {
@@ -238,6 +241,7 @@ public class Player : MonoBehaviour
                         isReloading = true;
                         int bulletsNeeded = AmmoManager.shotgunBulletsMax - AmmoManager.shotgunBullets;
                         int bFromMagazine = Mathf.Min(bulletsNeeded, AmmoManager.shotgunMagazine);
+                        anim.Play("ShotgunPumpAnim");
                         AmmoManager.shotgunBullets += bFromMagazine;
                         AmmoManager.shotgunMagazine -= bFromMagazine;
                         isReloading = false;
@@ -254,6 +258,11 @@ public class Player : MonoBehaviour
     {
         audioSource.pitch = UnityEngine.Random.Range(1f, 1.1f);
         audioSource.PlayOneShot(sfxReload, 0.3f);
+    }
+    void ReloadSFXShotgun()
+    {
+        audioSource.pitch = UnityEngine.Random.Range(1f, 1.1f);
+        audioSource.PlayOneShot(sfxPumpShotgun, 0.5f);
     }
 
     // -------------------- LANTERNA --------------------

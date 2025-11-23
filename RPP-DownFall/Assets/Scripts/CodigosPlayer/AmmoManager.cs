@@ -17,8 +17,8 @@ public class AmmoManager : MonoBehaviour
     public static int pistolBulletsMax = 12;
     public static int pistolMagazineMax = 60;
 
-    public static int shotgunBulletsMax = 6;
-    public static int shotgunMagazineMax = 30;
+    public static int shotgunBulletsMax = 1;
+    public static int shotgunMagazineMax = 20;
 
     void Update()
     {
