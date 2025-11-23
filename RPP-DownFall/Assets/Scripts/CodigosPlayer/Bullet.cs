@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
-using UnityEngine.VFX;
 
 public class Bullet : MonoBehaviour
 {
@@ -17,16 +16,6 @@ public class Bullet : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
         trailRenderer = GetComponent<TrailRenderer>();
-
-        
-        GameObject[] slashes = GameObject.FindGameObjectsWithTag("BossProjectile");
-        foreach (var slash in slashes)
-        {
-            foreach (var colSlash in slash.GetComponentsInChildren<Collider2D>())
-            {
-                Physics2D.IgnoreCollision(capsuleCollider, colSlash);
-            }
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -51,7 +40,7 @@ public class Bullet : MonoBehaviour
             BossHealth bh = collision.GetComponent<BossHealth>();
             if (bh != null)
             {
-                // ▼ SE for a PISTOLA:
+                // ▼ SE for PISTOLA:
                 bh.TakeHitFromGun(false);
             }
 

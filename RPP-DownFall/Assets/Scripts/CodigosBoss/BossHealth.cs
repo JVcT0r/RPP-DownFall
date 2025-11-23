@@ -3,27 +3,29 @@ using UnityEngine;
 public class BossHealth : MonoBehaviour
 {
     [Header("Vida real do Boss")]
-    public int maxRealHealth = 50; 
+    public int maxRealHealth = 50;
     private int currentRealHealth;
 
-    [Header("Sistema de Stagger")]
+    [Header("Sistema de Stagger (desmaio)")]
     public int pistolHitsNeeded = 10;
     public int shotgunHitsNeeded = 3;
 
     private int pistolCounter = 0;
     private int shotgunCounter = 0;
 
-    public float staggerTime = 2f; 
+    public float staggerTime = 2f;
     public bool isStaggered = false;
 
-    [Header("Referências")]
     private BossAI bossAI;
+
+    [Header("Referências de VFX (opcional)")]
     public SpawnDamageParticles Particles;
 
-    [Header("Porta que abre ao morrer")]
-    public string doorTagToOpen = "BossDoor";
-    public float doorMoveDistance = 2f;
-    public float doorMoveTime = 0.5f;
+    [Header("Porta do Boss")]
+    public Transform bossDoor;          
+    public float doorMoveDistance = 30f; 
+    public float doorMoveTime = 0.5f;   
+    public bool doorMovesRight = true;  
 
     private void Awake()
     {
@@ -31,8 +33,12 @@ public class BossHealth : MonoBehaviour
         bossAI = GetComponent<BossAI>();
     }
 
+    // --------------------------------------------------------------------
+    //   RECEBE DANO (DE PISTOLA OU SHOTGUN)
+    // --------------------------------------------------------------------
     public void TakeHitFromGun(bool isShotgun)
     {
+        
         if (isStaggered)
         {
             currentRealHealth--;
@@ -44,6 +50,7 @@ public class BossHealth : MonoBehaviour
             return;
         }
 
+        
         if (isShotgun) shotgunCounter++;
         else pistolCounter++;
 
@@ -51,13 +58,18 @@ public class BossHealth : MonoBehaviour
             EnterStagger();
     }
 
+    // --------------------------------------------------------------------
+    //   ENTRA NO STUN
+    // --------------------------------------------------------------------
     private void EnterStagger()
     {
         isStaggered = true;
+
         pistolCounter = 0;
         shotgunCounter = 0;
 
         bossAI?.EnterStaggerState();
+
         Invoke(nameof(ExitStagger), staggerTime);
     }
 
@@ -67,61 +79,56 @@ public class BossHealth : MonoBehaviour
         bossAI?.ExitStaggerState();
     }
 
+    // --------------------------------------------------------------------
+    //   MORRE
+    // --------------------------------------------------------------------
     private void Die()
     {
         bossAI?.OnBossDeath();
-        OpenBossDoor();
+
+        OpenDoor(); 
+        
+        Invoke(nameof(DisableBoss), 0.2f);
+    }
+
+    private void DisableBoss()
+    {
         gameObject.SetActive(false);
     }
 
-    // -------------------- ABERTURA LATERAL DA PORTA --------------------
-    private void OpenBossDoor()
+    // --------------------------------------------------------------------
+    //   ABRE A PORTA
+    // --------------------------------------------------------------------
+    private void OpenDoor()
     {
-        GameObject doorObj = GameObject.FindGameObjectWithTag(doorTagToOpen);
-        if (doorObj == null)
+        if (bossDoor == null)
         {
-            Debug.LogWarning("[BossHealth] Porta com tag " + doorTagToOpen + " não encontrada!");
+            Debug.LogWarning("BossHealth: Nenhuma porta atribuída no inspector!");
             return;
         }
 
-        Transform door = doorObj.transform;
-        Vector3 start = door.localPosition;
-        Vector3 target = start + new Vector3(doorMoveDistance, 0, 0);
+        Vector3 start = bossDoor.position;
+        Vector3 target;
 
-        doorObj.AddComponent<TempDoorMover>().Move(start, target, doorMoveTime);
-    }
-}
+        if (doorMovesRight)
+            target = start + new Vector3(doorMoveDistance, 0, 0);
+        else
+            target = start + new Vector3(-doorMoveDistance, 0, 0);
 
-// -------------------------------------------------------------------
-//       Faz a porta deslizar e depois se auto-destrói
-// -------------------------------------------------------------------
-public class TempDoorMover : MonoBehaviour
-{
-    private Vector3 startPos;
-    private Vector3 targetPos;
-    private float moveTime;
-
-    public void Move(Vector3 start, Vector3 target, float time)
-    {
-        startPos = start;
-        targetPos = target;
-        moveTime = time;
-        StartCoroutine(MoveRoutine());
+        StartCoroutine(OpenDoorRoutine(start, target));
     }
 
-    private System.Collections.IEnumerator MoveRoutine()
+    private System.Collections.IEnumerator OpenDoorRoutine(Vector3 start, Vector3 target)
     {
-        float t = 0f;
+        float t = 0;
 
-        while (t < moveTime)
+        while (t < doorMoveTime)
         {
-            transform.localPosition = Vector3.Lerp(startPos, targetPos, t / moveTime);
+            bossDoor.position = Vector3.Lerp(start, target, t / doorMoveTime);
             t += Time.deltaTime;
             yield return null;
         }
 
-        transform.localPosition = targetPos;
-
-        Destroy(this);
+        bossDoor.position = target;
     }
 }

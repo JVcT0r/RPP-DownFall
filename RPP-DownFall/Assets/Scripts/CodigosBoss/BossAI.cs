@@ -86,10 +86,8 @@ public class BossAI : MonoBehaviour
         Vector2 dir = (target.position - transform.position).normalized;
         facingDir = dir;
 
-        if (facingDir.x > 0) spriteRenderer.flipX = false;
-        else spriteRenderer.flipX = true;
+        spriteRenderer.flipX = facingDir.x < 0;
 
-        
         float angle = Mathf.Atan2(facingDir.y, facingDir.x) * Mathf.Rad2Deg;
         firePointSlash.rotation = Quaternion.Euler(0, 0, angle);
 
@@ -133,34 +131,32 @@ public class BossAI : MonoBehaviour
     // -------------------- ATAQUE À DISTÂNCIA --------------------
     private void RangedSlash()
     {
+        anim.SetTrigger("SlashShoot");
 
-        if (slashProjectilePrefab != null)
+        GameObject proj = Instantiate(
+            slashProjectilePrefab,
+            firePointSlash.position,
+            firePointSlash.rotation
+        );
+
+        // Ignorar colisão projétil ↔ boss
+        foreach (var colBoss in GetComponentsInChildren<Collider2D>())
         {
-            GameObject proj = Instantiate(
-                slashProjectilePrefab,
-                firePointSlash.position,
-                firePointSlash.rotation
-            );
-
-           
-            foreach (var colBoss in GetComponentsInChildren<Collider2D>())
+            foreach (var colProj in proj.GetComponentsInChildren<Collider2D>())
             {
-                foreach (var colProj in proj.GetComponentsInChildren<Collider2D>())
-                {
-                    Physics2D.IgnoreCollision(colProj, colBoss);
-                }
+                Physics2D.IgnoreCollision(colProj, colBoss);
             }
-
-            
-            if (proj.TryGetComponent<Rigidbody2D>(out var rb))
-            {
-                rb.linearVelocity = firePointSlash.right * slashSpeed;
-            }
-
-            proj.transform.position += firePointSlash.right * 0.25f;
-
-            Destroy(proj, 4f);
         }
+
+        // VELOCIDADE CORRETA
+        if (proj.TryGetComponent<Rigidbody2D>(out var rb))
+        {
+            rb.linearVelocity = firePointSlash.right * slashSpeed;
+        }
+
+        proj.transform.position += firePointSlash.right * 0.25f;
+
+        Destroy(proj, 4f);
     }
 
     // -------------------- VISÃO --------------------
@@ -201,7 +197,6 @@ public class BossAI : MonoBehaviour
     // -------------------- MORTE --------------------
     public void OnBossDeath()
     {
-        anim.SetTrigger("Die");
         agent.enabled = false;
     }
 
