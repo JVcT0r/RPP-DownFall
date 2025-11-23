@@ -90,6 +90,10 @@ public class BossAI : MonoBehaviour
         else spriteRenderer.flipX = true;
 
         
+        float angle = Mathf.Atan2(facingDir.y, facingDir.x) * Mathf.Rad2Deg;
+        firePointSlash.rotation = Quaternion.Euler(0, 0, angle);
+
+        
         if (canSeePlayer)
         {
             agent.SetDestination(target.position);
@@ -101,8 +105,8 @@ public class BossAI : MonoBehaviour
             anim.SetBool("IsFollowing", false);
         }
 
-        
         float dist = Vector2.Distance(transform.position, target.position);
+
         if (Time.time >= nextAttackTime && canSeePlayer)
         {
             if (dist <= meleeRange)
@@ -141,8 +145,23 @@ public class BossAI : MonoBehaviour
                 firePointSlash.rotation
             );
 
+            
+            foreach (var colBoss in GetComponentsInChildren<Collider2D>())
+            {
+                foreach (var colProj in proj.GetComponentsInChildren<Collider2D>())
+                {
+                    Physics2D.IgnoreCollision(colProj, colBoss);
+                }
+            }
+
+            
             if (proj.TryGetComponent<Rigidbody2D>(out var rb))
-                rb.linearVelocity = facingDir.normalized * slashSpeed;
+            {
+                rb.linearVelocity = firePointSlash.right * slashSpeed;
+            }
+
+            
+            proj.transform.position += firePointSlash.right * 0.25f;
 
             Destroy(proj, 4f);
         }
@@ -192,7 +211,6 @@ public class BossAI : MonoBehaviour
     // -------------------- GIZMOS --------------------
     private void OnDrawGizmos()
     {
-        
         Vector3 origin = Application.isPlaying
             ? (Vector3)transform.position
             : transform.position;
@@ -200,7 +218,6 @@ public class BossAI : MonoBehaviour
         Gizmos.color = canSeePlayer ? Color.red : Color.yellow;
         Gizmos.DrawWireSphere(origin, viewDistance);
 
-        
         Vector2 dir = Application.isPlaying
             ? (facingDir.sqrMagnitude < 0.01f ? (Vector2)transform.right : facingDir.normalized)
             : (Vector2)transform.right;
