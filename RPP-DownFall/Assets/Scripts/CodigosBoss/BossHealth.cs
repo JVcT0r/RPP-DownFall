@@ -23,9 +23,6 @@ public class BossHealth : MonoBehaviour
 
     [Header("Porta do Boss")]
     public Transform bossDoor;          
-    public float doorMoveDistance = 30f; 
-    public float doorMoveTime = 0.5f;   
-    public bool doorMovesRight = true;  
 
     private void Awake()
     {
@@ -86,9 +83,10 @@ public class BossHealth : MonoBehaviour
     {
         bossAI?.OnBossDeath();
 
-        OpenDoor(); 
-        
-        Invoke(nameof(DisableBoss), 0.2f);
+        if (bossDoor != null)
+            bossDoor.GetComponent<BossDoorController>()?.OpenDoor();
+
+        Invoke(nameof(DisableBoss), 0.1f); 
     }
 
     private void DisableBoss()
@@ -96,39 +94,4 @@ public class BossHealth : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    // --------------------------------------------------------------------
-    //   ABRE A PORTA
-    // --------------------------------------------------------------------
-    private void OpenDoor()
-    {
-        if (bossDoor == null)
-        {
-            Debug.LogWarning("BossHealth: Nenhuma porta atribuída no inspector!");
-            return;
-        }
-
-        Vector3 start = bossDoor.position;
-        Vector3 target;
-
-        if (doorMovesRight)
-            target = start + new Vector3(doorMoveDistance, 0, 0);
-        else
-            target = start + new Vector3(-doorMoveDistance, 0, 0);
-
-        StartCoroutine(OpenDoorRoutine(start, target));
-    }
-
-    private System.Collections.IEnumerator OpenDoorRoutine(Vector3 start, Vector3 target)
-    {
-        float t = 0;
-
-        while (t < doorMoveTime)
-        {
-            bossDoor.position = Vector3.Lerp(start, target, t / doorMoveTime);
-            t += Time.deltaTime;
-            yield return null;
-        }
-
-        bossDoor.position = target;
-    }
 }

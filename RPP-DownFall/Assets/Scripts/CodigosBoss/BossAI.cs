@@ -74,34 +74,37 @@ public class BossAI : MonoBehaviour
         }
         // ------------------------------------------------
 
-        // --------- STUN: sem animação, só para e fica idle ---------
+        // --------- STUN: sem animação, só parar e ficar na idle ---------
         if (isStaggered)
         {
-            agent.ResetPath();
+            SafeResetPath();
             anim.SetBool("IsFollowing", false); 
             return;
         }
-        // -----------------------------------------------------------
 
+        // DIREÇÃO / FLIP
         Vector2 dir = (target.position - transform.position).normalized;
         facingDir = dir;
 
-        spriteRenderer.flipX = facingDir.x < 0;
+        spriteRenderer.flipX = (facingDir.x < 0);
 
+        // Rotacionar firePoint
         float angle = Mathf.Atan2(facingDir.y, facingDir.x) * Mathf.Rad2Deg;
         firePointSlash.rotation = Quaternion.Euler(0, 0, angle);
 
+        // Movimento
         if (canSeePlayer)
         {
-            agent.SetDestination(target.position);
+            SafeSetDestination(target.position);
             anim.SetBool("IsFollowing", true);
         }
         else
         {
-            agent.ResetPath();
+            SafeResetPath();
             anim.SetBool("IsFollowing", false);
         }
 
+        // Ataque
         float dist = Vector2.Distance(transform.position, target.position);
         if (Time.time >= nextAttackTime && canSeePlayer)
         {
@@ -148,11 +151,9 @@ public class BossAI : MonoBehaviour
             }
         }
 
-        // VELOCIDADE CORRETA
+        // Velocidade correta
         if (proj.TryGetComponent<Rigidbody2D>(out var rb))
-        {
             rb.linearVelocity = firePointSlash.right * slashSpeed;
-        }
 
         proj.transform.position += firePointSlash.right * 0.25f;
 
@@ -165,7 +166,7 @@ public class BossAI : MonoBehaviour
         if (target == null) return false;
 
         Vector2 origin = transform.position;
-        Vector2 toPlayer = (target.position - transform.position);
+        Vector2 toPlayer = target.position - transform.position;
         float dist = toPlayer.magnitude;
 
         if (dist > viewDistance) return false;
@@ -184,9 +185,9 @@ public class BossAI : MonoBehaviour
     public void EnterStaggerState()
     {
         isStaggered = true;
-        
+
         anim.SetBool("IsFollowing", false);
-        agent.ResetPath();
+        SafeResetPath();
     }
 
     public void ExitStaggerState()
@@ -197,7 +198,22 @@ public class BossAI : MonoBehaviour
     // -------------------- MORTE --------------------
     public void OnBossDeath()
     {
-        agent.enabled = false;
+        if (agent != null)
+            agent.enabled = false;
+    }
+
+    // -------------------- NAVMESH SAFE FUNCTIONS --------------------
+
+    private void SafeResetPath()
+    {
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+            agent.ResetPath();
+    }
+
+    private void SafeSetDestination(Vector3 pos)
+    {
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+            agent.SetDestination(pos);
     }
 
     // -------------------- GIZMOS --------------------
