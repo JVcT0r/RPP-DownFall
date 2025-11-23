@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1117596575328055371}
   - component: {fileID: 5374321343262527554}
   - component: {fileID: 1652480339562511843}
+  - component: {fileID: 7702084720577031433}
   m_Layer: 0
   m_Name: Potion
   m_TagString: Interagir
@@ -139,3 +140,60 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   potionAmount: 1
+--- !u!114 &7702084720577031433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4645774621514273115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShadowGroup: 0
+  m_Priority: 1
+  m_ComponentVersion: 5
+  m_HasRenderer: 1
+  m_UseRendererSilhouette: 1
+  m_CastsShadows: 1
+  m_SelfShadows: 0
+  m_AlphaCutoff: 0.1
+  m_ApplyToSortingLayers: 0000000051119af9
+  m_ShapePath:
+  - {x: -0.41422847, y: -0.13391687, z: 0.0000000013657662}
+  - {x: -0.48678234, y: 0.00486576, z: -0.00000004318538}
+  - {x: -0.4078933, y: 0.16242583, z: 0.0000000013657662}
+  - {x: 0.5060906, y: 0.16242582, z: 0.0000000013657662}
+  - {x: 0.55537647, y: 0.109398425, z: -0.00000004318538}
+  - {x: 0.56487954, y: 0.0016981066, z: -0.00000004318538}
+  - {x: 0.5458735, y: -0.09966689, z: -0.00000004318538}
+  - {x: 0.502923, y: -0.14025219, z: 0.0000000013657662}
+  m_ShapePathHash: 1536837649
+  m_InstanceId: 0
+  m_ShadowShape2DComponent: {fileID: 1117596575328055371}
+  m_ShadowShape2DProvider:
+    rid: 7378505294742552667
+  m_ShadowCastingSource: 2
+  m_ShadowMesh:
+    m_Mesh: {fileID: 0}
+    m_LocalBounds:
+      m_Center: {x: -0.040000916, y: 0.0049972534, z: 0}
+      m_Extent: {x: 0.5099869, y: 0.07498932, z: 0}
+    m_EdgeProcessing: 1
+    m_TrimEdge: 0.11
+    m_FlipX: 0
+    m_FlipY: 0
+    m_InitialTrim: 0.05
+  m_CastingOption: 3
+  m_PreviousTrimEdge: 0.11
+  m_PreviousEdgeProcessing: 1
+  m_PreviousShadowCastingSource: 2
+  m_PreviousShadowShape2DSource: {fileID: 1117596575328055371}
+  references:
+    version: 2
+    RefIds:
+    - rid: 7378505294742552667
+      type: {class: ShadowShape2DProvider_SpriteRenderer, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
+      data: 
