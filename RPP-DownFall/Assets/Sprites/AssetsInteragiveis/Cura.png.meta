@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7ee0c2cbcc6e51346af78caae12aeee2
+guid: 569f4c7e6ea004342ad1c0e0aafacc80
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7619950620956298001
-    second: PistolAmmo_0
+      213: -5857046015753615886
+    second: Cura_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PistolAmmo_0
+      name: Cura_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 75
-        height: 40
+        x: 10
+        y: 23
+        width: 122
+        height: 35
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fe4f1ef484f704690800000000000000
-      internalID: -7619950620956298001
+      spriteID: 2f583ed3ea797bea0800000000000000
+      internalID: -5857046015753615886
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      PistolAmmo_0: -7619950620956298001
+      Cura_0: -5857046015753615886
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
