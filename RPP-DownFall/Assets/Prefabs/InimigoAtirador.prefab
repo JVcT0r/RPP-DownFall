@@ -353,7 +353,7 @@ MonoBehaviour:
   bulletSpeed: 10
   memorySeconds: 2
   checkInterval: 0.1
-  viewDistance: 13
+  viewDistance: 73.7
   viewAngle: 130
   obstacleMask:
     serializedVersion: 2

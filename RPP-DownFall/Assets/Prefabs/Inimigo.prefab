@@ -388,8 +388,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  viewDistance: 23.84
-  viewAngle: 83
+  viewDistance: 73.6
+  viewAngle: 119
   obstacleMask:
     serializedVersion: 2
     m_Bits: 128

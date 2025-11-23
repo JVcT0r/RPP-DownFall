@@ -70,8 +70,7 @@ public class EnemyShooter : MonoBehaviour
                 spriteRenderer.flipX = startDir.x < 0;
         }
 
-        if (firePoint == null)
-            Debug.LogWarning($"[EnemyShooter] FirePoint não atribuído em {gameObject.name}");
+        if (firePoint == null);
     }
 
     private void Update()
