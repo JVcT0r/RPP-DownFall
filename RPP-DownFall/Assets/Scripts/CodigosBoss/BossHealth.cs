@@ -3,7 +3,7 @@ using UnityEngine;
 public class BossHealth : MonoBehaviour
 {
     [Header("Vida real do Boss")]
-    public int maxRealHealth = 10;
+    public int maxRealHealth = 50; 
     private int currentRealHealth;
 
     [Header("Sistema de Stagger")]
@@ -13,7 +13,7 @@ public class BossHealth : MonoBehaviour
     private int pistolCounter = 0;
     private int shotgunCounter = 0;
 
-    public float staggerTime = 3f;
+    public float staggerTime = 2f; 
     public bool isStaggered = false;
 
     [Header("Referências")]
@@ -22,8 +22,8 @@ public class BossHealth : MonoBehaviour
 
     [Header("Porta que abre ao morrer")]
     public string doorTagToOpen = "BossDoor";
-    public float doorMoveDistance = 2f;      
-    public float doorMoveTime = 0.5f;        
+    public float doorMoveDistance = 2f;
+    public float doorMoveTime = 0.5f;
 
     private void Awake()
     {
@@ -84,12 +84,10 @@ public class BossHealth : MonoBehaviour
             return;
         }
 
-        // Move para o lado
         Transform door = doorObj.transform;
         Vector3 start = door.localPosition;
         Vector3 target = start + new Vector3(doorMoveDistance, 0, 0);
 
-        // Coroutine global
         doorObj.AddComponent<TempDoorMover>().Move(start, target, doorMoveTime);
     }
 }
