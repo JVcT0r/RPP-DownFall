@@ -12,6 +12,8 @@ TagManager:
   - PortaSaida
   - Pistola
   - Shotgun
+  - BossDoor
+  - Boss
   layers:
   - Default
   - TransparentFX
