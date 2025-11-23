@@ -527,9 +527,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ammoCircle: {fileID: 659760509}
   ammoText: {fileID: 484381177}
-  weaponIcon: {fileID: 0}
+  weaponIcon: {fileID: 1720546313}
   pistolSprite: {fileID: 21300000, guid: 794943f5676d8b14588d27531c3bc226, type: 3}
-  shotgunSprite: {fileID: 8092319549872215919, guid: b11d256d4f7a5fe449608149c7837fcb, type: 3}
+  shotgunSprite: {fileID: 21300000, guid: 3835ba14616532349a34de10319b6591, type: 3}
   potionIcon: {fileID: 659760509}
   potionCountText: {fileID: 1990243401}
 --- !u!1 &1391765353
