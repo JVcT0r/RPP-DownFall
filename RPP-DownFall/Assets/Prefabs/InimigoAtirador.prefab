@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 4393938449532160601}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.44, y: -0.06, z: 0}
+  m_LocalPosition: {x: 0.742, y: -0.031, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -120,7 +120,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 84c248a004f814c4cb4b1ce8e21caedb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cf545f1108c88fb478551ff7724b0339, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -168,7 +168,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.21253227, y: 0.51300293}
+    pivot: {x: 0.22222221, y: 0.50975215}
     oldSize: {x: 4.7, y: 4.67}
     newSize: {x: 4.7, y: 4.67}
     adaptiveTilingThreshold: 0.5
@@ -192,8 +192,6 @@ MonoBehaviour:
   maxHealth: 10
   Particles: {fileID: 4973923001054968070}
   bulletScript: {fileID: 925674296409163778, guid: 8a23ac776f3d9434fa7abb7f16363c3a, type: 3}
-  _knockbackTime: 0
-  _knockbackForce: 0
   enemyID: 
 --- !u!50 &5400735887143428794
 Rigidbody2D:
@@ -257,8 +255,8 @@ MonoBehaviour:
   m_ShadowMesh:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
-      m_Center: {x: 0.94109344, y: -0.065719604, z: 0}
-      m_Extent: {x: 1.4799881, y: 1.5999908, z: 0}
+      m_Center: {x: -0.09944153, y: -0.090538025, z: 0}
+      m_Extent: {x: 0.47499084, y: 1.3099899, z: 0}
     m_EdgeProcessing: 1
     m_TrimEdge: 0.3
     m_FlipX: 0
