@@ -153,7 +153,6 @@ GameObject:
   - component: {fileID: 3132714149052235892}
   - component: {fileID: 7191010567771989387}
   - component: {fileID: 2367340383858829537}
-  - component: {fileID: 3224677670441952731}
   m_Layer: 0
   m_Name: Inimigo
   m_TagString: Inimigo
@@ -608,18 +607,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &3224677670441952731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6333794214620058320}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd08b0689fed0044cba06907c4a2fa9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &905550735848017648
 PrefabInstance:
   m_ObjectHideFlags: 0

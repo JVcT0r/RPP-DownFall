@@ -6,7 +6,7 @@ public class EnemyAI : MonoBehaviour
     private static readonly int IsFollowing = Animator.StringToHash("IsFollowing");
 
     [Header("Referências")]
-    [SerializeField] private Transform target; 
+    [SerializeField] private Transform target;
     private NavMeshAgent agent;
     private SpriteRenderer spriteRenderer;
 
@@ -46,15 +46,25 @@ public class EnemyAI : MonoBehaviour
                 target = p.transform;
         }
 
-        facingDir = transform.right;
+        // 🔥 Ajuste inicial: inimigo nasce olhando para o player
+        if (target != null)
+        {
+            facingDir = ((Vector2)target.position - (Vector2)transform.position).normalized;
+            spriteRenderer.flipX = facingDir.x < 0;
+        }
+        else
+        {
+            facingDir = transform.right;
+        }
     }
 
     private void Update()
     {
         if (target == null) return;
-        
+
         UpdateFacingDirection();
-        
+
+        // ---- visão ----
         checkTimer += Time.deltaTime;
         if (checkTimer >= checkInterval)
         {
@@ -78,11 +88,8 @@ public class EnemyAI : MonoBehaviour
             _animator.SetBool(IsFollowing, false);
         }
 
-        if (spriteRenderer != null)
-        {
-            if (facingDir.x > 0.05f) spriteRenderer.flipX = false;
-            else if (facingDir.x < -0.05f) spriteRenderer.flipX = true;
-        }
+        // ---- flip ----
+        spriteRenderer.flipX = facingDir.x < 0;
     }
 
     private void UpdateFacingDirection()
@@ -90,13 +97,9 @@ public class EnemyAI : MonoBehaviour
         Vector2 dirToPlayer = ((Vector2)target.position - (Vector2)transform.position).normalized;
 
         if (canSeePlayer)
-        {
             facingDir = Vector2.Lerp(facingDir, dirToPlayer, Time.deltaTime * 10f);
-        }
         else if (agent.desiredVelocity.sqrMagnitude > 0.001f)
-        {
             facingDir = Vector2.Lerp(facingDir, agent.desiredVelocity.normalized, Time.deltaTime * 5f);
-        }
     }
 
     private bool CheckPlayerInVision()
@@ -107,7 +110,7 @@ public class EnemyAI : MonoBehaviour
 
         if (dist > viewDistance) return false;
 
-        Vector2 dirToPlayer = toPlayer / (dist > 0.001f ? dist : 1f);
+        Vector2 dirToPlayer = toPlayer.normalized;
         float angle = Vector2.Angle(facingDir, dirToPlayer);
         if (angle > viewAngle * 0.5f) return false;
 
@@ -117,33 +120,11 @@ public class EnemyAI : MonoBehaviour
         return true;
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = canSeePlayer ? Color.red : Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, viewDistance);
-
-        Vector2 dir = (facingDir.sqrMagnitude < 0.01f ? (Vector2)transform.right : facingDir).normalized;
-
-        Vector3 origin = transform.position;
-
-        Quaternion qRight = Quaternion.Euler(0, 0, viewAngle * 0.5f);
-        Quaternion qLeft  = Quaternion.Euler(0, 0, -viewAngle * 0.5f);
-
-        Vector3 rightBound = qRight * (Vector3)dir;
-        Vector3 leftBound  = qLeft * (Vector3)dir;
-
-        Gizmos.color = new Color(1f, 0.5f, 0f, 0.4f);
-        Gizmos.DrawLine(origin, origin + rightBound * viewDistance);
-        Gizmos.DrawLine(origin, origin + leftBound * viewDistance);
-    }
-
     // -------------------------------
     //      inimigo sente o tiro
     // -------------------------------
     public void OnHitByPlayer()
     {
-        if (target == null) return;
-
         lastSeenTimer = 0f;
         canSeePlayer = true;
 
@@ -152,5 +133,32 @@ public class EnemyAI : MonoBehaviour
 
         agent.SetDestination(target.position);
         _animator.SetBool(IsFollowing, true);
+    }
+
+    // -------------------------------
+    //           GIZMOS
+    // -------------------------------
+    private void OnDrawGizmos()
+    {
+        Vector3 origin = Application.isPlaying
+            ? (Vector3)transform.position
+            : transform.position;
+
+        Gizmos.color = canSeePlayer ? Color.red : Color.yellow;
+        Gizmos.DrawWireSphere(origin, viewDistance);
+
+        Vector2 dir = Application.isPlaying
+            ? (facingDir.sqrMagnitude < 0.01f ? (Vector2)transform.right : facingDir.normalized)
+            : (Vector2)transform.right;
+
+        Quaternion qRight = Quaternion.Euler(0, 0, viewAngle * 0.5f);
+        Quaternion qLeft = Quaternion.Euler(0, 0, -viewAngle * 0.5f);
+
+        Vector3 rightBound = qRight * dir;
+        Vector3 leftBound = qLeft * dir;
+
+        Gizmos.color = new Color(1f, 0.5f, 0f, 0.4f);
+        Gizmos.DrawLine(origin, origin + rightBound * viewDistance);
+        Gizmos.DrawLine(origin, origin + leftBound * viewDistance);
     }
 }

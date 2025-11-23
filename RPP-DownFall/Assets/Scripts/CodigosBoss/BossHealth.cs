@@ -5,6 +5,8 @@ public class BossHealth : MonoBehaviour
     [Header("Vida real do Boss")]
     public int maxRealHealth = 50;
     private int currentRealHealth;
+    
+    public int CurrentRealHealth => currentRealHealth;
 
     [Header("Sistema de Stagger (desmaio)")]
     public int pistolHitsNeeded = 10;
