@@ -78,7 +78,7 @@ public class BossAI : MonoBehaviour
         if (isStaggered)
         {
             agent.ResetPath();
-            anim.SetBool("IsFollowing", false);  // volta pro idle
+            anim.SetBool("IsFollowing", false); 
             return;
         }
         // -----------------------------------------------------------
@@ -89,7 +89,7 @@ public class BossAI : MonoBehaviour
         if (facingDir.x > 0) spriteRenderer.flipX = false;
         else spriteRenderer.flipX = true;
 
-        // manter firePoint apontando pra frente
+        
         float angle = Mathf.Atan2(facingDir.y, facingDir.x) * Mathf.Rad2Deg;
         firePointSlash.rotation = Quaternion.Euler(0, 0, angle);
 
@@ -133,7 +133,6 @@ public class BossAI : MonoBehaviour
     // -------------------- ATAQUE À DISTÂNCIA --------------------
     private void RangedSlash()
     {
-        anim.SetTrigger("SlashShoot");
 
         if (slashProjectilePrefab != null)
         {
@@ -143,7 +142,7 @@ public class BossAI : MonoBehaviour
                 firePointSlash.rotation
             );
 
-            // IGNORA COLISÕES COM O BOSS (mesmo se tiver vários colliders)
+           
             foreach (var colBoss in GetComponentsInChildren<Collider2D>())
             {
                 foreach (var colProj in proj.GetComponentsInChildren<Collider2D>())
@@ -152,7 +151,7 @@ public class BossAI : MonoBehaviour
                 }
             }
 
-            // CORREÇÃO: Rigidbody2D usa "velocity", não "linearVelocity"
+            
             if (proj.TryGetComponent<Rigidbody2D>(out var rb))
             {
                 rb.linearVelocity = firePointSlash.right * slashSpeed;
@@ -189,8 +188,7 @@ public class BossAI : MonoBehaviour
     public void EnterStaggerState()
     {
         isStaggered = true;
-
-        // sem animação de stun: só para e volta pro idle
+        
         anim.SetBool("IsFollowing", false);
         agent.ResetPath();
     }
