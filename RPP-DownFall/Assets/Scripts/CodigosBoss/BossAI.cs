@@ -93,12 +93,12 @@ public class BossAI : MonoBehaviour
         if (canSeePlayer)
         {
             agent.SetDestination(target.position);
-            anim.SetBool("IsMoving", true);
+            anim.SetBool("IsFollowing", true);
         }
         else
         {
             agent.ResetPath();
-            anim.SetBool("IsMoving", false);
+            anim.SetBool("IsFollowing", false);
         }
 
         
