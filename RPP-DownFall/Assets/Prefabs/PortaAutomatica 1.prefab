@@ -68,7 +68,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.060498953, y: 0.13069773}
+  m_Offset: {x: 0.085497856, y: -0.11136198}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -78,7 +78,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.11198, y: 3.1947813}
+  m_Size: {x: 13.091518, y: 10.198367}
   m_EdgeRadius: 0
 --- !u!114 &291857673586446012
 MonoBehaviour:
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   door: {fileID: 8735365920663634770}
-  openOffset: {x: 3, y: 0, z: 0}
+  openOffset: {x: 15, y: 0, z: 0}
   openTime: 0.1
   closeDelay: 1
   allowedTags:
@@ -224,7 +224,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.07672031, y: 5.710787, z: 0.0826484}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5125, y: 0.6625, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8735365920663634770}
@@ -239,13 +239,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5676190250932612222}
     m_Modifications:
+    - target: {fileID: -5011490562965048616, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
+      propertyPath: m_Size.x
+      value: 2.43
+      objectReference: {fileID: 0}
+    - target: {fileID: -5011490562965048616, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
+      propertyPath: m_Size.y
+      value: 5.17
+      objectReference: {fileID: 0}
+    - target: {fileID: -5011490562965048616, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: -5011490562965048616, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 5.12
+      objectReference: {fileID: 0}
+    - target: {fileID: -5011490562965048616, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 5.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1890530237053306970, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 46f55c3cea32b7447baabef0b659cf2d, type: 3}
     - target: {fileID: 1890530237053306970, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_SortingOrder
-      value: 1
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 2093220472723523364, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_Priority
-      value: 1
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 2093220472723523364, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_PreviousTrimEdge
@@ -268,12 +292,20 @@ PrefabInstance:
       value: -107343535
       objectReference: {fileID: 0}
     - target: {fileID: 2093220472723523364, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Center.x
+      value: -0.05999756
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093220472723523364, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
+      propertyPath: m_ShadowMesh.m_LocalBounds.m_Center.y
+      value: -0.010002136
+      objectReference: {fileID: 0}
+    - target: {fileID: 2093220472723523364, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.x
-      value: 0.5
+      value: 1.199997
       objectReference: {fileID: 0}
     - target: {fileID: 2093220472723523364, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_ShadowMesh.m_LocalBounds.m_Extent.y
-      value: 0.5
+      value: 2.5499954
       objectReference: {fileID: 0}
     - target: {fileID: 2138364081588022490, guid: deee428e87fc1a148a5f2d37b469786d, type: 3}
       propertyPath: m_LocalScale.x
