@@ -51,6 +51,7 @@ GameObject:
   - component: {fileID: 6508252126938157011}
   - component: {fileID: 8967528074536065693}
   - component: {fileID: 8446297134665483011}
+  - component: {fileID: 7863899977917932891}
   m_Layer: 0
   m_Name: InimigoAtirador
   m_TagString: Inimigo
@@ -347,17 +348,16 @@ MonoBehaviour:
   firePoint: {fileID: 977502713756525798}
   bulletPrefab: {fileID: 1489640080764844140, guid: 8a23ac776f3d9434fa7abb7f16363c3a, type: 3}
   viewPivot: {fileID: 6713589372588473761}
-  moveSpeed: 3.5
-  attackRange: 6
-  fireRate: 1.2
-  bulletSpeed: 10
-  memorySeconds: 2
-  checkInterval: 0.1
   viewDistance: 73.7
   viewAngle: 130
   obstacleMask:
     serializedVersion: 2
     m_Bits: 128
+  checkInterval: 0.1
+  memorySeconds: 2
+  fireRate: 1.2
+  bulletSpeed: 10
+  canSeePlayer: 0
 --- !u!95 &8446297134665483011
 Animator:
   serializedVersion: 7
@@ -380,6 +380,25 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7863899977917932891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6333794214620058320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8f9a9be12b212a40abe172513400a60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chanceDropPistola: 0.3
+  chanceDropShotgun: 0.3
+  chanceDropPocao: 0.1
+  dropPistola: {fileID: 8413232171380955219, guid: 7e85379c42562c84bb33d7176a53fa1f, type: 3}
+  dropShotgun: {fileID: 2785173847364699582, guid: b4a144e5ef8da7b42bbfcb78b6a2c2c0, type: 3}
+  dropPocao: {fileID: 4645774621514273115, guid: 1df8f759f5971c64aaca954ec0c89883, type: 3}
+  alturaDrop: 0.2
 --- !u!1 &7771080292290017850
 GameObject:
   m_ObjectHideFlags: 0
