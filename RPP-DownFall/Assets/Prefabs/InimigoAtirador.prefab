@@ -394,7 +394,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chanceDropPistola: 0.3
   chanceDropShotgun: 0.3
-  chanceDropPocao: 0.1
+  chanceDropPocao: 0.3
   dropPistola: {fileID: 8413232171380955219, guid: 7e85379c42562c84bb33d7176a53fa1f, type: 3}
   dropShotgun: {fileID: 2785173847364699582, guid: b4a144e5ef8da7b42bbfcb78b6a2c2c0, type: 3}
   dropPocao: {fileID: 4645774621514273115, guid: 1df8f759f5971c64aaca954ec0c89883, type: 3}
