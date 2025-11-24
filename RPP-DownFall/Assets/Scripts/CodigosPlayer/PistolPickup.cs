@@ -4,8 +4,7 @@ public class PistolPickup : MonoBehaviour
 {
     public void OnInteracted()
     {
-        WeaponManager.Instance.pistolUnlocked = true;
-        WeaponManager.Instance.SetWeapon(WeaponType.Pistol);
+        WeaponManager.Instance.UnlockPistol();
         Debug.Log("[Pickup] Pistola coletada!");
         Destroy(gameObject);
     }
