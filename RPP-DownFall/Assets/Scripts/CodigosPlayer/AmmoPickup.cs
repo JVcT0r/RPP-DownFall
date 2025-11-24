@@ -34,6 +34,8 @@ public class AmmoPickup : MonoBehaviour
                 break;
         }
 
+        GlobalRunData.Instance.CaptureStatics();
+        
         Destroy(gameObject);
     }
 }

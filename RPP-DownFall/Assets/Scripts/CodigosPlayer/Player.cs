@@ -98,9 +98,7 @@ public class Player : MonoBehaviour
         weaponManager = GetComponent<WeaponManager>();
         if (weaponManager != null)
         {
-            weaponManager.pistolUnlocked = false;
-            weaponManager.shotgunUnlocked = false;
-            weaponManager.SetWeapon(WeaponType.None);
+            
         }
 
         if (deathScreen != null)
@@ -280,129 +278,129 @@ public class Player : MonoBehaviour
 
     // -------------------- INTERAÇÃO --------------------
     void TryInteract()
+{
+    if (isReadingDocument) return;
+
+    bool encontrouDocumento = false;
+
+    Collider2D[] hitsDocsHint = Physics2D.OverlapCircleAll(transform.position, interactRange);
+    Vector2 forwardHint = transform.right;
+    float coneHint = 70f;
+
+    foreach (var hit in hitsDocsHint)
     {
-        if (isReadingDocument) return;
+        var doc = hit.GetComponent<DocumentObject>();
+        if (doc == null) continue;
 
-        bool encontrouDocumento = false;
+        Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+        float ang = Vector2.Angle(forwardHint, dir);
 
-        Collider2D[] hitsDocsHint = Physics2D.OverlapCircleAll(transform.position, interactRange);
-        Vector2 forwardHint = transform.right;
-        float coneHint = 70f;
-
-        foreach (var hit in hitsDocsHint)
+        if (ang <= coneHint / 2f)
         {
-            var doc = hit.GetComponent<DocumentObject>();
-            if (doc == null) continue;
-
-            Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
-            float ang = Vector2.Angle(forwardHint, dir);
-
-            if (ang <= coneHint / 2f)
-            {
-                encontrouDocumento = true;
-                break;
-            }
+            encontrouDocumento = true;
+            break;
         }
+    }
 
-        if (hintLerDocumento != null)
-            hintLerDocumento.SetActive(encontrouDocumento);
+    if (hintLerDocumento != null)
+        hintLerDocumento.SetActive(encontrouDocumento);
 
-        if (!Input.GetKeyDown(KeyCode.E)) return;
+    if (!Input.GetKeyDown(KeyCode.E)) return;
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
+    Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
 
-        // ---------- COLETAR PISTOLA ----------
-        foreach (var hit in hits)
+    // ---------- COLETAR PISTOLA ----------
+    foreach (var hit in hits)
+    {
+        if (hit.CompareTag("Pistola") && IsFacing(hit))
         {
-            if (hit.CompareTag("Pistola") && IsFacing(hit))
+            if (WeaponManager.Instance != null)
             {
-                if (WeaponManager.Instance != null)
-                {
-                    WeaponManager.Instance.pistolUnlocked = true;
-                    WeaponManager.Instance.SetWeapon(WeaponType.Pistol);
-                }
+                WeaponManager.Instance.UnlockPistol();
 
+                // ZERA A MUNIÇÃO DA PISTOLA AO PEGAR
                 AmmoManager.pistolBullets = 0;
                 AmmoManager.pistolMagazine = 0;
 
-                Destroy(hit.gameObject);
-                return;
+                GlobalRunData.Instance.CaptureStatics();
             }
+
+            Destroy(hit.gameObject);
+            return;
         }
+    }
 
-        // ---------- COLETAR SHOTGUN ----------  
-        foreach (var hit in hits)
+    // ---------- COLETAR SHOTGUN ----------
+    foreach (var hit in hits)
+    {
+        if (hit.CompareTag("Shotgun") && IsFacing(hit))
         {
-            if (hit.CompareTag("Shotgun") && IsFacing(hit))
+            if (WeaponManager.Instance != null)
             {
-                if (WeaponManager.Instance != null)
-                {
-                    WeaponManager.Instance.shotgunUnlocked = true;
-                    WeaponManager.Instance.SetWeapon(WeaponType.Shotgun);
-                }
+                WeaponManager.Instance.UnlockShotgun();
 
-                Player.hasShotgun = true; 
-
+                // ZERA A MUNIÇÃO DA SHOTGUN AO PEGAR
                 AmmoManager.shotgunBullets = 0;
                 AmmoManager.shotgunMagazine = 0;
 
-                Destroy(hit.gameObject);
-                return;
+                GlobalRunData.Instance.CaptureStatics();
             }
+
+            Destroy(hit.gameObject);
+            return;
         }
-
-        // ---------- MUNIÇÃO / POÇÃO (COLETA) ----------
-        foreach (var hit in hits)
-        {
-            if (hit.CompareTag("Interagir") && IsFacing(hit))
-            {
-                hit.SendMessage("OnInteracted", SendMessageOptions.DontRequireReceiver);
-                return;
-            }
-        }
-
-        // ---------- DOCUMENTO ----------
-        foreach (var hit in hits)
-        {
-            var doc = hit.GetComponent<DocumentObject>();
-            if (doc != null && IsFacing(hit))
-            {
-                AbrirDocumento(doc);
-                return;
-            }
-        }
-
-        // ---------- CHAVE ----------
-        foreach (var hit in hits)
-        {
-            if (hit.CompareTag("Chave") && IsFacing(hit))
-            {
-                temChave = true;
-                Debug.Log("[PLAYER] Chave / Cartão coletado!");
-                Destroy(hit.gameObject);
-                return;
-            }
-        }
-
-        // ---------- PORTA DE SAÍDA ----------
-        foreach (var hit in hits)
-        {
-            if (hit.CompareTag("PortaSaida") && IsFacing(hit))
-            {
-                PortaSaida porta = hit.GetComponent<PortaSaida>();
-
-                if (porta != null)
-                    porta.AbrirPorta(this);
-                else
-                {
-                    MostrarMensagem("Você precisa da chave/cartão!", 2f);
-                }
-
-                return;
-            }
-        }
-
     }
+
+    // ---------- MUNIÇÃO / POÇÃO (COLETA) ----------
+    foreach (var hit in hits)
+    {
+        if (hit.CompareTag("Interagir") && IsFacing(hit))
+        {
+            hit.SendMessage("OnInteracted", SendMessageOptions.DontRequireReceiver);
+            return;
+        }
+    }
+
+    // ---------- DOCUMENTO ----------
+    foreach (var hit in hits)
+    {
+        var doc = hit.GetComponent<DocumentObject>();
+        if (doc != null && IsFacing(hit))
+        {
+            AbrirDocumento(doc);
+            return;
+        }
+    }
+
+    // ---------- CHAVE ----------
+    foreach (var hit in hits)
+    {
+        if (hit.CompareTag("Chave") && IsFacing(hit))
+        {
+            temChave = true;
+            Debug.Log("[PLAYER] Chave / Cartão coletado!");
+            Destroy(hit.gameObject);
+            return;
+        }
+    }
+
+    // ---------- PORTA DE SAÍDA ----------
+    foreach (var hit in hits)
+    {
+        if (hit.CompareTag("PortaSaida") && IsFacing(hit))
+        {
+            PortaSaida porta = hit.GetComponent<PortaSaida>();
+
+            if (porta != null)
+                porta.AbrirPorta(this);
+            else
+                MostrarMensagem("Você precisa da chave/cartão!", 2f);
+
+            return;
+        }
+    }
+}
+
 
     bool IsFacing(Collider2D hit)
     {

@@ -20,7 +20,8 @@ public class PotionPickup : MonoBehaviour
             hud.SendMessage("UpdatePotionUI", SendMessageOptions.DontRequireReceiver);
 
         Debug.Log($"[Pickup] Coletou {potionAmount} poção(ões). Total: {HealthManager.potionCount}");
-
+    
+        GlobalRunData.Instance.CaptureStatics();
         // destrói item
         Destroy(gameObject);
     }
