@@ -18,21 +18,22 @@ public class WeaponManager : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
+        DontDestroyOnLoad(gameObject);
+
         animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        if (!pistolUnlocked && !shotgunUnlocked)
-        {
-            animator.SetBool("Desarmado", true);
-        }
-        else if (pistolUnlocked || shotgunUnlocked)
-        {
-            animator.SetBool("Desarmado", false);
-        }
-        
+        animator.SetBool("Desarmado", !pistolUnlocked && !shotgunUnlocked);
+
         if (Input.GetKeyDown(KeyCode.Alpha1) && pistolUnlocked)
         {
             animator.SetBool("Shotgun", false);

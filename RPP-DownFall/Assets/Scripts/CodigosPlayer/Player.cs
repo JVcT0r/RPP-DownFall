@@ -7,7 +7,9 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
-    public static bool hasShotgun = false; 
+    private static bool created = false;
+
+    public static bool hasShotgun = false;
 
     private GameManager gameManager;
 
@@ -85,8 +87,24 @@ public class Player : MonoBehaviour
     private CapsuleCollider2D capsule;
     private Animator anim;
 
+    // ----------------------------------------------------------
+    // AWAKE — Persistência + bloqueio de duplicatas
+    // ----------------------------------------------------------
     void Awake()
     {
+        if (!created)
+        {
+            DontDestroyOnLoad(gameObject);
+            created = true;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
         gameManager = GameObject.Find("GameManager")?.GetComponent<GameManager>();
         mainCam = Camera.main;
         rb = GetComponent<Rigidbody2D>();
@@ -96,15 +114,24 @@ public class Player : MonoBehaviour
         CurrentHealth = maxHealth;
 
         weaponManager = GetComponent<WeaponManager>();
-        if (weaponManager != null)
-        {
-            weaponManager.pistolUnlocked = false;
-            weaponManager.shotgunUnlocked = false;
-            weaponManager.SetWeapon(WeaponType.None);
-        }
 
         if (deathScreen != null)
             deathScreen.SetActive(false);
+    }
+
+    // ----------------------------------------------------------
+    // Atualiza a câmera + teleporta no SpawnPoint da fase
+    // ----------------------------------------------------------
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        mainCam = Camera.main;
+
+        GameObject spawn = GameObject.FindWithTag("PlayerSpawn");
+        if (spawn != null)
+        {
+            transform.position = spawn.transform.position;
+            rb.position = spawn.transform.position;
+        }
     }
 
     void Start()
@@ -112,6 +139,9 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
+    // ----------------------------------------------------------
+    // UPDATE
+    // ----------------------------------------------------------
     void Update()
     {
         if (isReadingDocument)
@@ -143,6 +173,9 @@ public class Player : MonoBehaviour
         }
     }
 
+    // ----------------------------------------------------------
+    // FIXED UPDATE
+    // ----------------------------------------------------------
     void FixedUpdate()
     {
         if (!isDashing && !isReadingDocument)
@@ -151,18 +184,25 @@ public class Player : MonoBehaviour
             rb.MovePosition(targetPosition);
         }
 
+        if (mainCam == null) return;
+        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
+
         Vector2 aimDir = mousePos - rb.position;
         float angle = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
+    // ----------------------------------------------------------
+    // MOVIMENTO
+    // ----------------------------------------------------------
     private void Movement()
     {
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
-        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
     }
 
-    // -------------------- TIRO PISTOLA --------------------
+    // ----------------------------------------------------------
+    // TIRO PISTOLA
+    // ----------------------------------------------------------
     void ShootPistol()
     {
         if (isReloading || isReadingDocument) return;
@@ -183,7 +223,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    // -------------------- TIRO SHOTGUN --------------------
+    // ----------------------------------------------------------
+    // TIRO SHOTGUN
+    // ----------------------------------------------------------
     void ShootShotgun()
     {
         if (isReloading || isReadingDocument) return;
@@ -192,7 +234,6 @@ public class Player : MonoBehaviour
         {
             AmmoManager.shotgunBullets--;
             audioSource.PlayOneShot(sfxTiroShotgun, 0.5f);
-            
 
             for (int i = 0; i < 6; i++)
             {
@@ -213,7 +254,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    // -------------------- RELOAD --------------------
+    // ----------------------------------------------------------
+    // RELOAD
+    // ----------------------------------------------------------
     void Reload()
     {
         if (isReadingDocument) return;
@@ -251,21 +294,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void SetIsReloadingToTrue() { isReloading = true; }
-    public void SetIsReloadingToFalse() { isReloading = false; }
-
-    void ReloadSFX()
-    {
-        audioSource.pitch = UnityEngine.Random.Range(1f, 1.1f);
-        audioSource.PlayOneShot(sfxReload, 0.3f);
-    }
-    void ReloadSFXShotgun()
-    {
-        audioSource.pitch = UnityEngine.Random.Range(1f, 1.1f);
-        audioSource.PlayOneShot(sfxPumpShotgun, 0.5f);
-    }
-
-    // -------------------- LANTERNA --------------------
+    // ----------------------------------------------------------
+    // FLASHLIGHT
+    // ----------------------------------------------------------
     private void Flashlight()
     {
         if (isReadingDocument) return;
@@ -278,7 +309,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    // -------------------- INTERAÇÃO --------------------
+    // ----------------------------------------------------------
+    // INTERAÇÃO
+    // ----------------------------------------------------------
     void TryInteract()
     {
         if (isReadingDocument) return;
@@ -311,7 +344,7 @@ public class Player : MonoBehaviour
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
 
-        // ---------- COLETAR PISTOLA ----------
+        // PISTOLA
         foreach (var hit in hits)
         {
             if (hit.CompareTag("Pistola") && IsFacing(hit))
@@ -330,7 +363,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        // ---------- COLETAR SHOTGUN ----------  
+        // SHOTGUN
         foreach (var hit in hits)
         {
             if (hit.CompareTag("Shotgun") && IsFacing(hit))
@@ -341,7 +374,7 @@ public class Player : MonoBehaviour
                     WeaponManager.Instance.SetWeapon(WeaponType.Shotgun);
                 }
 
-                Player.hasShotgun = true; 
+                hasShotgun = true;
 
                 AmmoManager.shotgunBullets = 0;
                 AmmoManager.shotgunMagazine = 0;
@@ -351,7 +384,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        // ---------- MUNIÇÃO / POÇÃO (COLETA) ----------
+        // AMMO / POÇÃO
         foreach (var hit in hits)
         {
             if (hit.CompareTag("Interagir") && IsFacing(hit))
@@ -361,7 +394,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        // ---------- DOCUMENTO ----------
+        // DOCUMENTO
         foreach (var hit in hits)
         {
             var doc = hit.GetComponent<DocumentObject>();
@@ -372,19 +405,18 @@ public class Player : MonoBehaviour
             }
         }
 
-        // ---------- CHAVE ----------
+        // CHAVE
         foreach (var hit in hits)
         {
             if (hit.CompareTag("Chave") && IsFacing(hit))
             {
                 temChave = true;
-                Debug.Log("[PLAYER] Chave / Cartão coletado!");
                 Destroy(hit.gameObject);
                 return;
             }
         }
 
-        // ---------- PORTA DE SAÍDA ----------
+        // PORTA SAÍDA
         foreach (var hit in hits)
         {
             if (hit.CompareTag("PortaSaida") && IsFacing(hit))
@@ -393,15 +425,10 @@ public class Player : MonoBehaviour
 
                 if (porta != null)
                     porta.AbrirPorta(this);
-                else
-                {
-                    MostrarMensagem("Você precisa da chave/cartão!", 2f);
-                }
 
                 return;
             }
         }
-
     }
 
     bool IsFacing(Collider2D hit)
@@ -411,7 +438,6 @@ public class Player : MonoBehaviour
         return ang <= 70f / 2f;
     }
 
-    // -------------------- MENSAGENS --------------------
     public void MostrarMensagem(string msg, float duracao = 2f)
     {
         if (mensagemUI == null) return;
@@ -433,7 +459,9 @@ public class Player : MonoBehaviour
         mensagemRoutine = null;
     }
 
-    // -------------------- DOCUMENTOS --------------------
+    // ----------------------------------------------------------
+    // DOCUMENTO
+    // ----------------------------------------------------------
     void AbrirDocumento(DocumentObject doc)
     {
         isReadingDocument = true;
@@ -456,7 +484,9 @@ public class Player : MonoBehaviour
         textoDocumento.text = "";
     }
 
-    // -------------------- DASH --------------------
+    // ----------------------------------------------------------
+    // DASH
+    // ----------------------------------------------------------
     private IEnumerator Dash()
     {
         if (isDashing || isReadingDocument) yield break;
@@ -509,7 +539,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    // -------------------- CURA --------------------
+    // ----------------------------------------------------------
+    // VIDA E MORTE
+    // ----------------------------------------------------------
     public void Heal()
     {
         if (dead || isReadingDocument) return;
@@ -519,7 +551,6 @@ public class Player : MonoBehaviour
             CurrentHealth = maxHealth;
     }
 
-    // -------------------- DANO --------------------
     public void TakeDamage(int amount)
     {
         if (dead || isReadingDocument) return;
@@ -543,7 +574,9 @@ public class Player : MonoBehaviour
         audioSource.PlayOneShot(DeathSound);
     }
 
-    // -------------------- GIZMOS --------------------
+    // ----------------------------------------------------------
+    // DEBUG
+    // ----------------------------------------------------------
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

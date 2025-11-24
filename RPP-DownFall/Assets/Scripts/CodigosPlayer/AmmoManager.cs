@@ -6,14 +6,12 @@ public class AmmoManager : MonoBehaviour
     [Header("UI")]
     public TMP_Text ammoText;
 
-    // 🔹 Armas e munições
     public static int pistolBullets = 12;
     public static int pistolMagazine = 60;
 
     public static int shotgunBullets = 6;
     public static int shotgunMagazine = 30;
 
-    // 🔹 Valores máximos
     public static int pistolBulletsMax = 12;
     public static int pistolMagazineMax = 60;
 
@@ -25,7 +23,6 @@ public class AmmoManager : MonoBehaviour
         if (WeaponManager.Instance == null || ammoText == null)
             return;
 
-        
         switch (WeaponManager.Instance.Current)
         {
             case WeaponType.Pistol:
