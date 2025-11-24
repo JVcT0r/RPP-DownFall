@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 977502713756525798}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: PontoDeDisparo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52,7 +52,7 @@ GameObject:
   - component: {fileID: 8967528074536065693}
   - component: {fileID: 8446297134665483011}
   - component: {fileID: 7863899977917932891}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: InimigoAtirador
   m_TagString: Inimigo
   m_Icon: {fileID: 0}
@@ -346,7 +346,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firePoint: {fileID: 977502713756525798}
-  bulletPrefab: {fileID: 1489640080764844140, guid: 8a23ac776f3d9434fa7abb7f16363c3a, type: 3}
+  bulletPrefab: {fileID: 1489640080764844140, guid: aa5dcdd15051ad14191857426034ac2b, type: 3}
   viewPivot: {fileID: 6713589372588473761}
   viewDistance: 73.7
   viewAngle: 130
@@ -408,7 +408,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6713589372588473761}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: ViewPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -441,6 +441,10 @@ PrefabInstance:
     - target: {fileID: 4649033246286797281, guid: 02d4c8b2931f39a4ead3cbc98267deb1, type: 3}
       propertyPath: m_Name
       value: EnemyBlood
+      objectReference: {fileID: 0}
+    - target: {fileID: 4649033246286797281, guid: 02d4c8b2931f39a4ead3cbc98267deb1, type: 3}
+      propertyPath: m_Layer
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 4649033246286797281, guid: 02d4c8b2931f39a4ead3cbc98267deb1, type: 3}
       propertyPath: m_IsActive
