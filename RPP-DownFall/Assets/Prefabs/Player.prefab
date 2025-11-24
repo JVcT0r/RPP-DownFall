@@ -182,9 +182,6 @@ MonoBehaviour:
   Particles: {fileID: 3714491560530818072}
   ParticlesDmg: {fileID: 1187696476476365}
   interactRange: 1.7
-  interactableLayer:
-    serializedVersion: 2
-    m_Bits: 64
   hintLerDocumento: {fileID: 0}
   flashlight: {fileID: 1704335520273380475}
   dashSpeed: 16
@@ -201,14 +198,17 @@ MonoBehaviour:
   fullScreenFX: {fileID: 0}
   deathScreen: {fileID: 0}
   healAmount: 1
-  potionCount: 3
   sfxTiro: {fileID: 8300000, guid: 743ee36eb47797b47b4f550514592351, type: 3}
+  sfxTiroShotgun: {fileID: 8300000, guid: 5cf6777d3972b3e42b2cf1e1145d3fd2, type: 3}
+  sfxPumpShotgun: {fileID: 8300000, guid: c2ad8a76bd9bde941bd2487a458ab90c, type: 3}
   sfxReload: {fileID: 8300000, guid: 416ae6ace453de646a604fd7799d7249, type: 3}
   DeathSound: {fileID: 8300000, guid: bcc45d0cc2add064e9380d0301a82597, type: 3}
   sfxPlayerHit: {fileID: 8300000, guid: 30584825e211d124c8c8da1ea5a56bc8, type: 3}
+  mensagemUI: {fileID: 0}
   painelDocumento: {fileID: 0}
   textoDocumento: {fileID: 0}
   isReadingDocument: 0
+  temChave: 0
   dead: 0
 --- !u!114 &5210553240032714968
 MonoBehaviour:
@@ -222,6 +222,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da7d1d655b79ca545b3674b5b16f0fa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pistolUnlocked: 0
+  shotgunUnlocked: 0
 --- !u!95 &6358728037701523183
 Animator:
   serializedVersion: 7
