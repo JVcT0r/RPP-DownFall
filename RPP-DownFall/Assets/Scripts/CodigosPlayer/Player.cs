@@ -309,40 +309,18 @@ public class Player : MonoBehaviour
 
     Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
     
-    // ---------- Mostrar POPUP do terminal ----------
-    bool encontrouTerminal = false;
-
+    // -------- POPUP UNIVERSAL PARA INTERAÇÕES -----------
     Collider2D[] hitsPopup = Physics2D.OverlapCircleAll(transform.position, interactRange);
+
     foreach (var hit in hitsPopup)
     {
-        if (hit.CompareTag("Terminal"))
+        var popup = hit.GetComponent<InteractablePopup>();
+        if (popup != null)
         {
-            if (IsFacing(hit))
-            {
-                TerminalAbrirPortao t = hit.GetComponent<TerminalAbrirPortao>();
-                if (t != null)
-                {
-                    t.MostrarPopup(true);
-                    encontrouTerminal = true;
-                }
-            }
+            bool olhando = IsFacing(hit);
+            popup.ShowPopup(olhando);
         }
     }
-
-// esconde popup de todos os terminais que não foram olhados
-    if (!encontrouTerminal)
-    {
-        foreach (var hit in hitsPopup)
-        {
-            if (hit.CompareTag("Terminal"))
-            {
-                TerminalAbrirPortao t = hit.GetComponent<TerminalAbrirPortao>();
-                if (t != null)
-                    t.MostrarPopup(false);
-            }
-        }
-    }
-
     
     // ---------- TERMINAL QUE ABRE PORTÃO ----------
     foreach (var hit in hits)
@@ -358,8 +336,6 @@ public class Player : MonoBehaviour
             return;
         }
     }
-
-
     
     // ---------- ABRIR PORTÃO ----------
     foreach (var hit in hits)
