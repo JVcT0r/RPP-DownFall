@@ -103,7 +103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponType: 2
-  ammoAmount: 10
+  ammoAmount: 6
 --- !u!61 &6369654926227723295
 BoxCollider2D:
   m_ObjectHideFlags: 0
