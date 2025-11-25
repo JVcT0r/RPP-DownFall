@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4368205034850775567}
   - component: {fileID: 291857673586446012}
   - component: {fileID: 3753898004208242910}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DoorTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -207,7 +207,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5676190250932612222}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: PortaAutomatica 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
