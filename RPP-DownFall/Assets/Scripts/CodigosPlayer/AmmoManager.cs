@@ -6,11 +6,11 @@ public class AmmoManager : MonoBehaviour
     [Header("UI")]
     public TMP_Text ammoText;
 
-    public static int pistolBullets = 12;
-    public static int pistolMagazine = 60;
+    public static int pistolBullets = 0;
+    public static int pistolMagazine = 0;
 
-    public static int shotgunBullets = 6;
-    public static int shotgunMagazine = 30;
+    public static int shotgunBullets = 0;
+    public static int shotgunMagazine = 0;
 
     public static int pistolBulletsMax = 12;
     public static int pistolMagazineMax = 60;

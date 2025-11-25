@@ -27,9 +27,7 @@ public class WeaponManager : MonoBehaviour
             GameObject obj = new GameObject("GlobalRunData");
             obj.AddComponent<GlobalRunData>();
         }
-
-        // puxa os dados persistentes pra esta cena
-        GlobalRunData.Instance.ApplyToWeaponManager(this);
+        
     }
 
     private void OnDestroy()
@@ -40,17 +38,20 @@ public class WeaponManager : MonoBehaviour
 
     private void Update()
     {
+        // animação se estiver sem arma nenhuma
         if (!shotgunUnlocked && !pistolUnlocked)
         {
             animator.SetBool("Desarmado", true);
         }
         else animator.SetBool("Desarmado", false);
-        
+
+        // troca para pistola
         if (Input.GetKeyDown(KeyCode.Alpha1) && pistolUnlocked)
         {
             animator.SetBool("Shotgun", false);
             SetWeapon(WeaponType.Pistol);
         }
+        // troca para shotgun
         else if (Input.GetKeyDown(KeyCode.Alpha2) && shotgunUnlocked)
         {
             animator.SetBool("Shotgun", true);

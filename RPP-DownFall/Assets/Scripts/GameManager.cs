@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
+        GlobalRunData.Instance.LoadCheckpointState();
+
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
