@@ -2,19 +2,50 @@ using UnityEngine;
 
 public class PortaSaida : MonoBehaviour
 {
+    public enum DirecaoAbertura
+    {
+        Cima,
+        Baixo,
+        Direita,
+        Esquerda
+    }
+
     [Header("Movimento da Porta")]
-    public float distanciaAbrir = 1.5f;   
-    public float velocidade = 2f;         
+    public DirecaoAbertura direcao = DirecaoAbertura.Cima;
+    public float distanciaAbrir = 1.5f;
+    public float velocidade = 2f;
     public bool aberta = false;
-    
+
     private Vector3 posicaoInicial;
     private Vector3 posicaoFinal;
 
     private void Start()
     {
         posicaoInicial = transform.localPosition;
-        posicaoFinal = posicaoInicial + new Vector3(0, distanciaAbrir, 0);
-        
+
+        // escolher direção
+        Vector3 deslocamento = Vector3.zero;
+
+        switch (direcao)
+        {
+            case DirecaoAbertura.Cima:
+                deslocamento = new Vector3(0, distanciaAbrir, 0);
+                break;
+
+            case DirecaoAbertura.Baixo:
+                deslocamento = new Vector3(0, -distanciaAbrir, 0);
+                break;
+
+            case DirecaoAbertura.Direita:
+                deslocamento = new Vector3(distanciaAbrir, 0, 0);
+                break;
+
+            case DirecaoAbertura.Esquerda:
+                deslocamento = new Vector3(-distanciaAbrir, 0, 0);
+                break;
+        }
+
+        posicaoFinal = posicaoInicial + deslocamento;
     }
 
     public void AbrirPorta(Player player)
