@@ -308,6 +308,71 @@ public class Player : MonoBehaviour
     if (!Input.GetKeyDown(KeyCode.E)) return;
 
     Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
+    
+    // ---------- Mostrar POPUP do terminal ----------
+    bool encontrouTerminal = false;
+
+    Collider2D[] hitsPopup = Physics2D.OverlapCircleAll(transform.position, interactRange);
+    foreach (var hit in hitsPopup)
+    {
+        if (hit.CompareTag("Terminal"))
+        {
+            if (IsFacing(hit))
+            {
+                TerminalAbrirPortao t = hit.GetComponent<TerminalAbrirPortao>();
+                if (t != null)
+                {
+                    t.MostrarPopup(true);
+                    encontrouTerminal = true;
+                }
+            }
+        }
+    }
+
+// esconde popup de todos os terminais que não foram olhados
+    if (!encontrouTerminal)
+    {
+        foreach (var hit in hitsPopup)
+        {
+            if (hit.CompareTag("Terminal"))
+            {
+                TerminalAbrirPortao t = hit.GetComponent<TerminalAbrirPortao>();
+                if (t != null)
+                    t.MostrarPopup(false);
+            }
+        }
+    }
+
+    
+    // ---------- TERMINAL QUE ABRE PORTÃO ----------
+    foreach (var hit in hits)
+    {
+        if (hit.CompareTag("Terminal") && IsFacing(hit))
+        {
+            TerminalAbrirPortao terminal = hit.GetComponent<TerminalAbrirPortao>();
+            if (terminal != null)
+            {
+                terminal.AtivarTerminal();
+                terminal.MostrarPopup(false); 
+            }
+            return;
+        }
+    }
+
+
+    
+    // ---------- ABRIR PORTÃO ----------
+    foreach (var hit in hits)
+    {
+        if (hit.CompareTag("Portao") && IsFacing(hit))
+        {
+            Portao p = hit.GetComponent<Portao>();
+            if (p != null)
+                p.Abrir();
+
+            return;
+        }
+    }
 
     // ---------- COLETAR PISTOLA ----------
     foreach (var hit in hits)
