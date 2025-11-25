@@ -281,35 +281,7 @@ public class Player : MonoBehaviour
 {
     if (isReadingDocument) return;
 
-    bool encontrouDocumento = false;
-
-    Collider2D[] hitsDocsHint = Physics2D.OverlapCircleAll(transform.position, interactRange);
-    Vector2 forwardHint = transform.right;
-    float coneHint = 70f;
-
-    foreach (var hit in hitsDocsHint)
-    {
-        var doc = hit.GetComponent<DocumentObject>();
-        if (doc == null) continue;
-
-        Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
-        float ang = Vector2.Angle(forwardHint, dir);
-
-        if (ang <= coneHint / 2f)
-        {
-            encontrouDocumento = true;
-            break;
-        }
-    }
-
-    if (hintLerDocumento != null)
-        hintLerDocumento.SetActive(encontrouDocumento);
-
-    if (!Input.GetKeyDown(KeyCode.E)) return;
-
-    Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, interactRange);
-    
-    // -------- POPUP UNIVERSAL PARA INTERAÇÕES -----------
+    // ---------------- POPUP UNIVERSAL ----------------
     Collider2D[] hitsPopup = Physics2D.OverlapCircleAll(transform.position, interactRange);
 
     foreach (var hit in hitsPopup)
@@ -321,23 +293,47 @@ public class Player : MonoBehaviour
             popup.ShowPopup(olhando);
         }
     }
-    
-    // ---------- TERMINAL QUE ABRE PORTÃO ----------
+
+    // ---------------- HINT DO DOCUMENTO ----------------
+    bool encontrouDocumento = false;
+
+    foreach (var hit in hitsPopup)
+    {
+        var doc = hit.GetComponent<DocumentObject>();
+        if (doc == null) continue;
+
+        Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
+        float ang = Vector2.Angle(transform.right, dir);
+
+        if (ang <= 70f / 2f)
+        {
+            encontrouDocumento = true;
+            break;
+        }
+    }
+
+    if (hintLerDocumento != null)
+        hintLerDocumento.SetActive(encontrouDocumento);
+
+    // ---------------- INTERAÇÕES AO APERTAR E ----------------
+    if (!Input.GetKeyDown(KeyCode.E)) return;
+
+    Collider2D[] hits = hitsPopup;
+
+    // ---------- TERMINAL ----------
     foreach (var hit in hits)
     {
         if (hit.CompareTag("Terminal") && IsFacing(hit))
         {
             TerminalAbrirPortao terminal = hit.GetComponent<TerminalAbrirPortao>();
             if (terminal != null)
-            {
                 terminal.AtivarTerminal();
-                terminal.MostrarPopup(false); 
-            }
+
             return;
         }
     }
-    
-    // ---------- ABRIR PORTÃO ----------
+
+    // ---------- PORTÃO ----------
     foreach (var hit in hits)
     {
         if (hit.CompareTag("Portao") && IsFacing(hit))
@@ -345,7 +341,6 @@ public class Player : MonoBehaviour
             Portao p = hit.GetComponent<Portao>();
             if (p != null)
                 p.Abrir();
-
             return;
         }
     }
@@ -358,11 +353,8 @@ public class Player : MonoBehaviour
             if (WeaponManager.Instance != null)
             {
                 WeaponManager.Instance.UnlockPistol();
-
-                // ZERA A MUNIÇÃO DA PISTOLA AO PEGAR
                 AmmoManager.pistolBullets = 0;
                 AmmoManager.pistolMagazine = 0;
-
                 GlobalRunData.Instance.CaptureStatics();
             }
 
@@ -379,11 +371,8 @@ public class Player : MonoBehaviour
             if (WeaponManager.Instance != null)
             {
                 WeaponManager.Instance.UnlockShotgun();
-
-                // ZERA A MUNIÇÃO DA SHOTGUN AO PEGAR
                 AmmoManager.shotgunBullets = 0;
                 AmmoManager.shotgunMagazine = 0;
-
                 GlobalRunData.Instance.CaptureStatics();
             }
 
@@ -392,7 +381,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    // ---------- MUNIÇÃO / POÇÃO (COLETA) ----------
+    // ---------- MUNIÇÃO / POÇÃO ----------
     foreach (var hit in hits)
     {
         if (hit.CompareTag("Interagir") && IsFacing(hit))
@@ -419,7 +408,6 @@ public class Player : MonoBehaviour
         if (hit.CompareTag("Chave") && IsFacing(hit))
         {
             temChave = true;
-            Debug.Log("[PLAYER] Chave / Cartão coletado!");
             Destroy(hit.gameObject);
             return;
         }
@@ -440,6 +428,8 @@ public class Player : MonoBehaviour
             return;
         }
     }
+
+
 }
 
 
