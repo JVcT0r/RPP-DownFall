@@ -6,7 +6,7 @@ public class InteractablePopup : MonoBehaviour
     public GameObject popup;
 
     private float hideTimer = 0f;
-    private float hideDelay = 2f;  
+    private float hideDelay = 0.1f;  
 
     private bool isVisible = false;
 

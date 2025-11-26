@@ -27,6 +27,7 @@ public class Bullet : MonoBehaviour
             if (enemy != null)
             {
                 collision.GetComponent<EnemyAI>()?.OnHitByPlayer();
+                collision.GetComponent<EnemyShooter>()?.OnHitByPlayer();
                 enemy.TakeDamage(damage);
             }
 

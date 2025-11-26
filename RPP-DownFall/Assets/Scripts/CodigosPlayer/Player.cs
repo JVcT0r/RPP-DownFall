@@ -294,27 +294,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    // ---------------- HINT DO DOCUMENTO ----------------
-    bool encontrouDocumento = false;
-
-    foreach (var hit in hitsPopup)
-    {
-        var doc = hit.GetComponent<DocumentObject>();
-        if (doc == null) continue;
-
-        Vector2 dir = ((Vector2)hit.transform.position - (Vector2)transform.position).normalized;
-        float ang = Vector2.Angle(transform.right, dir);
-
-        if (ang <= 70f / 2f)
-        {
-            encontrouDocumento = true;
-            break;
-        }
-    }
-
-    if (hintLerDocumento != null)
-        hintLerDocumento.SetActive(encontrouDocumento);
-
     // ---------------- INTERAÇÕES AO APERTAR E ----------------
     if (!Input.GetKeyDown(KeyCode.E)) return;
 

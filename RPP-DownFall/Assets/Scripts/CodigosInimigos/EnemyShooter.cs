@@ -65,7 +65,7 @@ public class EnemyShooter : MonoBehaviour
     {
         if (target == null) return;
 
-        UpdateFacingDirection(); // IGUAL AO MELEE
+        UpdateFacingDirection();
 
         // ---- visão ----
         checkTimer += Time.deltaTime;
@@ -94,7 +94,6 @@ public class EnemyShooter : MonoBehaviour
             agent.ResetPath();
         }
 
-        // Flip visual IGUAL MELEE
         spriteRenderer.flipX = facingDir.x < 0;
     }
 
@@ -102,18 +101,15 @@ public class EnemyShooter : MonoBehaviour
     {
         Vector2 dirToPlayer = ((Vector2)target.position - (Vector2)transform.position).normalized;
 
-        // SE ENXERGA O PLAYER → olha direto
         if (canSeePlayer)
         {
             facingDir = Vector2.Lerp(facingDir, dirToPlayer, Time.deltaTime * 10f);
         }
-        // SENÃO → olha para onde está andando
         else if (agent.desiredVelocity.sqrMagnitude > 0.001f)
         {
             facingDir = Vector2.Lerp(facingDir, agent.desiredVelocity.normalized, Time.deltaTime * 5f);
         }
 
-        // ROTAÇÃO IGUAL AO MELEE
         float angle = Mathf.Atan2(facingDir.y, facingDir.x) * Mathf.Rad2Deg;
 
         if (firePoint != null)
@@ -161,12 +157,30 @@ public class EnemyShooter : MonoBehaviour
         {
             rb.isKinematic = false;
             rb.gravityScale = 0;
-
-            // 🔥 O tiro segue o firePoint, QUE SEGUE O facingDir (igual melee)
             rb.linearVelocity = firePoint.right * bulletSpeed;
         }
 
         Destroy(bullet, 3f);
+    }
+
+    // -------------------------------
+    //            REAÇÃO AO TIRO
+    // -------------------------------
+    public void OnHitByPlayer()
+    {
+        canSeePlayer = true;
+        lastSeenTimer = 0f;
+
+        if (target != null)
+        {
+            Vector2 dir = ((Vector2)target.position - (Vector2)transform.position).normalized;
+            facingDir = dir;
+
+            spriteRenderer.flipX = facingDir.x < 0;
+        }
+
+        agent.SetDestination(target.position);
+        anim.SetBool(IsShooting, true);
     }
 
     // -------------------------------
