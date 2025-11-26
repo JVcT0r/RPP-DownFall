@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
-
+using UnityEngine.SceneManagement; 
 public class EnemyShooter : MonoBehaviour
 {
     private static readonly int IsShooting = Animator.StringToHash("IsShooting");
@@ -50,15 +50,23 @@ public class EnemyShooter : MonoBehaviour
         if (p != null)
             target = p.transform;
 
-        if (target != null)
+        // -----------------------
+        // 🔥 ADICIONADO: só virar para o player no Start SE FOR FASE 3
+        // -----------------------
+        bool isPhase3 = SceneManager.GetActiveScene().name == "Fase3";
+
+        if (isPhase3 && target != null)
         {
+            // virado pro player somente na fase 3
             facingDir = ((Vector2)target.position - (Vector2)transform.position).normalized;
             spriteRenderer.flipX = facingDir.x < 0;
         }
         else
         {
+            // nas outras fases, olha para frente
             facingDir = transform.right;
         }
+      
     }
 
     private void Update()
@@ -67,7 +75,6 @@ public class EnemyShooter : MonoBehaviour
 
         UpdateFacingDirection();
 
-        // ---- visão ----
         checkTimer += Time.deltaTime;
         if (checkTimer >= checkInterval)
         {
@@ -163,9 +170,9 @@ public class EnemyShooter : MonoBehaviour
         Destroy(bullet, 3f);
     }
 
-    // -------------------------------
-    //            REAÇÃO AO TIRO
-    // -------------------------------
+    // --------------------------------
+    // 🔥 também reage ao tiro do player
+    // --------------------------------
     public void OnHitByPlayer()
     {
         canSeePlayer = true;
@@ -175,7 +182,6 @@ public class EnemyShooter : MonoBehaviour
         {
             Vector2 dir = ((Vector2)target.position - (Vector2)transform.position).normalized;
             facingDir = dir;
-
             spriteRenderer.flipX = facingDir.x < 0;
         }
 
@@ -183,9 +189,6 @@ public class EnemyShooter : MonoBehaviour
         anim.SetBool(IsShooting, true);
     }
 
-    // -------------------------------
-    //             GIZMOS
-    // -------------------------------
     private void OnDrawGizmos()
     {
         Vector3 origin = transform.position;
