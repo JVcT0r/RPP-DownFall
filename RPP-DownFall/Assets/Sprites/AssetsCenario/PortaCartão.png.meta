@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "PortaCart\xE3o_0": -1384328896579456696
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
